@@ -1,0 +1,10 @@
+Python 3.14.7
+numpy: 2.5.3
+pandas: 3.0.5
+scikit-learn: 1.9.1
+aif360: 0.6.1
+fairlearn: 0.14.0
+BlackBoxAuditing: 0.1.54
+scipy: 1.18.1
+jupyter: 1.1.1
+nbconvert: 7.17.1

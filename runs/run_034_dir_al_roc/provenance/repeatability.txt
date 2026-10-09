@@ -1,0 +1,30 @@
+Run 034 A/B repeatability check
+
+Run A exit code: 0
+Run B exit code: 0
+
+Per-seed comparison status: 0
+Aggregate comparison status: 0
+Stdout comparison status: 0
+
+Run 034 uses two independent Python process executions.
+
+The complete DIR -> AL stage is required to reproduce frozen Run 028
+exactly, including:
+- DIR activity diagnostics
+- binary prediction hashes
+- continuous score hashes
+- confusion matrices
+- metrics
+
+ROC then operates on the continuous DIR+AL score distribution.
+
+Run 030 AL+ROC is included only as a diagnostic comparison.
+Equality with Run 030 is not required.
+
+Final Run 034 prediction hashes are compared across A/B.
+
+A comparison status of 0 indicates byte-identical A/B equality.
+
+Run 034 is the final configuration in the locked COMPAS Step 5 execution
+plan.

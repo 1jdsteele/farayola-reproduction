@@ -1,0 +1,7 @@
+cd runs/run_003_egr_logreg_maxiter_1000/notebooks
+
+jupyter nbconvert \
+  --to notebook \
+  --execute repro_COMPAS_PIP_DIR_EGR_ROC_EO_logreg1000.ipynb \
+  --output repro_COMPAS_PIP_DIR_EGR_ROC_EO_logreg1000_executed.ipynb \
+  --ExecutePreprocessor.timeout=300

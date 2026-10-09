@@ -1,0 +1,33 @@
+RUN 008 PROTOCOL
+
+Methodological parent:
+Run 007 — race-stratified candidate NONE baseline, seeds 101 through 110.
+
+Single scientific change:
+
+Run 007:
+classifier = LogisticRegression()
+
+Run 008:
+classifier = LogisticRegression(max_iter=1000)
+
+Held constant:
+
+- exact COMPAS input
+- best-supported 11-feature matrix
+- seeds 101 through 110
+- test_size=0.3
+- shuffle=True
+- stratify on race
+- no fairness intervention
+- AIF360 protected-group definitions
+- favorable_label=1
+- metric computation
+- aggregate reporting procedure
+- software environment
+
+Research question:
+
+Does allowing Logistic Regression additional LBFGS optimization
+iterations materially change the ten-seed candidate NONE baseline,
+particularly seed 105 or the aggregate fairness metrics?

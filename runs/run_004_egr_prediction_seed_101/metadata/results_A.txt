@@ -1,0 +1,39 @@
+======================================================================
+CELL 1 OUTPUT
+======================================================================
+WARNING:root:No module named 'tensorflow': AdversarialDebiasing will be unavailable. To install, run:
+pip install 'aif360[AdversarialDebiasing]'
+
+WARNING:root:No module named 'tensorflow': AdversarialDebiasing will be unavailable. To install, run:
+pip install 'aif360[AdversarialDebiasing]'
+
+WARNING:root:No module named 'inFairness': SenSeI and SenSR will be unavailable. To install, run:
+pip install 'aif360[inFairness]'
+
+/Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/.venv/lib/python3.14/site-packages/sklearn/preprocessing/_label.py:120: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  y = column_or_1d(y, warn=True)
+
+Performance with fairness intervention (Reject Option Classification):
+Accuracy: 0.678662
+Disparate Impact: 0.896137
+Mean Difference: -0.047580
+Statistical Parity Difference: -0.04758032186014549
+Equal Opportunity Difference: -0.023545293295870184
+Predictive Equality: 0.010013670539986308
+Performance with fairness intervention (Equalized Odds Optimization):
+Accuracy: 0.670455
+Disparate Impact: 1.097347
+Mean Difference: 0.039963
+Statistical Parity Difference: 0.03996334688734893
+Equal Opportunity Difference: 0.0026684665735319246
+Difference in True Positive Rates (Unprivileged - Privileged) = 0.002668
+Difference in False Positive Rates (Unprivileged - Privileged) = -0.003195
+
+Performance with fairness intervention (Reject Option Classification):
+Accuracy: 0.680556
+Disparate Impact: 1.096814
+Mean Difference: 0.036979
+Statistical Parity Difference: 0.03697873628576337
+Equal Opportunity Difference: 0.010195111997111761
+Difference in True Positive Rates (Unprivileged - Privileged) = 0.010195
+Difference in False Positive Rates (Unprivileged - Privileged) = -0.018575

@@ -1,0 +1,63 @@
+==============================================================================
+RUN 011 — INDIVIDUAL EXPONENTIATED GRADIENT REDUCTION — COMPAS
+==============================================================================
+
+IMPORTANT
+---------
+Seeds 101-110 are a predetermined diagnostic set. They are NOT claimed to be the authors' exact ten seeds.
+EGR is the primary scientific change from Run 008.
+NumPy is explicitly reseeded immediately before EGR prediction to control randomized prediction behavior.
+
+INPUT
+-----
+File: /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_011_individual_egr/data/compas_farayola_numeric.csv
+SHA256: 6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e
+Shape: (5278, 12)
+
+PROTOCOL
+--------
+Fairness intervention: ExponentiatedGradientReduction
+Base classifier: LogisticRegression(max_iter=1000)
+Constraint: DemographicParity
+eps: 0.02
+EGR max_iter: 20
+drop_prot_attr: False
+Test size: 0.3
+Shuffle: True
+Stratified on: race
+Seeds: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+Number of trials: 10
+
+EGR INTEGRITY
+-------------
+Seed 101 | prediction_seed=101 | predicted_0=918 | predicted_1=666
+Seed 102 | prediction_seed=102 | predicted_0=901 | predicted_1=683
+Seed 103 | prediction_seed=103 | predicted_0=930 | predicted_1=654
+Seed 104 | prediction_seed=104 | predicted_0=973 | predicted_1=611
+Seed 105 | prediction_seed=105 | predicted_0=906 | predicted_1=678
+Seed 106 | prediction_seed=106 | predicted_0=913 | predicted_1=671
+Seed 107 | prediction_seed=107 | predicted_0=915 | predicted_1=669
+Seed 108 | prediction_seed=108 | predicted_0=901 | predicted_1=683
+Seed 109 | prediction_seed=109 | predicted_0=927 | predicted_1=657
+Seed 110 | prediction_seed=110 | predicted_0=894 | predicted_1=690
+
+PER-SEED RESULTS
+----------------
+Seed 101 | Accuracy=0.674873737374 | DI=0.918423992147 | SPD=-0.036069264962 | EOD=-0.049590945777 | PED=-0.102967775468
+Seed 102 | Accuracy=0.660353535354 | DI=0.919096118991 | SPD=-0.036669587906 | EOD=-0.039486007270 | PED=-0.114744017710
+Seed 103 | Accuracy=0.664141414141 | DI=0.978131260135 | SPD=-0.009149520324 | EOD=-0.019833220645 | PED=-0.061985898942
+Seed 104 | Accuracy=0.673611111111 | DI=1.066748280284 | SPD=0.024752928029 | EOD=0.012854030501 | PED=-0.034554129175
+Seed 105 | Accuracy=0.636994949495 | DI=0.964391623705 | SPD=-0.015575137650 | EOD=-0.012149312377 | PED=-0.087447683904
+Seed 106 | Accuracy=0.666666666667 | DI=1.001858904072 | SPD=0.000786572721 | EOD=-0.036735613763 | PED=-0.040739089237
+Seed 107 | Accuracy=0.658459595960 | DI=0.960437254246 | SPD=-0.017116687149 | EOD=-0.041176613826 | PED=-0.081919467431
+Seed 108 | Accuracy=0.669191919192 | DI=0.970471359681 | SPD=-0.012962651931 | EOD=-0.056791873376 | PED=-0.049982464344
+Seed 109 | Accuracy=0.657828282828 | DI=0.991920650817 | SPD=-0.003367462496 | EOD=-0.027413366337 | PED=-0.054928571429
+Seed 110 | Accuracy=0.690025252525 | DI=1.115555628141 | SPD=0.047064653617 | EOD=0.017291599614 | PED=-0.042495404628
+
+AGGREGATE SUMMARY
+-----------------
+accuracy: mean=0.665214646465, std=0.013818725182, min=0.636994949495, max=0.690025252525, 95% CI=[0.655329325974, 0.675099966955]
+disparate_impact: mean=0.988703507222, std=0.061449611470, min=0.918423992147, max=1.115555628141, 95% CI=[0.944745103288, 1.032661911157]
+statistical_parity_difference: mean=-0.005830615805, std=0.025674776361, min=-0.036669587906, max=0.047064653617, 95% CI=[-0.024197244384, 0.012536012774]
+equal_opportunity_difference: mean=-0.025303132326, std=0.025039830378, min=-0.056791873376, max=0.017291599614, 95% CI=[-0.043215547911, -0.007390716740]
+predictive_equality_difference: mean=-0.067176450227, std=0.027922235896, min=-0.114744017710, max=-0.034554129175, 95% CI=[-0.087150814505, -0.047202085949]

@@ -1,0 +1,21 @@
+DATE
+Sat Sep 19 17:57:53 PDT 2026
+
+PLATFORM
+Darwin Jakes-MacBook-Air.local 24.6.0 Darwin Kernel Version 24.6.0: Mon Jan 19 22:01:41 PST 2026; root:xnu-11417.140.69.708.3~1/RELEASE_ARM64_T8132 arm64
+arm64
+ProductName:		macOS
+ProductVersion:		15.7.4
+BuildVersion:		24G517
+
+PYTHON
+/Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/.venv-al/bin/python
+Python 3.11.16
+
+PACKAGE VERSIONS
+numpy: 1.26.4
+pandas: 3.0.6
+scipy: 1.17.1
+scikit-learn: 1.9.1
+aif360: 0.6.1
+tensorflow: 2.15.0

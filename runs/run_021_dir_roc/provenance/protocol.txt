@@ -1,0 +1,91 @@
+RUN 021 — Disparate Impact Remover + Reject Option Classification (PP), COMPAS
+
+PURPOSE
+Reproduce the COMPAS Pre-processing -> Post-processing configuration:
+
+Disparate Impact Remover (DIR)
+    -> Logistic Regression
+    -> Reject Option Classification (ROC)
+
+REFERENCE RUNS
+- Run 009: individual DIR
+- Run 013: individual ROC
+
+DIR
+- repair_level = 1.0
+- sensitive_attribute = race
+- training data only
+- test data remain unrepaired
+- race remains unchanged
+- labels remain unchanged
+
+CLASSIFIER
+- LogisticRegression(solver="lbfgs", max_iter=1000)
+- trained on DIR-repaired training features
+- predicts on original/unrepaired test features
+
+CRITICAL PRE-ROC CONTROL
+Before ROC, every confusion matrix and fairness metric must reproduce
+frozen Run 009 exactly.
+
+ROC INPUT
+The prediction BinaryLabelDataset is deliberately constructed from the
+classifier's hard 0/1 predictions, without predict_proba scores.
+
+Therefore its scores equal hard predicted labels, matching the
+repository-faithful ROC behavior observed in Run 013.
+
+ROC SETTINGS
+- metric_name = "Equal opportunity difference"
+- low_class_thresh = 0.3
+- high_class_thresh = 0.8
+- num_class_thresh = 100
+- num_ROC_margin = 50
+- metric_ub = 0.05
+- metric_lb = -0.05
+
+TEST-SET CALIBRATION
+ROC is fitted using:
+- true labels from the evaluation test set
+- DIR-classifier predictions from that same test set
+
+and evaluated on the same test set.
+
+This reproduces the repository pathway but constitutes conventional
+test-set calibration/leakage.
+
+CONTROLLED BACKBONE
+- reconstructed 5,278-row COMPAS dataset
+- same 11 predictors
+- target two_year_recid
+- race protected attribute
+- African-American = 0 = unprivileged
+- Caucasian = 1 = privileged
+- favorable_label = 1
+- 70/30 split
+- stratify on race
+- seeds 101 through 110
+- no StandardScaler
+- signed fairness differences retained
+- 95% Student-t confidence intervals
+
+EXPECTED DIAGNOSTIC
+DIR should remain scientifically active:
+- nonprotected training features change
+- pre-ROC results reproduce Run 009
+
+Because ROC receives only hard scores:
+- scores should have exactly 2 unique values
+- ROC may select threshold 0.3 and margin 0
+- ROC may change zero predictions
+- final DIR+ROC may reproduce Run 009 exactly
+
+These are hypotheses to test, not manually forced outcomes.
+
+PAPER COMPAS DIR+ROC
+Approximate reported values:
+- SPD = 0.288
+- DI = 2.160
+- EOD = 0.300
+- PED = 0.207
+- Accuracy = 0.68

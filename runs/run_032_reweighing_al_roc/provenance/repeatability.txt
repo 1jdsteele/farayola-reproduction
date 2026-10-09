@@ -1,0 +1,24 @@
+Run 032 A/B repeatability check
+
+Run A exit code: 0
+Run B exit code: 0
+
+Per-seed comparison status: 0
+Aggregate comparison status: 0
+Stdout comparison status: 0
+
+Run 032 uses two independent Python process executions.
+
+The Re -> AL stage is required to reproduce frozen Run 027 exactly,
+including binary prediction and continuous score hashes.
+
+The complete Re -> AL -> ROC stage is compared directly against frozen
+Run 030, including:
+- ROC threshold
+- ROC margin
+- changed-prediction count
+- final prediction hash
+- confusion matrix
+- final metrics
+
+A comparison status of 0 indicates byte-identical A/B equality.

@@ -1,0 +1,19 @@
+Run 030 A/B repeatability check
+
+Run A exit code: 0
+Run B exit code: 0
+
+Per-seed comparison status: 0
+Aggregate comparison status: 0
+Stdout comparison status: 0
+
+Run 030 uses two independent Python process executions.
+
+The pre-ROC AL stage is required to reproduce frozen Run 026 exactly,
+including binary prediction hashes and continuous AL score hashes.
+
+ROC operates on the continuous AL score distribution.
+
+Final ROC prediction hashes are preserved and compared across A/B.
+
+A comparison status of 0 indicates byte-identical A/B equality.

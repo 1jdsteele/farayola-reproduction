@@ -1,0 +1,17 @@
+WARNING:root:No module named 'tensorflow': AdversarialDebiasing will be unavailable. To install, run:
+pip install 'aif360[AdversarialDebiasing]'
+WARNING:root:No module named 'tensorflow': AdversarialDebiasing will be unavailable. To install, run:
+pip install 'aif360[AdversarialDebiasing]'
+WARNING:root:No module named 'inFairness': SenSeI and SenSR will be unavailable. To install, run:
+pip install 'aif360[inFairness]'
+/Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/.venv/lib/python3.14/site-packages/sklearn/preprocessing/_label.py:120: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  y = column_or_1d(y, warn=True)
+Traceback (most recent call last):
+  File "/Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_017_egr_roc/scripts/run_egr_roc_10seed.py", line 265, in <module>
+    assert np.all(
+           ~~~~~~^
+        egr_scores <= 1.0
+        ^^^^^^^^^^^^^^^^^
+    )
+    ^
+AssertionError

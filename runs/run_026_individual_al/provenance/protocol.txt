@@ -1,0 +1,144 @@
+RUN 026 — Individual Adversarial Debiasing / Adversarial Learning (AL), COMPAS
+
+PURPOSE
+Execute the first production COMPAS Adversarial Debiasing experiment after
+the dedicated TensorFlow/AIF360 compatibility troubleshooting phase.
+
+This is NOT the earlier smoke test.
+
+METHOD
+AIF360 0.6.1 legacy:
+
+aif360.algorithms.inprocessing.AdversarialDebiasing
+
+PAPER-REPORTED AL SETTINGS
+- protected attribute = race
+- num_epochs = 50
+- batch_size = 128
+- adversary_loss_weight = 0.2
+- debias = True
+
+LIBRARY-DEFAULT SETTING
+classifier_num_hidden_units is deliberately not passed to the constructor.
+
+AIF360 0.6.1 therefore supplies its default:
+- classifier_num_hidden_units = 200
+
+This should be documented as an AIF360 library default, NOT as an explicit
+author-selected parameter.
+
+REPOSITORY DIFFERENCE
+The released author AL notebooks omit adversary_loss_weight, thereby
+inheriting AIF360's default value of 0.1.
+
+Run 026 instead uses the paper-reported value 0.2.
+
+CONTROLLED BACKBONE
+- reconstructed COMPAS cohort = 5,278 rows
+- 11 predictors
+- target = two_year_recid
+- race protected attribute
+- African-American = race 0 = unprivileged
+- Caucasian = race 1 = privileged
+- favorable_label = 1
+- unfavorable_label = 0
+- 70/30 train/test split
+- shuffle = True
+- stratify = race
+- seeds = 101 through 110
+- no StandardScaler
+- no invented class balancing
+- race retained as predictor
+- signed fairness differences preserved
+
+The released notebooks use stratify=y.
+The controlled reproduction established before AL uses stratify=race and
+continues that backbone for cross-run comparability.
+
+TENSORFLOW ENVIRONMENT
+Run 026 uses the isolated .venv-al environment:
+
+- Python 3.11
+- TensorFlow 2.15
+- tensorflow.compat.v1
+- tf.disable_v2_behavior()
+- AIF360 0.6.1
+
+This is an environment/runtime adaptation needed to execute the legacy
+TensorFlow-1-style implementation on the present Apple Silicon machine.
+
+GRAPH / SESSION LIFECYCLE
+Each seed receives:
+
+tf.reset_default_graph()
+-> fresh tf.Session()
+-> construct AL model
+-> fit
+-> predict
+-> close Session
+
+No TensorFlow model/session state is shared between seeds.
+
+RANDOMNESS
+AdversarialDebiasing receives seed=<current experimental seed>.
+
+No additional external np.random.seed() or tf.set_random_seed() is imposed.
+
+The dedicated smoke test established exact A/B reproducibility for seed 101
+using AIF360's own seed mechanism.
+
+AL SCORES
+AIF360 AdversarialDebiasing.predict() supplies continuous classifier scores.
+
+Run 026 therefore preserves per-seed diagnostics:
+- score minimum
+- score maximum
+- score mean
+- number of unique scores
+- whether scores are hard 0/1 only
+- number of scores differing from final hard labels
+- hashes of predictions and scores
+
+These diagnostics are important for later AL -> ROC configurations.
+
+SMOKE-TEST REFERENCE
+Before Run 026, seed 101 was tested independently in a troubleshooting smoke
+test using the same scientific configuration.
+
+Diagnostic smoke result:
+- Accuracy = 0.679924242424
+- DI = 1.162281926820
+- SPD = 0.071496633369
+- EOD = 0.032577591900
+- PED = 0.020140332640
+- TN = 596
+- FP = 285
+- FN = 222
+- TP = 481
+
+The smoke test is NOT part of Run 026.
+
+Run 026 records whether its seed-101 production result matches those values.
+That comparison is diagnostic and is not used to alter the experiment.
+
+METRICS
+For each seed:
+- accuracy
+- disparate impact
+- statistical parity difference
+- equal opportunity difference
+- predictive equality difference / false-positive-rate difference
+
+Aggregate output:
+- n
+- mean
+- sample standard deviation
+- minimum
+- maximum
+- 95% Student-t confidence interval
+
+REPRODUCIBILITY
+Run 026 is executed twice as independent Python processes, A and B.
+
+Per-seed results, aggregate results, and deterministic stdout are compared
+before the run is frozen.

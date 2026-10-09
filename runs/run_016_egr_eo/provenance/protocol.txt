@@ -1,0 +1,94 @@
+RUN 016 — Exponentiated Gradient Reduction + Equalized Odds (IP), COMPAS
+
+PURPOSE
+Reproduce the paper's two-stage COMPAS In-processing -> Post-processing
+configuration:
+
+Exponentiated Gradient Reduction (EGR) -> Equalized Odds (EO)
+
+REFERENCE RUNS
+- Run 011: individual EGR
+- Run 012: individual EO
+
+REPOSITORY PIPELINE
+The pinned IF-EA COMPAS IP notebook:
+
+1. Fits ExponentiatedGradientReduction on the training BinaryLabelDataset.
+2. Predicts on the test BinaryLabelDataset.
+3. Passes the test-set true labels and EGR predictions directly to
+   EqOddsPostprocessing.fit_predict().
+4. Evaluates the resulting EO-adjusted predictions on that same test set.
+
+Run 016 reproduces that ordering.
+
+EGR SETTINGS
+- base estimator: LogisticRegression(solver="lbfgs", max_iter=1000)
+- constraint: DemographicParity
+- eps = 0.02
+- max_iter = 20
+- drop_prot_attr = False
+
+The paper explicitly specifies a maximum of 20 EGR iterations.
+The repository specifies eps=0.02 and drop_prot_attr=False but does not
+explicitly set max_iter.
+
+EO SETTINGS
+- AIF360 EqOddsPostprocessing
+- unprivileged group: race = 0
+- privileged group: race = 1
+- EO seed = current experimental seed
+
+TEST-SET CALIBRATION
+The pinned repository fits EO using:
+- the true labels from the evaluation test set
+- EGR predictions on that same test set
+
+and evaluates the transformed predictions on the same test set.
+
+Run 016 intentionally reproduces this behavior for comparability.
+This constitutes test-set calibration/leakage under conventional ML
+evaluation practice and is not recommended as an independent holdout design.
+
+RANDOMNESS
+EGR predictions are randomized.
+
+For each experimental seed:
+- np.random.seed(seed) immediately before EGR fit
+- np.random.seed(seed) immediately before EGR prediction
+- EqOddsPostprocessing receives seed=seed
+
+These are deterministic reconstruction controls and are NOT claimed as the
+authors' exact unpublished ten-seed procedure.
+
+HELD CONSTANT
+- reconstructed 5,278-row COMPAS dataset
+- same 11 predictors
+- target: two_year_recid
+- protected attribute: race
+- African-American = 0 = unprivileged
+- Caucasian = 1 = privileged
+- favorable_label = 1
+- unfavorable_label = 0
+- 70/30 train/test split
+- shuffle = True
+- stratify on race
+- diagnostic seeds 101 through 110
+- LogisticRegression(max_iter=1000)
+- no StandardScaler
+- same AIF360 fairness metric definitions
+- signed fairness differences preserved
+- same aggregate statistics and 95% Student-t confidence intervals
+
+CRITICAL INTEGRITY CHECK
+Before EO is applied, the EGR confusion matrix and all five metrics for every
+seed must reproduce frozen Run 011 exactly.
+
+This establishes that EO is the only new scientific intervention relative to
+Run 011.
+
+ADDITIONAL INTEGRITY CHECKS
+- training and test source data remain unchanged
+- EGR predictions are preserved after EO fitting
+- post-EO prediction count equals test row count
+- post-EO predictions remain binary
+- number of predictions changed by EO is recorded

@@ -1,0 +1,8 @@
+RUN 007 PRISTINE INPUT CHECK
+============================
+
+Run 006 data:
+6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e  /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_006_none_race_stratified/data/compas_farayola_numeric.csv
+
+Run 007 data:
+6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e  /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_007_none_race_stratified_10seed/data/compas_farayola_numeric.csv

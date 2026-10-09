@@ -1,0 +1,77 @@
+======================================================================
+CELL 2 OUTPUT
+======================================================================
+WARNING:root:No module named 'tensorflow': AdversarialDebiasing will be unavailable. To install, run:
+pip install 'aif360[AdversarialDebiasing]'
+
+WARNING:root:No module named 'tensorflow': AdversarialDebiasing will be unavailable. To install, run:
+pip install 'aif360[AdversarialDebiasing]'
+
+WARNING:root:No module named 'inFairness': SenSeI and SenSR will be unavailable. To install, run:
+pip install 'aif360[inFairness]'
+
+/Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/.venv/lib/python3.14/site-packages/sklearn/preprocessing/_label.py:120: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  y = column_or_1d(y, warn=True)
+/Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/.venv/lib/python3.14/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 100 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=100).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/.venv/lib/python3.14/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 100 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=100).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/.venv/lib/python3.14/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 100 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=100).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+
+/Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/.venv/lib/python3.14/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 100 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=100).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+
+Performance with fairness intervention (Reject Option Classification):
+Accuracy: 0.679924
+Disparate Impact: 0.883007
+Mean Difference: -0.053595
+Statistical Parity Difference: -0.053595359454130465
+Equal Opportunity Difference: -0.009763448286687515
+Predictive Equality: -0.011842105263157932
+Performance with fairness intervention (Equalized Odds Optimization):
+Accuracy: 0.679924
+Disparate Impact: 1.103905
+Mean Difference: 0.042812
+Statistical Parity Difference: 0.042812144616165004
+Equal Opportunity Difference: 0.006004049790446886
+Difference in True Positive Rates (Unprivileged - Privileged) = 0.006004
+Difference in False Positive Rates (Unprivileged - Privileged) = -0.005001
+
+Performance with fairness intervention (Reject Option Classification):
+Accuracy: 0.680556
+Disparate Impact: 1.096814
+Mean Difference: 0.036979
+Statistical Parity Difference: 0.03697873628576337
+Equal Opportunity Difference: 0.010195111997111761
+Difference in True Positive Rates (Unprivileged - Privileged) = 0.010195
+Difference in False Positive Rates (Unprivileged - Privileged) = -0.018575
+

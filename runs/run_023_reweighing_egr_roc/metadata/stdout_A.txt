@@ -1,0 +1,37 @@
+==============================================================================
+RUN 023 — REWEIGHING + EGR + ROC (PIP) — COMPAS
+==============================================================================
+
+INTEGRATION DIAGNOSTICS
+-----------------------
+Seed 101 | weights_changed=True | manual_weight_to_EGR=False | Run011_preROC_match=True | hard_scores=False | unique_scores=4 | threshold=0.507071 | margin=0.090538 | changed=41 | Run017_final_match=True
+Seed 102 | weights_changed=True | manual_weight_to_EGR=False | Run011_preROC_match=True | hard_scores=False | unique_scores=4 | threshold=0.355556 | margin=0.355556 | changed=70 | Run017_final_match=True
+Seed 103 | weights_changed=True | manual_weight_to_EGR=False | Run011_preROC_match=True | hard_scores=False | unique_scores=4 | threshold=0.300000 | margin=0.189796 | changed=55 | Run017_final_match=True
+Seed 104 | weights_changed=True | manual_weight_to_EGR=False | Run011_preROC_match=True | hard_scores=False | unique_scores=4 | threshold=0.300000 | margin=0.000000 | changed=8 | Run017_final_match=True
+Seed 105 | weights_changed=True | manual_weight_to_EGR=False | Run011_preROC_match=True | hard_scores=False | unique_scores=4 | threshold=0.300000 | margin=0.000000 | changed=7 | Run017_final_match=True
+Seed 106 | weights_changed=True | manual_weight_to_EGR=False | Run011_preROC_match=True | hard_scores=False | unique_scores=4 | threshold=0.320202 | margin=0.313667 | changed=59 | Run017_final_match=True
+Seed 107 | weights_changed=True | manual_weight_to_EGR=False | Run011_preROC_match=True | hard_scores=False | unique_scores=4 | threshold=0.507071 | margin=0.020120 | changed=78 | Run017_final_match=True
+Seed 108 | weights_changed=True | manual_weight_to_EGR=False | Run011_preROC_match=True | hard_scores=False | unique_scores=4 | threshold=0.300000 | margin=0.214286 | changed=38 | Run017_final_match=True
+Seed 109 | weights_changed=True | manual_weight_to_EGR=False | Run011_preROC_match=True | hard_scores=False | unique_scores=4 | threshold=0.300000 | margin=0.000000 | changed=18 | Run017_final_match=True
+Seed 110 | weights_changed=True | manual_weight_to_EGR=False | Run011_preROC_match=True | hard_scores=False | unique_scores=4 | threshold=0.300000 | margin=0.251020 | changed=17 | Run017_final_match=True
+
+PER-SEED RESULTS
+----------------
+Seed 101 | Accuracy=0.684343434343 | DI=1.013284280198 | SPD=0.005200027272 | EOD=-0.025552131484 | PED=-0.051283783784
+Seed 102 | Accuracy=0.670454545455 | DI=1.141494228751 | SPD=0.056059520107 | EOD=0.040263822087 | PED=-0.013504808086
+Seed 103 | Accuracy=0.672348484848 | DI=1.169931705408 | SPD=0.063556073655 | EOD=0.033355871084 | PED=0.025205640423
+Seed 104 | Accuracy=0.673611111111 | DI=1.098713783639 | SPD=0.035824812129 | EOD=0.027886710240 | PED=-0.026756626627
+Seed 105 | Accuracy=0.638888888889 | DI=0.983513453482 | SPD=-0.007158975826 | EOD=-0.006255402750 | PED=-0.077693835568
+Seed 106 | Accuracy=0.674873737374 | DI=1.207394605271 | SPD=0.078224906584 | EOD=0.032703961537 | PED=0.041251881166
+Seed 107 | Accuracy=0.667297979798 | DI=1.100550182922 | SPD=0.035375817129 | EOD=-0.019066403682 | PED=-0.006738014886
+Seed 108 | Accuracy=0.675505050505 | DI=1.030746504134 | SPD=0.013740909930 | EOD=-0.032317505315 | PED=-0.024070610241
+Seed 109 | Accuracy=0.662878787879 | DI=1.047493933631 | SPD=0.019268537257 | EOD=0.002127165842 | PED=-0.039797619048
+Seed 110 | Accuracy=0.689393939394 | DI=1.152293451117 | SPD=0.062268954656 | EOD=0.032676214998 | PED=-0.026570674459
+
+AGGREGATE SUMMARY
+-----------------
+accuracy: mean=0.670959595960, std=0.013627527586, min=0.638888888889, max=0.689393939394, 95% CI=[0.661211049990, 0.680708141929]
+disparate_impact: mean=1.094541612855, std=0.073956521116, min=0.983513453482, max=1.207394605271, 95% CI=[1.041636304734, 1.147446920977]
+statistical_parity_difference: mean=0.036236058290, std=0.028326135885, min=-0.007158975826, max=0.078224906584, 95% CI=[0.015972761365, 0.056499355214]
+equal_opportunity_difference: mean=0.008582230256, std=0.027921936216, min=-0.032317505315, max=0.040263822087, 95% CI=[-0.011391919645, 0.028556380156]
+predictive_equality_difference: mean=-0.019995845111, std=0.034669880638, min=-0.077693835568, max=0.041251881166, 95% CI=[-0.044797183655, 0.004805493433]

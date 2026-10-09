@@ -1,0 +1,35 @@
+# Python environments
+.venv/
+.venv-al/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# External repositories (document upstream sources instead)
+compas-analysis/
+IF-EA/
+RisCanvi/
+
+# Datasets (document retrieval and preparation)
+data/
+
+# Temporary files
+*.tmp
+*.log
+
+# Original upstream source files retained locally
+runs/run_035_pp_scaling_audit/provenance/Git_COMPAS_PP_DIR+ROC_EO.ipynb
+runs/run_035_pp_scaling_audit/provenance/Git_COMPAS_PP_Re+EO_ROC.ipynb
+runs/run_001_repository_faithful/metadata/Git_COMPAS_PIP_DIR+EGR+ROC_EO.txt

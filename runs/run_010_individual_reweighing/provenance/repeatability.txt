@@ -1,0 +1,10 @@
+Run 010 A/B repeatability check
+
+Required conditions before freezing:
+- Run A exit code = 0
+- Run B exit code = 0
+- per_seed_results_A.csv identical to per_seed_results_B.csv
+- aggregate_summary_A.csv identical to aggregate_summary_B.csv
+- stdout_A.txt identical to stdout_B.txt
+
+Verification performed manually before freeze.

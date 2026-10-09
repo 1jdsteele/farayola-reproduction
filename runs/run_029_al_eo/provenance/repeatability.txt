@@ -1,0 +1,17 @@
+Run 029 A/B repeatability check
+
+Run A exit code: 0
+Run B exit code: 0
+
+Per-seed comparison status: 0
+Aggregate comparison status: 0
+Stdout comparison status: 0
+
+Run 029 uses two independent Python process executions.
+
+The pre-EO AL stage is required to reproduce frozen Run 026 exactly,
+including binary prediction and continuous score hashes.
+
+Final EO prediction hashes are also preserved for future comparisons.
+
+A comparison status of 0 indicates byte-identical A/B equality.

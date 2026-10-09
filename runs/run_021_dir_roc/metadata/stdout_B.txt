@@ -1,0 +1,37 @@
+==============================================================================
+RUN 021 — DIR + ROC (PP) — COMPAS
+==============================================================================
+
+INTEGRATION DIAGNOSTICS
+-----------------------
+Seed 101 | DIR_changed_cells=2597 | Run009_preROC_match=True | hard_scores=True | unique_scores=2 | threshold=0.300000 | margin=0.000000 | changed=0 | Run009_final_match=True
+Seed 102 | DIR_changed_cells=2710 | Run009_preROC_match=True | hard_scores=True | unique_scores=2 | threshold=0.300000 | margin=0.000000 | changed=0 | Run009_final_match=True
+Seed 103 | DIR_changed_cells=2424 | Run009_preROC_match=True | hard_scores=True | unique_scores=2 | threshold=0.300000 | margin=0.000000 | changed=0 | Run009_final_match=True
+Seed 104 | DIR_changed_cells=2578 | Run009_preROC_match=True | hard_scores=True | unique_scores=2 | threshold=0.300000 | margin=0.000000 | changed=0 | Run009_final_match=True
+Seed 105 | DIR_changed_cells=2678 | Run009_preROC_match=True | hard_scores=True | unique_scores=2 | threshold=0.300000 | margin=0.000000 | changed=0 | Run009_final_match=True
+Seed 106 | DIR_changed_cells=2831 | Run009_preROC_match=True | hard_scores=True | unique_scores=2 | threshold=0.300000 | margin=0.000000 | changed=0 | Run009_final_match=True
+Seed 107 | DIR_changed_cells=2348 | Run009_preROC_match=True | hard_scores=True | unique_scores=2 | threshold=0.300000 | margin=0.000000 | changed=0 | Run009_final_match=True
+Seed 108 | DIR_changed_cells=3012 | Run009_preROC_match=True | hard_scores=True | unique_scores=2 | threshold=0.300000 | margin=0.000000 | changed=0 | Run009_final_match=True
+Seed 109 | DIR_changed_cells=2996 | Run009_preROC_match=True | hard_scores=True | unique_scores=2 | threshold=0.300000 | margin=0.000000 | changed=0 | Run009_final_match=True
+Seed 110 | DIR_changed_cells=2305 | Run009_preROC_match=True | hard_scores=True | unique_scores=2 | threshold=0.300000 | margin=0.000000 | changed=0 | Run009_final_match=True
+
+PER-SEED RESULTS
+----------------
+Seed 101 | Accuracy=0.685606060606 | DI=2.052962615720 | SPD=0.282013759202 | EOD=0.267820456380 | PED=0.218799376299
+Seed 102 | Accuracy=0.666666666667 | DI=2.014793451741 | SPD=0.262141573112 | EOD=0.294236233471 | PED=0.162795600689
+Seed 103 | Accuracy=0.684343434343 | DI=2.147644415745 | SPD=0.283728254923 | EOD=0.302005859815 | PED=0.204524089307
+Seed 104 | Accuracy=0.681186868687 | DI=2.216457175177 | SPD=0.271823235658 | EOD=0.287145969499 | PED=0.190447903053
+Seed 105 | Accuracy=0.668560606061 | DI=1.917467807775 | SPD=0.251540302290 | EOD=0.265658153242 | PED=0.163864652054
+Seed 106 | Accuracy=0.686868686869 | DI=2.255344963274 | SPD=0.318312510497 | EOD=0.275763342849 | PED=0.279209631570
+Seed 107 | Accuracy=0.681186868687 | DI=2.101695833192 | SPD=0.270622589770 | EOD=0.277010738549 | PED=0.180782210716
+Seed 108 | Accuracy=0.686868686869 | DI=2.062602944450 | SPD=0.277859723984 | EOD=0.299362154500 | PED=0.186865793781
+Seed 109 | Accuracy=0.674873737374 | DI=2.001938151966 | SPD=0.269935793715 | EOD=0.237964108911 | PED=0.224303571429
+Seed 110 | Accuracy=0.700126262626 | DI=2.166936945531 | SPD=0.284799191144 | EOD=0.264515609913 | PED=0.193706697460
+
+AGGREGATE SUMMARY
+-----------------
+accuracy: mean=0.681628787879, std=0.009780487368, min=0.666666666667, max=0.700126262626, 95% CI=[0.674632248697, 0.688625327061]
+disparate_impact: mean=2.093784430457, std=0.104278876888, min=1.917467807775, max=2.255344963274, 95% CI=[2.019187815729, 2.168381045185]
+statistical_parity_difference: mean=0.277277693430, std=0.017714615461, min=0.251540302290, max=0.318312510497, 95% CI=[0.264605420923, 0.289949965936]
+equal_opportunity_difference: mean=0.277148262713, std=0.019491477728, min=0.237964108911, max=0.302005859815, 95% CI=[0.263204899513, 0.291091625913]
+predictive_equality_difference: mean=0.200529952636, std=0.034316362251, min=0.162795600689, max=0.279209631570, 95% CI=[0.175981505912, 0.225078399360]

@@ -1,0 +1,39 @@
+RUN 007 LOGISTIC REGRESSION CONVERGENCE NOTE
+
+Run 007 evaluates the candidate NONE Logistic Regression baseline across
+predetermined seeds 101 through 110.
+
+Logistic Regression uses the inherited default:
+
+max_iter=100
+
+Iterations used by seed:
+
+101: 84
+102: 62
+103: 89
+104: 78
+105: 100
+106: 72
+107: 61
+108: 74
+109: 68
+110: 70
+
+Seed 105 reached the configured maximum of 100 iterations and produced
+scikit-learn's LBFGS convergence warning:
+
+"lbfgs failed to converge after 100 iteration(s)"
+
+The other nine seeds terminated below the configured iteration limit.
+
+This warning did NOT cause execution failure. Executions A and B both
+completed with exit code 0 and produced identical per-seed and aggregate
+results.
+
+Run 007 intentionally does NOT increase LogisticRegression max_iter,
+because doing so would introduce another scientific variable into the
+10-seed sensitivity experiment inherited from Run 006.
+
+A later controlled diagnostic may test whether seed 105's results change
+when Logistic Regression is allowed additional optimization iterations.

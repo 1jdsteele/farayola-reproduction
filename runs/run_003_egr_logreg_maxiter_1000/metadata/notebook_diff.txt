@@ -1,0 +1,11 @@
+--- runs/run_003_egr_logreg_maxiter_1000/metadata/run001.txt	2026-09-18 14:43:06
++++ runs/run_003_egr_logreg_maxiter_1000/metadata/run003.txt	2026-09-18 14:43:07
+@@ -70,7 +70,7 @@
+ 
+ # Apply Exponentiated Gradient Reduction (EG) in-processing technique
+ # You can choose a suitable base learner (e.g., logistic regression)
+-base_classifier = LogisticRegression()
++base_classifier = LogisticRegression(max_iter=1000)
+ 
+ inprocess_algorithm = ExponentiatedGradientReduction(base_classifier, constraints="DemographicParity",
+                                                      eps = 0.02, drop_prot_attr = False)

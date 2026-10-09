@@ -1,0 +1,78 @@
+RUN 018 — Reweighing + Equalized Odds (PP), COMPAS
+
+PURPOSE
+Reproduce and diagnose the released COMPAS Pre-processing ->
+Post-processing pathway:
+
+Reweighing (Re) -> Logistic Regression -> Equalized Odds (EO)
+
+REFERENCE RUNS
+- Run 008: NONE Logistic Regression baseline
+- Run 010: meaningful individual Reweighing
+- Run 012: individual Equalized Odds
+
+RELEASED PP IMPLEMENTATION
+The pinned IF-EA COMPAS PP Re+EO notebook:
+
+1. applies AIF360 Reweighing to the training BinaryLabelDataset;
+2. extracts reweighted_dataset.features and reweighted_dataset.labels;
+3. fits sklearn LogisticRegression on those features/labels;
+4. DOES NOT pass reweighted_dataset.instance_weights to LogisticRegression;
+5. predicts on the test set;
+6. applies EqOddsPostprocessing using test-set true labels and predictions;
+7. evaluates on that same test set.
+
+Because AIF360 Reweighing changes instance_weights rather than features or
+labels, the released PP pathway appears not to consume the Reweighing
+intervention during classifier training.
+
+RUN 018 CONTROLLED RECONSTRUCTION
+We retain the standardized experimental backbone from Runs 008 and 012:
+- no StandardScaler
+- LogisticRegression(solver="lbfgs", max_iter=1000)
+- race-stratified 70/30 split
+- seeds 101 through 110
+
+The ONLY added preprocessing stage relative to Run 012 is Reweighing.
+
+To reproduce the released integration behavior, its generated
+instance_weights are intentionally NOT supplied to LogisticRegression.
+
+This is different from Run 010, where sample_weight was explicitly supplied
+to LogisticRegression so that individual Reweighing was scientifically active.
+
+EXPECTED DIAGNOSTIC
+If Reweighing is inert because its weights are unused:
+- Reweighing weights should change;
+- training features should remain unchanged;
+- training labels should remain unchanged;
+- pre-EO LR results should equal Run 008;
+- final EO results should equal Run 012.
+
+This is an experimental hypothesis, not forced by the script.
+
+EO
+- AIF360 EqOddsPostprocessing
+- EO seed = current experimental seed
+- fitted using true test labels and predictions on that same test set
+- evaluated on the same test set
+
+The last behavior reproduces the released pathway but constitutes
+test-set calibration/leakage under conventional ML evaluation practice.
+
+HELD CONSTANT
+- 5,278-row reconstructed COMPAS dataset
+- 11 predictors
+- target two_year_recid
+- race protected attribute
+- African-American = 0 = unprivileged
+- Caucasian = 1 = privileged
+- favorable_label = 1
+- unfavorable_label = 0
+- 70/30 split
+- race stratification
+- seeds 101-110
+- LogisticRegression max_iter=1000
+- no StandardScaler
+- signed fairness metrics
+- 95% Student-t confidence intervals

@@ -1,0 +1,6 @@
+RUN 008 REPEATABILITY
+=====================
+
+PASS: per-seed results A and B identical.
+PASS: aggregate summaries A and B identical.
+PASS: stdout A and B identical.

@@ -1,0 +1,79 @@
+RUN 011 — Individual Exponentiated Gradient Reduction (EGR), COMPAS
+
+PURPOSE
+Reproduce the paper's individual COMPAS Exponentiated Gradient Reduction
+fairness intervention using the standardized Run 008 reconstruction backbone.
+
+PARENT
+Run 008 — 10-seed race-stratified NONE Logistic Regression baseline.
+
+PRIMARY SCIENTIFIC CHANGE
+Replace ordinary Logistic Regression training with AIF360
+ExponentiatedGradientReduction using Logistic Regression as its base estimator.
+
+EGR SETTINGS
+- base estimator: LogisticRegression(max_iter=1000)
+- fairness constraint: DemographicParity
+- eps = 0.02
+- max_iter = 20
+- drop_prot_attr = False
+- EGR fit on training dataset only
+- prediction performed on untouched test dataset
+
+EVIDENCE / PROVENANCE
+- The paper specifies Logistic Regression as the EGR base classifier.
+- The paper specifies Demographic Parity as the EGR fairness constraint.
+- The paper specifies a maximum of 20 EGR iterations.
+- The released IF-EA repository uses eps=0.02.
+- The released IF-EA repository uses drop_prot_attr=False.
+- The released repository does not explicitly set max_iter, so its behavior
+  depends on the installed AIF360/Fairlearn default.
+- Installed AIF360 0.6.1 defaults EGR max_iter to 50; Run 011 explicitly uses
+  the paper-described value of 20.
+
+PREDICTION RANDOMNESS
+Fairlearn/AIF360 EGR returns a randomized classifier. Prior diagnostic work
+(Run 004) established that predictions can vary unless NumPy's random state
+is explicitly controlled.
+
+For each experimental seed:
+- np.random.seed(seed) is set immediately before EGR fitting.
+- np.random.seed(seed) is reset immediately before EGR prediction.
+
+This is a reconstruction reproducibility control. It is NOT claimed to be
+an undocumented author procedure.
+
+HELD CONSTANT FROM RUN 008
+- reconstructed 5,278-row COMPAS dataset
+- same 11 predictors
+- target: two_year_recid
+- protected attribute: race
+- African-American = 0 = unprivileged
+- Caucasian = 1 = privileged
+- favorable_label = 1
+- unfavorable_label = 0
+- 70/30 train/test split
+- shuffle = True
+- stratify on race
+- diagnostic seeds 101 through 110
+- same AIF360 fairness metrics
+- signed fairness metrics preserved
+- same aggregate statistics and 95% t confidence intervals
+- no StandardScaler
+
+IMPORTANT RECONSTRUCTION CHOICES
+- Seeds 101-110 are diagnostic seeds and are NOT claimed to be the authors'
+  exact ten seeds.
+- Race stratification operationalizes the paper's description, despite the
+  released repository using stratify=y.
+- LogisticRegression(max_iter=1000) is a reconstruction stability choice.
+- Explicit NumPy seeding controls EGR prediction stochasticity.
+- max_iter=20 follows the paper rather than the installed AIF360 default.
+
+INTEGRITY CHECKS
+For every seed:
+- EGR training does not modify the source training dataset
+- source test dataframe remains untouched
+- race remains present in the EGR feature matrix
+- prediction count equals test row count
+- predictions contain only labels 0 and 1

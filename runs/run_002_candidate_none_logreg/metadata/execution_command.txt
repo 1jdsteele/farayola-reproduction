@@ -1,0 +1,1 @@
+python3 runs/run_002_candidate_none_logreg/scripts/run_candidate_none_logreg.py > runs/run_002_candidate_none_logreg/metadata/results.txt 2>&1

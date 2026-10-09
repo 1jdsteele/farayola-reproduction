@@ -1,0 +1,897 @@
+--- runs/run_016_egr_eo/provenance/run_011_egr_reference_script.py	2026-09-19 14:32:28
++++ runs/run_016_egr_eo/scripts/run_egr_eo_10seed.py	2026-09-19 14:33:19
+@@ -7,11 +7,17 @@
+ import pandas as pd
+ 
+ from scipy.stats import t
++
+ from sklearn.linear_model import LogisticRegression
+ from sklearn.model_selection import train_test_split
+ from sklearn.metrics import accuracy_score, confusion_matrix
+ 
+-from aif360.algorithms.inprocessing import ExponentiatedGradientReduction
++from aif360.algorithms.inprocessing import (
++    ExponentiatedGradientReduction,
++)
++from aif360.algorithms.postprocessing import (
++    EqOddsPostprocessing,
++)
+ from aif360.datasets import BinaryLabelDataset
+ from aif360.metrics import ClassificationMetric
+ 
+@@ -44,7 +50,18 @@
+ 
+ RUN_ROOT = Path(__file__).resolve().parents[1]
+ 
+-DATA_PATH = RUN_ROOT / "data" / "compas_farayola_numeric.csv"
++DATA_PATH = (
++    RUN_ROOT
++    / "data"
++    / "compas_farayola_numeric.csv"
++)
++
++RUN011_RESULTS_PATH = (
++    RUN_ROOT
++    / "provenance"
++    / "run_011_egr_per_seed_results_A.csv"
++)
++
+ METADATA_DIR = RUN_ROOT / "metadata"
+ 
+ 
+@@ -57,6 +74,7 @@
+ )
+ 
+ data = pd.read_csv(DATA_PATH)
++run011_results = pd.read_csv(RUN011_RESULTS_PATH)
+ 
+ assert data.shape == (5278, 12), (
+     f"Unexpected dataset shape: {data.shape}"
+@@ -65,14 +83,16 @@
+ assert data["two_year_recid"].value_counts().to_dict() == {
+     0: 2795,
+     1: 2483,
+-}, "Unexpected target counts"
++}
+ 
+ assert data["race"].value_counts().to_dict() == {
+     0: 3175,
+     1: 2103,
+-}, "Unexpected race counts"
++}
+ 
+-sha256 = hashlib.sha256(DATA_PATH.read_bytes()).hexdigest()
++sha256 = hashlib.sha256(
++    DATA_PATH.read_bytes()
++).hexdigest()
+ 
+ assert sha256 == EXPECTED_SHA256, (
+     f"Unexpected input SHA256: {sha256}"
+@@ -83,39 +103,54 @@
+ # Predictors and target
+ # ---------------------------------------------------------------------
+ 
+-X = data.drop(columns=["two_year_recid"])
+-y = data["two_year_recid"]
++X = data.drop(
++    columns=["two_year_recid"]
++)
+ 
++y = data[
++    "two_year_recid"
++]
++
+ assert "race" in X.columns
+ 
+ 
+ # ---------------------------------------------------------------------
+-# Experimental protocol
++# Protocol
+ # ---------------------------------------------------------------------
+ 
+-SEEDS = list(range(101, 111))
++SEEDS = list(
++    range(101, 111)
++)
+ 
+ EGR_CONSTRAINT = "DemographicParity"
+ EGR_EPS = 0.02
+ EGR_MAX_ITER = 20
+ EGR_DROP_PROT_ATTR = False
++
+ BASE_LOGREG_MAX_ITER = 1000
+ 
+ favorable_label = 1
+ unfavorable_label = 0
+ 
+-protected_attribute_names = ["race"]
++protected_attribute_names = [
++    "race"
++]
+ 
+-privileged_group = [{"race": 1}]
+-unprivileged_group = [{"race": 0}]
++privileged_group = [
++    {"race": 1}
++]
+ 
++unprivileged_group = [
++    {"race": 0}
++]
++
+ rows = []
+ 
+ 
+ for seed in SEEDS:
+ 
+     # -------------------------------------------------------------
+-    # Split
++    # Standardized split
+     # -------------------------------------------------------------
+ 
+     X_train, X_test, y_train, y_test = train_test_split(
+@@ -127,18 +162,46 @@
+         stratify=X["race"],
+     )
+ 
+-    X_train_reset = X_train.reset_index(drop=True)
+-    y_train_reset = y_train.reset_index(drop=True)
++    X_train_reset = (
++        X_train
++        .reset_index(drop=True)
++    )
+ 
+-    X_test_reset = X_test.reset_index(drop=True)
+-    y_test_reset = y_test.reset_index(drop=True)
++    y_train_reset = (
++        y_train
++        .reset_index(drop=True)
++    )
+ 
+-    # Preserve exact source data before EGR.
+-    X_train_snapshot = X_train_reset.copy(deep=True)
+-    y_train_snapshot = y_train_reset.copy(deep=True)
+-    X_test_snapshot = X_test_reset.copy(deep=True)
+-    y_test_snapshot = y_test_reset.copy(deep=True)
++    X_test_reset = (
++        X_test
++        .reset_index(drop=True)
++    )
++
++    y_test_reset = (
++        y_test
++        .reset_index(drop=True)
++    )
++
++    X_train_snapshot = (
++        X_train_reset
++        .copy(deep=True)
++    )
++
++    y_train_snapshot = (
++        y_train_reset
++        .copy(deep=True)
++    )
+ 
++    X_test_snapshot = (
++        X_test_reset
++        .copy(deep=True)
++    )
++
++    y_test_snapshot = (
++        y_test_reset
++        .copy(deep=True)
++    )
++
+     # -------------------------------------------------------------
+     # AIF360 datasets
+     # -------------------------------------------------------------
+@@ -177,17 +240,8 @@
+         privileged_protected_attributes=privileged_group,
+     )
+ 
+-    assert "race" in dataset_train_bld.feature_names
+-    assert "race" in dataset_test_bld.feature_names
+-
+-    train_features_before = dataset_train_bld.features.copy()
+-    train_labels_before = dataset_train_bld.labels.copy()
+-    train_protected_before = (
+-        dataset_train_bld.protected_attributes.copy()
+-    )
+-
+     # -------------------------------------------------------------
+-    # Individual EGR intervention
++    # Stage 1: EGR
+     # -------------------------------------------------------------
+ 
+     base_classifier = LogisticRegression(
+@@ -203,19 +257,158 @@
+         drop_prot_attr=EGR_DROP_PROT_ATTR,
+     )
+ 
+-    # Explicit reproducibility control for any training-side randomness.
+     np.random.seed(seed)
+ 
+-    egr.fit(dataset_train_bld)
++    egr.fit(
++        dataset_train_bld
++    )
+ 
+-    # EGR prediction is randomized. Reset NumPy immediately before
+-    # prediction so A/B executions are reproducible.
+     np.random.seed(seed)
+ 
+-    predictions_bld = egr.predict(dataset_test_bld)
++    predictions_egr_bld = egr.predict(
++        dataset_test_bld
++    )
+ 
+-    y_pred = (
+-        predictions_bld.labels
++    y_pred_egr = (
++        predictions_egr_bld
++        .labels
++        .ravel()
++        .astype(int)
++    )
++
++    egr_labels_snapshot = (
++        predictions_egr_bld
++        .labels
++        .copy()
++    )
++
++    # -------------------------------------------------------------
++    # Evaluate pre-EO EGR
++    # -------------------------------------------------------------
++
++    egr_metric = ClassificationMetric(
++        dataset_test_bld,
++        predictions_egr_bld,
++        unprivileged_groups=unprivileged_group,
++        privileged_groups=privileged_group,
++    )
++
++    egr_accuracy = accuracy_score(
++        y_test_reset,
++        y_pred_egr,
++    )
++
++    egr_cm = confusion_matrix(
++        y_test_reset,
++        y_pred_egr,
++        labels=[0, 1],
++    )
++
++    (
++        egr_tn,
++        egr_fp,
++        egr_fn,
++        egr_tp,
++    ) = egr_cm.ravel()
++
++    egr_metrics = {
++        "accuracy": float(
++            egr_accuracy
++        ),
++
++        "disparate_impact": float(
++            egr_metric.disparate_impact()
++        ),
++
++        "statistical_parity_difference": float(
++            egr_metric.statistical_parity_difference()
++        ),
++
++        "equal_opportunity_difference": float(
++            egr_metric.equal_opportunity_difference()
++        ),
++
++        "predictive_equality_difference": float(
++            egr_metric.false_positive_rate_difference()
++        ),
++    }
++
++    # -------------------------------------------------------------
++    # Critical Run 011 reproduction check
++    # -------------------------------------------------------------
++
++    run011_row = run011_results.loc[
++        run011_results["seed"] == seed
++    ]
++
++    assert len(run011_row) == 1, (
++        f"Expected one Run 011 row for seed {seed}"
++    )
++
++    run011_row = (
++        run011_row.iloc[0]
++    )
++
++    assert (
++        int(run011_row["tn"]) == int(egr_tn)
++    )
++
++    assert (
++        int(run011_row["fp"]) == int(egr_fp)
++    )
++
++    assert (
++        int(run011_row["fn"]) == int(egr_fn)
++    )
++
++    assert (
++        int(run011_row["tp"]) == int(egr_tp)
++    )
++
++    for metric_name, current_value in egr_metrics.items():
++
++        reference_value = float(
++            run011_row[metric_name]
++        )
++
++        assert np.isclose(
++            current_value,
++            reference_value,
++            rtol=0.0,
++            atol=1e-12,
++        ), (
++            f"Run 011 mismatch for seed {seed}, "
++            f"{metric_name}: "
++            f"{current_value} vs {reference_value}"
++        )
++
++    # -------------------------------------------------------------
++    # Stage 2: Equalized Odds
++    #
++    # Repository-supported structure:
++    #
++    # eo.fit_predict(
++    #     dataset_test_bld,
++    #     predictions_egr_bld
++    # )
++    #
++    # This calibrates EO using evaluation test labels.
++    # -------------------------------------------------------------
++
++    eo = EqOddsPostprocessing(
++        unprivileged_groups=unprivileged_group,
++        privileged_groups=privileged_group,
++        seed=seed,
++    )
++
++    predictions_eo_bld = eo.fit_predict(
++        dataset_test_bld,
++        predictions_egr_bld,
++    )
++
++    y_pred_eo = (
++        predictions_eo_bld
++        .labels
+         .ravel()
+         .astype(int)
+     )
+@@ -245,167 +438,206 @@
+     )
+ 
+     assert np.array_equal(
+-        dataset_train_bld.features,
+-        train_features_before,
+-    ), "EGR unexpectedly modified training features"
++        predictions_egr_bld.labels,
++        egr_labels_snapshot,
++    ), (
++        "EO unexpectedly modified stored EGR predictions"
++    )
+ 
+-    assert np.array_equal(
+-        dataset_train_bld.labels,
+-        train_labels_before,
+-    ), "EGR unexpectedly modified training labels"
+-
+-    assert np.array_equal(
+-        dataset_train_bld.protected_attributes,
+-        train_protected_before,
+-    ), "EGR unexpectedly modified protected attributes"
+-
+-    assert len(y_pred) == len(y_test_reset), (
+-        "Unexpected number of EGR predictions"
++    assert len(y_pred_eo) == len(
++        y_test_reset
+     )
+ 
+-    unique_predictions = set(np.unique(y_pred).tolist())
++    assert set(
++        np.unique(
++            y_pred_eo
++        ).tolist()
++    ).issubset({0, 1})
+ 
+-    assert unique_predictions.issubset({0, 1}), (
+-        f"Unexpected EGR prediction labels: {unique_predictions}"
++    changed_predictions = int(
++        np.sum(
++            y_pred_eo
++            != y_pred_egr
++        )
+     )
+ 
+     # -------------------------------------------------------------
+-    # Evaluation
++    # Post-EO metrics
+     # -------------------------------------------------------------
+ 
+-    metric = ClassificationMetric(
++    eo_metric = ClassificationMetric(
+         dataset_test_bld,
+-        predictions_bld,
++        predictions_eo_bld,
+         unprivileged_groups=unprivileged_group,
+         privileged_groups=privileged_group,
+     )
+ 
+-    accuracy = accuracy_score(
++    eo_accuracy = accuracy_score(
+         y_test_reset,
+-        y_pred,
++        y_pred_eo,
+     )
+ 
+-    cm = confusion_matrix(
++    eo_cm = confusion_matrix(
+         y_test_reset,
+-        y_pred,
++        y_pred_eo,
+         labels=[0, 1],
+     )
+ 
+-    tn, fp, fn, tp = cm.ravel()
++    (
++        tn,
++        fp,
++        fn,
++        tp,
++    ) = eo_cm.ravel()
+ 
+     # -------------------------------------------------------------
+-    # Split composition
++    # Output row
+     # -------------------------------------------------------------
+ 
+-    raw_test_df = X_test_reset.copy()
+-    raw_test_df["two_year_recid"] = y_test_reset
+-
+-    test_cross = pd.crosstab(
+-        raw_test_df["race"],
+-        raw_test_df["two_year_recid"],
+-    )
+-
+     row = {
+         "seed": seed,
+ 
+-        "train_rows": len(X_train_reset),
+-        "test_rows": len(X_test_reset),
+-
+-        "train_race_0": int(
+-            (X_train_reset["race"] == 0).sum()
+-        ),
+-
+-        "train_race_1": int(
+-            (X_train_reset["race"] == 1).sum()
+-        ),
+-
+-        "test_race_0": int(
+-            (X_test_reset["race"] == 0).sum()
++        "train_rows": len(
++            X_train_reset
+         ),
+ 
+-        "test_race_1": int(
+-            (X_test_reset["race"] == 1).sum()
++        "test_rows": len(
++            X_test_reset
+         ),
+ 
+-        "train_target_0": int(
+-            (y_train_reset == 0).sum()
+-        ),
++        # EGR configuration
++        "egr_constraint":
++            EGR_CONSTRAINT,
+ 
+-        "train_target_1": int(
+-            (y_train_reset == 1).sum()
+-        ),
++        "egr_eps":
++            EGR_EPS,
+ 
+-        "test_target_0": int(
+-            (y_test_reset == 0).sum()
+-        ),
++        "egr_max_iter":
++            EGR_MAX_ITER,
+ 
+-        "test_target_1": int(
+-            (y_test_reset == 1).sum()
+-        ),
++        "egr_drop_prot_attr":
++            EGR_DROP_PROT_ATTR,
+ 
+-        "test_race0_target0": int(
+-            test_cross.loc[0, 0]
+-        ),
++        "egr_prediction_seed":
++            seed,
+ 
+-        "test_race0_target1": int(
+-            test_cross.loc[0, 1]
+-        ),
++        "base_logreg_max_iter":
++            BASE_LOGREG_MAX_ITER,
+ 
+-        "test_race1_target0": int(
+-            test_cross.loc[1, 0]
+-        ),
++        # Pre-EO EGR diagnostics
++        "egr_matches_run011":
++            True,
+ 
+-        "test_race1_target1": int(
+-            test_cross.loc[1, 1]
+-        ),
++        "egr_tn":
++            int(egr_tn),
+ 
+-        "tn": int(tn),
+-        "fp": int(fp),
+-        "fn": int(fn),
+-        "tp": int(tp),
++        "egr_fp":
++            int(egr_fp),
+ 
+-        "predicted_0": int((y_pred == 0).sum()),
+-        "predicted_1": int((y_pred == 1).sum()),
++        "egr_fn":
++            int(egr_fn),
+ 
+-        "egr_constraint": EGR_CONSTRAINT,
+-        "egr_eps": EGR_EPS,
+-        "egr_max_iter": EGR_MAX_ITER,
+-        "egr_drop_prot_attr": EGR_DROP_PROT_ATTR,
+-        "egr_prediction_seed": seed,
+-        "base_logreg_max_iter": BASE_LOGREG_MAX_ITER,
++        "egr_tp":
++            int(egr_tp),
+ 
+-        "egr_train_features_unchanged": True,
+-        "egr_train_labels_unchanged": True,
+-        "egr_race_unchanged": True,
+-        "egr_test_untouched": True,
++        "egr_accuracy":
++            egr_metrics["accuracy"],
+ 
+-        "accuracy": float(accuracy),
++        "egr_disparate_impact":
++            egr_metrics["disparate_impact"],
+ 
+-        "disparate_impact": float(
+-            metric.disparate_impact()
+-        ),
++        "egr_statistical_parity_difference":
++            egr_metrics[
++                "statistical_parity_difference"
++            ],
+ 
+-        "statistical_parity_difference": float(
+-            metric.statistical_parity_difference()
+-        ),
++        "egr_equal_opportunity_difference":
++            egr_metrics[
++                "equal_opportunity_difference"
++            ],
+ 
+-        "equal_opportunity_difference": float(
+-            metric.equal_opportunity_difference()
+-        ),
++        "egr_predictive_equality_difference":
++            egr_metrics[
++                "predictive_equality_difference"
++            ],
+ 
+-        "predictive_equality_difference": float(
+-            metric.false_positive_rate_difference()
+-        ),
++        # EO diagnostics
++        "eo_seed":
++            seed,
++
++        "eo_test_calibration":
++            True,
++
++        "eo_changed_predictions":
++            changed_predictions,
++
++        "eo_predicted_0":
++            int(
++                (y_pred_eo == 0).sum()
++            ),
++
++        "eo_predicted_1":
++            int(
++                (y_pred_eo == 1).sum()
++            ),
++
++        "egr_predictions_preserved":
++            True,
++
++        "train_untouched":
++            True,
++
++        "test_untouched":
++            True,
++
++        # Post-EO confusion matrix
++        "tn":
++            int(tn),
++
++        "fp":
++            int(fp),
++
++        "fn":
++            int(fn),
++
++        "tp":
++            int(tp),
++
++        # Primary Run 016 outcomes
++        "accuracy":
++            float(eo_accuracy),
++
++        "disparate_impact":
++            float(
++                eo_metric.disparate_impact()
++            ),
++
++        "statistical_parity_difference":
++            float(
++                eo_metric.statistical_parity_difference()
++            ),
++
++        "equal_opportunity_difference":
++            float(
++                eo_metric.equal_opportunity_difference()
++            ),
++
++        "predictive_equality_difference":
++            float(
++                eo_metric.false_positive_rate_difference()
++            ),
+     }
+ 
+     rows.append(row)
+ 
+ 
+-results = pd.DataFrame(rows)
++results = pd.DataFrame(
++    rows
++)
+ 
+ 
+ # ---------------------------------------------------------------------
+-# Aggregate summary
++# Aggregate post-EO summary
+ # ---------------------------------------------------------------------
+ 
+ metric_columns = [
+@@ -419,58 +651,85 @@
+ summary_rows = []
+ 
+ n = len(results)
+-t_critical = t.ppf(0.975, df=n - 1)
+ 
++t_critical = t.ppf(
++    0.975,
++    df=n - 1,
++)
++
+ for metric_name in metric_columns:
+ 
+-    values = results[metric_name].astype(float)
++    values = results[
++        metric_name
++    ].astype(float)
+ 
+     mean = values.mean()
+-    std = values.std(ddof=1)
++
++    std = values.std(
++        ddof=1
++    )
++
+     minimum = values.min()
++
+     maximum = values.max()
+ 
+-    standard_error = std / math.sqrt(n)
+-    margin = t_critical * standard_error
++    standard_error = (
++        std
++        / math.sqrt(n)
++    )
+ 
++    margin = (
++        t_critical
++        * standard_error
++    )
++
+     summary_rows.append(
+         {
+-            "metric": metric_name,
+-            "n": n,
+-            "mean": mean,
+-            "sample_std": std,
+-            "min": minimum,
+-            "max": maximum,
+-            "ci95_lower": mean - margin,
+-            "ci95_upper": mean + margin,
++            "metric":
++                metric_name,
++
++            "n":
++                n,
++
++            "mean":
++                mean,
++
++            "sample_std":
++                std,
++
++            "min":
++                minimum,
++
++            "max":
++                maximum,
++
++            "ci95_lower":
++                mean - margin,
++
++            "ci95_upper":
++                mean + margin,
+         }
+     )
+ 
+-summary = pd.DataFrame(summary_rows)
++summary = pd.DataFrame(
++    summary_rows
++)
+ 
+ 
+ # ---------------------------------------------------------------------
+-# Preserve machine-readable outputs
++# Save outputs
+ # ---------------------------------------------------------------------
+ 
+-results_path = (
+-    METADATA_DIR
+-    / f"per_seed_results_{tag}.csv"
+-)
+-
+-summary_path = (
+-    METADATA_DIR
+-    / f"aggregate_summary_{tag}.csv"
+-)
+-
+ results.to_csv(
+-    results_path,
++    METADATA_DIR
++    / f"per_seed_results_{tag}.csv",
+     index=False,
+     float_format="%.15g",
+ )
+ 
+ summary.to_csv(
+-    summary_path,
++    METADATA_DIR
++    / f"aggregate_summary_{tag}.csv",
+     index=False,
+     float_format="%.15g",
+ )
+@@ -481,23 +740,27 @@
+ # ---------------------------------------------------------------------
+ 
+ print("=" * 78)
+-print("RUN 011 — INDIVIDUAL EXPONENTIATED GRADIENT REDUCTION — COMPAS")
++print("RUN 016 — EGR + EO (IP) — COMPAS")
+ print("=" * 78)
+ print()
+ 
+ print("IMPORTANT")
+ print("---------")
++
+ print(
+-    "Seeds 101-110 are a predetermined diagnostic set. "
+-    "They are NOT claimed to be the authors' exact ten seeds."
++    "Stage 1 EGR must reproduce frozen Run 011 exactly."
+ )
++
+ print(
+-    "EGR is the primary scientific change from Run 008."
++    "Stage 2 EO is fit using test-set true labels and "
++    "EGR test predictions, matching the pinned repository."
+ )
++
+ print(
+-    "NumPy is explicitly reseeded immediately before EGR prediction "
+-    "to control randomized prediction behavior."
++    "This is test-set calibration/leakage under "
++    "conventional evaluation practice."
+ )
++
+ print()
+ 
+ print("INPUT")
+@@ -509,36 +772,40 @@
+ 
+ print("PROTOCOL")
+ print("--------")
+-print("Fairness intervention: ExponentiatedGradientReduction")
+-print("Base classifier: LogisticRegression(max_iter=1000)")
++print("Stage 1: ExponentiatedGradientReduction")
+ print("Constraint:", EGR_CONSTRAINT)
+ print("eps:", EGR_EPS)
+ print("EGR max_iter:", EGR_MAX_ITER)
+ print("drop_prot_attr:", EGR_DROP_PROT_ATTR)
++print("Stage 2: EqOddsPostprocessing")
++print("EO seed: current experimental seed")
++print("EO calibrated on test set: True")
+ print("Test size: 0.3")
+ print("Shuffle: True")
+ print("Stratified on: race")
+ print("Seeds:", SEEDS)
+-print("Number of trials:", len(SEEDS))
+ print()
+ 
+-print("EGR INTEGRITY")
+-print("-------------")
++print("INTEGRATION DIAGNOSTICS")
++print("-----------------------")
+ 
+ for _, row in results.iterrows():
++
+     print(
+         "Seed {seed:.0f} | "
+-        "prediction_seed={egr_prediction_seed:.0f} | "
+-        "predicted_0={predicted_0:.0f} | "
+-        "predicted_1={predicted_1:.0f}"
++        "EGR_matches_Run011={egr_matches_run011} | "
++        "EO_seed={eo_seed:.0f} | "
++        "EO_changed_predictions={eo_changed_predictions:.0f} | "
++        "EGR_predictions_preserved={egr_predictions_preserved}"
+         .format(**row)
+     )
+ 
+ print()
+-print("PER-SEED RESULTS")
+-print("----------------")
++print("PER-SEED POST-EO RESULTS")
++print("------------------------")
+ 
+ for _, row in results.iterrows():
++
+     print(
+         "Seed {seed:.0f} | "
+         "Accuracy={accuracy:.12f} | "
+@@ -550,10 +817,11 @@
+     )
+ 
+ print()
+-print("AGGREGATE SUMMARY")
+-print("-----------------")
++print("AGGREGATE POST-EO SUMMARY")
++print("-------------------------")
+ 
+ for _, row in summary.iterrows():
++
+     print(
+         "{metric}: "
+         "mean={mean:.12f}, "

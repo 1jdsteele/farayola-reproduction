@@ -1,0 +1,126 @@
+RUN 017 — Exponentiated Gradient Reduction + Reject Option Classification (IP), COMPAS
+
+PURPOSE
+Reproduce the paper/repository two-stage COMPAS In-processing ->
+Post-processing configuration:
+
+Exponentiated Gradient Reduction (EGR) -> Reject Option Classification (ROC)
+
+REFERENCE RUNS
+- Run 011: individual EGR
+- Run 013: individual ROC
+
+REPOSITORY PIPELINE
+The pinned IF-EA COMPAS IP notebook:
+
+1. trains ExponentiatedGradientReduction;
+2. obtains EGR predictions on the test BinaryLabelDataset;
+3. passes those EGR predictions directly to
+   RejectOptionClassification.fit_predict();
+4. evaluates the ROC-adjusted predictions on the same test set.
+
+EGR SETTINGS
+- LogisticRegression(solver="lbfgs", max_iter=1000)
+- constraint = DemographicParity
+- eps = 0.02
+- max_iter = 20
+- drop_prot_attr = False
+
+ROC SETTINGS
+- metric_name = "Equal opportunity difference"
+- low_class_thresh = 0.3
+- high_class_thresh = 0.8
+- num_class_thresh = 100
+- num_ROC_margin = 50
+- metric_ub = 0.05
+- metric_lb = -0.05
+- unprivileged group: race = 0
+- privileged group: race = 1
+
+IMPORTANT DIFFERENCE FROM RUN 013
+Run 013 supplied ROC with ordinary Logistic Regression hard labels as the
+BinaryLabelDataset scores. ROC could not satisfy the configured constraints,
+selected margin=0, and changed zero predictions for every seed.
+
+AIF360 ExponentiatedGradientReduction.predict(), however, calls the
+underlying model's predict_proba() and places favorable-class probabilities
+into the returned BinaryLabelDataset.scores.
+
+Therefore Run 017 supplies ROC with continuous EGR scores, matching the
+released IP notebook and giving ROC a meaningful score region on which to
+operate.
+
+Run 017 records:
+- score minimum
+- score maximum
+- number of unique scores
+- whether scores are merely hard labels
+- ROC selected threshold
+- ROC selected margin
+- number of predictions changed
+
+TEST-SET CALIBRATION
+As in the released repository, ROC is fit using:
+- evaluation test-set true labels
+- EGR predictions/scores on that same test set
+
+and is evaluated on the same test set.
+
+This is test-set calibration/leakage under conventional ML evaluation
+practice, preserved intentionally for reproduction.
+
+RANDOMNESS
+EGR predictions are randomized.
+
+For each diagnostic seed:
+- np.random.seed(seed) immediately before EGR fit
+- np.random.seed(seed) immediately before EGR predict
+
+ROC itself is deterministic under these settings.
+
+These are reconstruction controls and are NOT claimed as the authors'
+exact unpublished seed procedure.
+
+HELD CONSTANT
+- reconstructed 5,278-row COMPAS dataset
+- same 11 predictors
+- target two_year_recid
+- race protected attribute
+- African-American = 0 = unprivileged
+- Caucasian = 1 = privileged
+- favorable_label = 1
+- unfavorable_label = 0
+- 70/30 train/test split
+- shuffle = True
+- stratify on race
+- diagnostic seeds 101 through 110
+- no StandardScaler
+- same AIF360 fairness metrics
+- signed fairness metrics retained
+- same 95% Student-t confidence intervals
+
+CRITICAL INTEGRITY CHECK
+Before ROC, every EGR confusion matrix and fairness metric must reproduce
+frozen Run 011 exactly.
+
+ADDITIONAL CHECKS
+- source train/test data remain unchanged
+- original EGR labels and scores remain preserved after ROC fitting
+- EGR scores are finite and within [0,1]
+- EGR scores are not merely binary hard labels
+- post-ROC predictions remain binary
+
+RUN 017 FAILED ATTEMPT / NUMERICAL TOLERANCE NOTE
+The initial Run A execution stopped because an integrity assertion required
+EGR scores to lie exactly within [0,1].
+
+A separate seed-101 diagnostic was performed before changing the script.
+If the observed violation was <= 1e-12, it was classified as floating-point
+roundoff.
+
+The final script therefore permits a score-bound tolerance of 1e-12 while:
+- retaining the original EGR scores unchanged;
+- performing no clipping;
+- continuing to reject any material score-range violation.
+
+The original failed execution is preserved under provenance/failed_attempt_1.

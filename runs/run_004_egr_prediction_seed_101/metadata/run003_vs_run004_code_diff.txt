@@ -1,0 +1,11 @@
+--- RUN_003
++++ RUN_004
+@@ -79,6 +79,7 @@
+ inprocess_algorithm.fit(dir_dataset)
+ 
+ # Predict on the test set
++np.random.seed(101)  # diagnostic EGR prediction reproducibility control
+ predictions = inprocess_algorithm.predict(dataset_test_bld)
+ 
+ # Evaluate the model's accuracy and fairness using AIF360 metrics
+

@@ -1,0 +1,19 @@
+    def fit(self, dataset):
+        """Learns randomized model with less bias
+
+        Args:
+            dataset: (Binary label) Dataset containing true labels.
+
+        Returns:
+            ExponentiatedGradientReduction: Returns self.
+        """
+        #set prot_attr
+        self.model.prot_attr = dataset.protected_attribute_names
+
+        X_df = pd.DataFrame(dataset.features, columns=dataset.feature_names)
+        Y = dataset.labels
+
+        self.model.fit(X_df, Y)
+
+        return self
+

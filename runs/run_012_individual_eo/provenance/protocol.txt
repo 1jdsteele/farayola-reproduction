@@ -1,0 +1,81 @@
+RUN 012 — Individual Equalized Odds (EO), COMPAS
+
+PURPOSE
+Reproduce the paper's individual COMPAS Equalized Odds post-processing
+intervention using the standardized Run 008 reconstruction backbone.
+
+PARENT
+Run 008 — 10-seed race-stratified NONE Logistic Regression baseline.
+
+PRIMARY SCIENTIFIC CHANGE
+Apply AIF360 EqOddsPostprocessing to the predictions produced by the
+unchanged Run 008-style Logistic Regression classifier.
+
+BASE CLASSIFIER
+- LogisticRegression(max_iter=1000)
+- trained on untreated training features and labels
+- no preprocessing fairness intervention
+- no in-processing fairness intervention
+- no StandardScaler
+
+EO SETTINGS
+- AIF360 EqOddsPostprocessing
+- unprivileged group: race = 0
+- privileged group: race = 1
+- EO random seed = current experimental seed
+
+REPOSITORY BEHAVIOR
+The pinned IF-EA repository constructs EqOddsPostprocessing with the
+privileged/unprivileged groups, uses seed=101 in at least one COMPAS
+notebook, and calls fit_predict using:
+1. the test dataset with true labels; and
+2. the corresponding baseline test predictions.
+
+Thus EO is calibrated and evaluated on the same test set in that pathway.
+
+Run 012 deliberately reproduces that structure for comparability.
+
+IMPORTANT CAVEAT
+Fitting a post-processing method using the evaluation test labels constitutes
+test-set calibration/leakage under a conventional ML evaluation design.
+This is preserved as repository-supported reproduction behavior and should
+not be interpreted as recommended deployment methodology.
+
+RANDOMNESS
+The repository's EO seeding is inconsistent across notebooks.
+
+For Run 012:
+- each 70/30 split uses experimental seed 101 through 110;
+- EqOddsPostprocessing receives that same experimental seed.
+
+This makes each trial deterministic and lets A/B runs be compared exactly.
+It is a reconstruction reproducibility control and is NOT claimed to be the
+authors' exact unpublished ten-seed procedure.
+
+HELD CONSTANT FROM RUN 008
+- reconstructed 5,278-row COMPAS dataset
+- same 11 predictors
+- target: two_year_recid
+- protected attribute: race
+- African-American = 0 = unprivileged
+- Caucasian = 1 = privileged
+- favorable_label = 1
+- unfavorable_label = 0
+- 70/30 split
+- shuffle = True
+- stratify on race
+- diagnostic seeds 101 through 110
+- LogisticRegression(max_iter=1000)
+- same AIF360 fairness metrics
+- signed fairness metrics preserved
+- same aggregate statistics and 95% t confidence intervals
+
+INTEGRITY CHECKS
+For every seed:
+- pre-EO classifier predictions reproduce the Run 008 baseline results
+- source training data remain unchanged
+- source test data remain unchanged
+- pre-EO predictions remain unchanged
+- post-EO prediction count equals test row count
+- post-EO predictions contain only labels 0 and 1
+- number of predictions changed by EO is recorded

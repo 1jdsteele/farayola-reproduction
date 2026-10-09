@@ -1,0 +1,104 @@
+RUN 022 — Reweighing + EGR + Equalized Odds (PIP), COMPAS
+
+PURPOSE
+Reproduce and diagnose the three-stage COMPAS pathway:
+
+Reweighing (Re)
+    -> Exponentiated Gradient Reduction (EGR)
+    -> Equalized Odds (EO)
+
+REFERENCE RUNS
+- Run 011: individual EGR
+- Run 014: Re + EGR
+- Run 016: EGR + EO
+
+PINNED REPOSITORY ORDER
+The pinned IF-EA COMPAS PIP Re+EGR+EO/ROC notebook:
+
+1. applies AIF360 Reweighing to the training BinaryLabelDataset;
+2. passes the resulting reweighted BinaryLabelDataset to
+   ExponentiatedGradientReduction.fit();
+3. predicts the untouched test BinaryLabelDataset with EGR;
+4. passes the true test dataset and EGR predictions to
+   EqOddsPostprocessing.fit_predict();
+5. evaluates on the same test set.
+
+REWEIGHING / EGR INTEGRATION ISSUE
+Run 014 established both source-level and experimental evidence that the
+AIF360 0.6.1 legacy ExponentiatedGradientReduction wrapper does not pass
+BinaryLabelDataset.instance_weights to the underlying Fairlearn model.
+
+Therefore Reweighing changes instance_weights, but those weights are not
+consumed by EGR in this released pathway.
+
+RUN 022 TEST
+Run 022 deliberately preserves that released integration behavior.
+
+For every seed:
+- Reweighing weights must change.
+- Reweighing must leave features, labels, and race unchanged.
+- EGR is fit directly on the reweighted BinaryLabelDataset.
+- No manual sample_weight is supplied.
+- The pre-EO EGR result must reproduce frozen Run 011 exactly.
+- EO is then applied to those EGR predictions.
+
+If the Re stage is functionally inert and EO behaves identically to Run 016,
+the final Re+EGR+EO output should reproduce Run 016 exactly.
+
+Final equality with Run 016 is recorded as a diagnostic rather than forced.
+
+EGR SETTINGS
+- base classifier: LogisticRegression(solver="lbfgs", max_iter=1000)
+- constraints = DemographicParity
+- eps = 0.02
+- max_iter = 20
+- drop_prot_attr = False
+
+The paper explicitly specifies 20 EGR iterations.
+The pinned notebook specifies eps=0.02 and drop_prot_attr=False but does not
+explicitly set max_iter.
+
+EO SETTINGS
+- AIF360 EqOddsPostprocessing
+- unprivileged race = 0
+- privileged race = 1
+- EO seed = current experimental seed
+
+TEST-SET CALIBRATION
+EO is fitted using true test labels and EGR predictions on that same test set,
+then evaluated on that same test set.
+
+This reproduces the released pathway but constitutes test-set leakage under
+conventional independent-holdout evaluation.
+
+RANDOMNESS
+For every diagnostic seed:
+- np.random.seed(seed) immediately before EGR fit
+- np.random.seed(seed) immediately before EGR predict
+- EO receives seed=seed
+
+These are controlled reconstruction choices and are not claimed to be the
+authors' exact unpublished ten-run seeding procedure.
+
+CONTROLLED BACKBONE
+- 5,278-row reconstructed COMPAS cohort
+- 11 predictors
+- target two_year_recid
+- race protected attribute
+- African-American = 0 = unprivileged
+- Caucasian = 1 = privileged
+- favorable_label = 1
+- 70/30 split
+- stratify on race
+- diagnostic seeds 101 through 110
+- no StandardScaler
+- signed fairness metrics retained
+- 95% Student-t confidence intervals
+
+PAPER COMPAS RE+EGR+EO
+Reported approximately:
+- SPD = 0.034
+- DI = 1.088
+- EOD = 0.001
+- PED = 0.0002
+- Accuracy = 0.65

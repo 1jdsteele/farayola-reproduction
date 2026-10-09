@@ -1,0 +1,25 @@
+Run 035 — PP StandardScaler audit
+
+Run A exit code: 0
+Run B exit code: 0
+
+Per-seed A/B status: 0
+Diagnostics A/B status: 0
+Aggregate A/B status: 0
+Stdout A/B status: 0
+
+Run 035 is a controlled scaling-only audit.
+
+It retains the Runs 018–021 backbone and introduces StandardScaler before
+LogisticRegression, matching the previously overlooked scaling operation
+in the released PP notebooks.
+
+The script independently reconstructs the unscaled pathways and requires
+them to reproduce frozen Runs 018–021 before accepting the scaling
+comparison.
+
+It also tests whether Reweighing remains operationally inert when scaling
+is included and whether ROC remains inactive when supplied hard LR
+predictions.
+
+A comparison status of 0 means byte-identical A/B output.

@@ -1,0 +1,14 @@
+RUN 004 PRISTINE STARTING STATE
+==============================
+
+Parent Run 003 notebook:
+08189b110b5de07123d463c2bb8413619f6af1a7019de8b78f6a811795c9f7fb  /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_003_egr_logreg_maxiter_1000/notebooks/repro_COMPAS_PIP_DIR_EGR_ROC_EO_logreg1000.ipynb
+
+Run 004 copied notebook:
+08189b110b5de07123d463c2bb8413619f6af1a7019de8b78f6a811795c9f7fb  /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_004_egr_prediction_seed_101/notebooks/repro_COMPAS_PIP_DIR_EGR_ROC_EO_logreg1000.ipynb
+
+Parent Run 003 data:
+6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e  /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_003_egr_logreg_maxiter_1000/data/compas_farayola_numeric.csv
+
+Run 004 copied data:
+6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e  /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_004_egr_prediction_seed_101/data/compas_farayola_numeric.csv

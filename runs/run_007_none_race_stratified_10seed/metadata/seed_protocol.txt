@@ -1,0 +1,12 @@
+RUN 007 SEED PROTOCOL
+
+Seeds:
+101, 102, 103, 104, 105, 106, 107, 108, 109, 110
+
+These ten consecutive seeds were selected prospectively as a transparent
+sensitivity set, beginning with the repository-associated seed 101.
+
+They are NOT claimed to be the exact ten seeds used by Farayola et al.
+
+The experiment preserves signed AIF360 fairness metrics. Absolute values
+are not applied before averaging.

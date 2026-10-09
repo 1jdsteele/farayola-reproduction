@@ -1,0 +1,22 @@
+Run 033 A/B repeatability check
+
+Run A exit code: 0
+Run B exit code: 0
+
+Per-seed comparison status: 0
+Aggregate comparison status: 0
+Stdout comparison status: 0
+
+Run 033 uses two independent Python process executions.
+
+The DIR -> AL stage is required to reproduce frozen Run 028 exactly,
+including binary prediction and continuous score hashes.
+
+EO is then applied using the established seeded test-calibration pathway.
+
+Final prediction hashes are preserved and compared across A/B.
+
+Run 029 AL+EO is included only as a diagnostic comparison; equality is not
+required.
+
+A comparison status of 0 indicates byte-identical A/B equality.

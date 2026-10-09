@@ -1,0 +1,3 @@
+RUN 008 EXECUTION B CONVERGENCE WARNING SCAN
+============================================
+PASS: No ConvergenceWarning in execution B.

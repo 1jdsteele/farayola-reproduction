@@ -1,0 +1,15 @@
+RUN 008 REPORTING NOTE
+
+The Run 008 script is derived from Run 007 and retains an inherited
+human-readable protocol line:
+
+Classifier: LogisticRegression()
+
+The actual instantiated classifier in Run 008 is:
+
+LogisticRegression(max_iter=1000)
+
+This is confirmed by the preserved Run 007 vs Run 008 code diff.
+
+The stale printed protocol label is reporting-only and does not affect
+execution.

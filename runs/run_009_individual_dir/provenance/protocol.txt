@@ -1,0 +1,56 @@
+RUN 009 — Individual Disparate Impact Remover (DIR), COMPAS
+
+PURPOSE
+Reproduce the paper's individual COMPAS Disparate Impact Remover fairness
+intervention using the standardized Run 008 reconstruction backbone.
+
+PARENT
+Run 008 — 10-seed race-stratified NONE Logistic Regression baseline.
+
+PRIMARY SCIENTIFIC CHANGE
+Apply AIF360 DisparateImpactRemover to the TRAINING DATA only, after each
+train/test split and before classifier training.
+
+DIR SETTINGS
+- sensitive_attribute = race
+- repair_level = 1.0
+- fit_transform applied to training dataset only
+- protected race attribute must remain unchanged
+- target labels must remain unchanged
+- test set remains unrepaired
+
+HELD CONSTANT FROM RUN 008
+- reconstructed 5,278-row COMPAS dataset
+- same 11 predictors
+- target: two_year_recid
+- protected attribute: race
+- African-American = 0 = unprivileged
+- Caucasian = 1 = privileged
+- favorable_label = 1
+- unfavorable_label = 0
+- 70/30 train/test split
+- shuffle = True
+- stratify on race
+- diagnostic seeds 101 through 110
+- LogisticRegression(max_iter=1000)
+- same AIF360 fairness metrics
+- signed fairness metrics preserved
+- same aggregate statistics and 95% t confidence intervals
+
+IMPORTANT RECONSTRUCTION CHOICES
+- Seeds 101-110 are diagnostic seeds and are NOT claimed to be the authors'
+  exact ten seeds.
+- Race stratification operationalizes the paper's description, despite the
+  released repository using stratify=y.
+- LogisticRegression(max_iter=1000) is a reconstruction stability choice.
+- StandardScaler is NOT added in Run 009, even though it appears in some
+  repository DIR pathways, because adding it here would introduce a second
+  scientific change relative to Run 008.
+
+INTEGRITY CHECKS
+For every seed:
+- row count unchanged by DIR
+- labels unchanged by DIR
+- race unchanged by DIR
+- at least one non-protected training feature changed
+- test dataframe unchanged

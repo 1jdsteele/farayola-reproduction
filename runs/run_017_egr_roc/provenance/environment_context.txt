@@ -1,0 +1,17 @@
+DATE
+Sat Sep 19 14:38:00 PDT 2026
+
+PYTHON
+Python 3.14.7
+
+GIT COMMIT
+
+GIT STATUS
+
+PACKAGE VERSIONS
+numpy: 2.5.3
+pandas: 3.0.5
+scipy: 1.18.1
+scikit-learn: 1.9.1
+aif360: 0.6.1
+fairlearn: 0.14.0

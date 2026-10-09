@@ -1,0 +1,149 @@
+RUN 034 — Disparate Impact Remover + Adversarial Debiasing +
+Reject Option Classification (DIR + AL + ROC), COMPAS
+
+PURPOSE
+Execute and diagnose:
+
+Disparate Impact Remover (DIR)
+    -> Adversarial Debiasing / Adversarial Learning (AL)
+    -> Reject Option Classification (ROC)
+
+REFERENCE RUNS
+- Run 028: DIR + AL
+- Run 030: AL + ROC
+
+CRITICAL PRE-ROC CONTROL
+For every seed, the complete DIR -> AL stage must reproduce frozen
+Run 028 exactly before ROC is applied.
+
+Required Run 028 matches:
+- DIR changed-cell count
+- DIR changed-feature count
+- DIR changed-feature names
+- binary prediction SHA256
+- continuous AL score SHA256
+- confusion matrix
+- all five metrics
+- score diagnostics
+
+These controls establish that ROC is the only new intervention relative to
+Run 028.
+
+DIR SETTINGS
+- repair_level = 1.0
+- sensitive_attribute = race
+- training data only
+- test data remains unrepaired
+
+DIR REQUIRED BEHAVIOR
+- labels unchanged
+- race unchanged
+- one or more nonprotected training features changed
+- original source train/test objects remain untouched
+
+AL SETTINGS
+Paper-faithful:
+- adversary_loss_weight = 0.2
+- num_epochs = 50
+- batch_size = 128
+- debias = True
+
+Library default:
+- classifier_num_hidden_units = 200
+
+The hidden-unit parameter is inherited from AIF360 0.6.1 and is not
+explicitly passed.
+
+CONTROLLED BACKBONE
+- reconstructed COMPAS cohort = 5,278 rows
+- 11 predictors
+- target = two_year_recid
+- race protected attribute
+- African-American = race 0 = unprivileged
+- Caucasian = race 1 = privileged
+- favorable_label = 1
+- unfavorable_label = 0
+- 70/30 train/test split
+- shuffle = True
+- stratify = race
+- seeds = 101 through 110
+- no StandardScaler
+- no invented class balancing
+- race retained as predictor
+- signed fairness differences preserved
+
+TENSORFLOW
+Environment:
+- Python 3.11
+- TensorFlow 2.15
+- tensorflow.compat.v1
+- tf.disable_v2_behavior()
+- AIF360 0.6.1
+
+Each seed receives:
+tf.reset_default_graph()
+-> fresh Session
+-> AL fit
+-> AL predict
+-> close Session
+
+RANDOMNESS
+AL receives seed=<current experimental seed>.
+
+No external np.random.seed() or tf.set_random_seed() is added.
+
+ROC SETTINGS
+Repository-style ROC configuration:
+- metric_name = "Equal opportunity difference"
+- low_class_thresh = 0.3
+- high_class_thresh = 0.8
+- num_class_thresh = 100
+- num_ROC_margin = 50
+- metric_ub = 0.05
+- metric_lb = -0.05
+
+ROC receives continuous DIR+AL scores.
+
+TEST-SET CALIBRATION
+ROC is fit using:
+- true labels from the evaluation test set
+- DIR+AL predictions/scores from that same test set
+
+and is evaluated on that same test set.
+
+This preserves the established repository-style pathway and its
+conventional test-set calibration/evaluation leakage.
+
+ROC DIAGNOSTICS
+For every seed record:
+- selected classification threshold
+- selected ROC margin
+- number of predictions changed by ROC
+- whether ROC mutates the original DIR+AL labels
+- whether ROC mutates the original DIR+AL scores
+- final prediction SHA256
+- final confusion matrix
+- final five metrics
+
+RUN 030 COMPARISON
+Final Run 034 DIR+AL+ROC output is compared with frozen Run 030 AL+ROC.
+
+This comparison is diagnostic only.
+
+Equality is NOT expected because DIR genuinely changed the features
+consumed by AL in Run 028.
+
+Compare:
+- ROC threshold
+- ROC margin
+- changed-prediction count
+- final prediction SHA256
+- confusion matrix
+- all five metrics
+
+REPRODUCIBILITY
+Run 034 is executed twice as independent Python processes, A and B.
+
+Freeze only after exact A/B repeatability is confirmed.
+
+This is the final configuration in the locked COMPAS Step 5 execution plan.

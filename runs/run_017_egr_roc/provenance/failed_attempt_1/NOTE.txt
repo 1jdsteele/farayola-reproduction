@@ -1,0 +1,12 @@
+Run 017 failed attempt 1
+
+The script compiled successfully and began the EGR -> ROC experiment.
+
+Execution stopped during seed 101 before ROC because the Run 017 integrity
+check required all EGR scores to be <= 1.0 exactly.
+
+At least one score exceeded 1.0.
+
+No scientific conclusion is drawn from this failed attempt. The next step is
+to determine whether the violation is only floating-point roundoff or a
+material score-range problem before changing the integrity check.

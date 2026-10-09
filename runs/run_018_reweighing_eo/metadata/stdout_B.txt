@@ -1,0 +1,37 @@
+==============================================================================
+RUN 018 — REWEIGHING + EO (PP) — COMPAS
+==============================================================================
+
+INTEGRATION DIAGNOSTICS
+-----------------------
+Seed 101 | weights_changed=True | weight_range=[0.865719,1.200172] | weight_sum=3694.000000 | LR_used_weights=False | Run008_preEO_match=True | EO_changed=166 | Run012_final_match=True
+Seed 102 | weights_changed=True | weight_range=[0.871434,1.201711] | weight_sum=3694.000000 | LR_used_weights=False | Run008_preEO_match=True | EO_changed=153 | Run012_final_match=True
+Seed 103 | weights_changed=True | weight_range=[0.859518,1.228126] | weight_sum=3694.000000 | LR_used_weights=False | Run008_preEO_match=True | EO_changed=184 | Run012_final_match=True
+Seed 104 | weights_changed=True | weight_range=[0.862371,1.229381] | weight_sum=3694.000000 | LR_used_weights=False | Run008_preEO_match=True | EO_changed=184 | Run012_final_match=True
+Seed 105 | weights_changed=True | weight_range=[0.872237,1.201025] | weight_sum=3694.000000 | LR_used_weights=False | Run008_preEO_match=True | EO_changed=165 | Run012_final_match=True
+Seed 106 | weights_changed=True | weight_range=[0.864568,1.210672] | weight_sum=3694.000000 | LR_used_weights=False | Run008_preEO_match=True | EO_changed=176 | Run012_final_match=True
+Seed 107 | weights_changed=True | weight_range=[0.875058,1.192699] | weight_sum=3694.000000 | LR_used_weights=False | Run008_preEO_match=True | EO_changed=167 | Run012_final_match=True
+Seed 108 | weights_changed=True | weight_range=[0.864776,1.215833] | weight_sum=3694.000000 | LR_used_weights=False | Run008_preEO_match=True | EO_changed=155 | Run012_final_match=True
+Seed 109 | weights_changed=True | weight_range=[0.867341,1.212349] | weight_sum=3694.000000 | LR_used_weights=False | Run008_preEO_match=True | EO_changed=157 | Run012_final_match=True
+Seed 110 | weights_changed=True | weight_range=[0.883030,1.178364] | weight_sum=3694.000000 | LR_used_weights=False | Run008_preEO_match=True | EO_changed=181 | Run012_final_match=True
+
+PER-SEED RESULTS
+----------------
+Seed 101 | Accuracy=0.651515151515 | DI=1.096815548155 | SPD=0.035289344018 | EOD=-0.011647956563 | PED=0.006533264033
+Seed 102 | Accuracy=0.617424242424 | DI=1.106731349261 | SPD=0.035013295241 | EOD=-0.007428925187 | PED=0.014957189875
+Seed 103 | Accuracy=0.650883838384 | DI=1.085230210120 | SPD=0.027689687915 | EOD=-0.015100292991 | PED=0.008695652174
+Seed 104 | Accuracy=0.631313131313 | DI=1.096413137912 | SPD=0.028419720526 | EOD=0.019389978214 | PED=-0.015576246068
+Seed 105 | Accuracy=0.617424242424 | DI=1.104641781837 | SPD=0.033001132465 | EOD=-0.008062868369 | PED=0.011137121373
+Seed 106 | Accuracy=0.640782828283 | DI=1.085876180483 | SPD=0.034023843297 | EOD=-0.022820987963 | PED=0.019909704030
+Seed 107 | Accuracy=0.638888888889 | DI=1.123006810279 | SPD=0.039767653402 | EOD=0.017873231548 | PED=-0.011892654061
+Seed 108 | Accuracy=0.645202020202 | DI=1.091057986222 | SPD=0.033190708132 | EOD=-0.003212851406 | PED=0.002747252747
+Seed 109 | Accuracy=0.632575757576 | DI=1.094704442113 | SPD=0.033769412798 | EOD=-0.002807858911 | PED=0.006029761905
+Seed 110 | Accuracy=0.653409090909 | DI=1.148313740996 | SPD=0.048654428504 | EOD=-0.005028966849 | PED=0.002804354998
+
+AGGREGATE SUMMARY
+-----------------
+accuracy: mean=0.637941919192, std=0.013196474828, min=0.617424242424, max=0.653409090909, 95% CI=[0.628501729790, 0.647382108594]
+disparate_impact: mean=1.103279118738, std=0.019354872256, min=1.085230210120, max=1.148313740996, 95% CI=[1.089433477205, 1.117124760270]
+statistical_parity_difference: mean=0.034881922630, std=0.005921668185, min=0.027689687915, max=0.048654428504, 95% CI=[0.030645816399, 0.039118028861]
+equal_opportunity_difference: mean=-0.003884749848, std=0.013302872909, min=-0.022820987963, max=0.019389978214, 95% CI=[-0.013401051852, 0.005631552157]
+predictive_equality_difference: mean=0.004534540101, std=0.011018424862, min=-0.015576246068, max=0.019909704030, 95% CI=[-0.003347566217, 0.012416646418]

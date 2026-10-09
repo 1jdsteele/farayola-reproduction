@@ -1,0 +1,16 @@
+Run 026 A/B repeatability check
+
+Run A exit code: 0
+Run B exit code: 0
+
+Per-seed comparison status: 0
+Aggregate comparison status: 0
+Stdout comparison status: 0
+
+Run 026 uses two independent Python process executions.
+
+The per-seed output includes SHA256 hashes for:
+- binary predictions
+- continuous AL classifier scores
+
+A comparison status of 0 indicates byte-identical equality.

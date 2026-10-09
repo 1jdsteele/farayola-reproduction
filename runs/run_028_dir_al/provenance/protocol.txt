@@ -1,0 +1,121 @@
+RUN 028 — Disparate Impact Remover + Adversarial Debiasing (DIR + AL), COMPAS
+
+PURPOSE
+Execute and diagnose:
+
+Disparate Impact Remover (DIR)
+    -> Adversarial Debiasing / Adversarial Learning (AL)
+
+REFERENCE RUN
+- Run 026: individual AL
+
+REPOSITORY PATHWAY
+The released DIR + AL pathway applies AIF360 DisparateImpactRemover to
+the training BinaryLabelDataset and passes the repaired dataset directly
+to AdversarialDebiasing.
+
+DIR SETTINGS
+- repair_level = 1.0
+- sensitive_attribute = race
+- training data only
+- test data remains unrepaired
+
+EXPECTED DIR BEHAVIOR
+DIR should:
+- modify one or more nonprotected training features
+- preserve labels
+- preserve protected race values
+- leave original source train/test data objects untouched
+
+Unlike Reweighing, DIR modifies features that AL directly consumes.
+
+Therefore Run 028 is NOT expected to collapse to Run 026.
+
+RUN 026 COMPARISON
+For every seed, Run 028 records whether its:
+- binary prediction SHA256
+- continuous score SHA256
+- confusion matrix
+- five metrics
+- score diagnostics
+
+match Run 026.
+
+These are diagnostic comparisons only.
+No equality is asserted.
+
+AL SETTINGS
+Paper-faithful:
+- adversary_loss_weight = 0.2
+- num_epochs = 50
+- batch_size = 128
+- debias = True
+
+Library default:
+- classifier_num_hidden_units = 200
+
+The hidden-unit parameter is not explicitly passed.
+
+CONTROLLED BACKBONE
+- reconstructed COMPAS cohort = 5,278 rows
+- 11 predictors
+- target = two_year_recid
+- race protected attribute
+- African-American = race 0 = unprivileged
+- Caucasian = race 1 = privileged
+- favorable_label = 1
+- unfavorable_label = 0
+- 70/30 train/test split
+- shuffle = True
+- stratify = race
+- seeds = 101 through 110
+- no StandardScaler
+- no invented class balancing
+- race retained as predictor
+- signed fairness differences preserved
+
+TENSORFLOW
+Environment:
+- Python 3.11
+- TensorFlow 2.15
+- tensorflow.compat.v1
+- tf.disable_v2_behavior()
+- AIF360 0.6.1
+
+Every seed receives:
+tf.reset_default_graph()
+-> fresh Session
+-> construct AL
+-> fit
+-> predict
+-> close Session
+
+RANDOMNESS
+AL receives seed=<current experimental seed>.
+
+No external np.random.seed() or tf.set_random_seed() is added.
+
+AL SCORES
+Continuous scores from AdversarialDebiasing.predict() are preserved.
+
+For every seed record:
+- score min
+- score max
+- score mean
+- unique score count
+- whether scores are hard 0/1
+- number of scores differing numerically from final labels
+- prediction SHA256
+- score SHA256
+
+METRICS
+- accuracy
+- disparate impact
+- statistical parity difference
+- equal opportunity difference
+- predictive equality / false-positive-rate difference
+
+REPRODUCIBILITY
+Execute Run 028 twice as independent Python processes, A and B.
+
+Freeze only after deterministic A/B equality is confirmed.

@@ -1,0 +1,20 @@
+DATE
+Wed Sep 23 15:04:11 PDT 2026
+
+PLATFORM
+Darwin mac.wifi-stu.calstatela.edu 24.6.0 Darwin Kernel Version 24.6.0: Mon Jan 19 22:01:41 PST 2026; root:xnu-11417.140.69.708.3~1/RELEASE_ARM64_T8132 arm64
+arm64
+ProductName:		macOS
+ProductVersion:		15.7.4
+BuildVersion:		24G517
+
+PYTHON
+/Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/.venv/bin/python
+Python 3.14.7
+
+PACKAGE VERSIONS
+numpy: 2.5.3
+pandas: 3.0.5
+scipy: 1.18.1
+scikit-learn: 1.9.1
+aif360: 0.6.1

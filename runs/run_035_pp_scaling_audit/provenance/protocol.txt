@@ -1,0 +1,110 @@
+RUN 035 — COMPAS PP StandardScaler audit
+
+PURPOSE
+
+Audit a previously overlooked detail in the two released COMPAS PP
+notebooks:
+
+- Git_COMPAS_PP_Re+EO_ROC.ipynb
+- Git_COMPAS_PP_DIR+ROC_EO.ipynb
+
+Both notebooks apply StandardScaler before LogisticRegression.
+
+Runs 018–021 did not include scaling.
+
+SCIENTIFIC QUESTION
+
+Does adding only the notebook's StandardScaler materially change the
+conclusions from Runs 018–021?
+
+CONTROLLED EXPERIMENT
+
+This run deliberately changes ONE scientific/implementation variable:
+StandardScaler.
+
+Everything else retains the established controlled COMPAS backbone:
+
+- reconstructed 5278-row COMPAS cohort
+- 11 predictors
+- target two_year_recid
+- African-American race=0 unprivileged
+- Caucasian race=1 privileged
+- favorable_label=1
+- 70/30 split
+- stratify=race
+- seeds 101–110
+- LogisticRegression max_iter=1000
+- EO seed=current experimental seed
+- repository-style ROC parameters
+- test-set calibration/evaluation for EO and ROC
+
+This is therefore a SCALING AUDIT, not a claim of exact notebook execution.
+
+The released notebooks additionally use stratify=y and LogisticRegression()
+with its default max_iter. Those variables are intentionally NOT changed
+here so that scaling can be isolated.
+
+REWEIGHING BRANCH
+
+Released notebook sequence:
+
+Reweighing
+-> extract features and labels
+-> StandardScaler
+-> LogisticRegression
+-> EO / ROC
+
+The Reweighing instance weights are NOT manually supplied to
+LogisticRegression.
+
+Required diagnostics:
+
+- Re weights changed
+- Re features unchanged
+- Re labels unchanged
+- scaled Re LR predictions equal scaled baseline LR predictions
+- scaled Re+EO equals scaled baseline+EO
+- scaled Re+ROC equals scaled baseline+ROC
+
+This directly tests whether Re remains operationally inert after including
+the notebook's scaling step.
+
+DIR BRANCH
+
+Released notebook sequence:
+
+DIR(repair_level=1)
+-> repaired training features
+-> StandardScaler fitted on repaired training features
+-> original test features transformed with same scaler
+-> LogisticRegression
+-> EO / ROC
+
+DIR remains training-only.
+
+Required diagnostics:
+
+- DIR labels unchanged
+- race unchanged
+- nonprotected features changed
+
+UNSCALED CONTROL
+
+The script also reconstructs the previous unscaled pathways and requires
+their final metrics to match frozen Runs 018–021 seed-by-seed.
+
+If that check fails, the scaling comparison is not trusted.
+
+ROC SCORE SEMANTICS
+
+As in the released PP notebooks, LogisticRegression.predict() supplies
+hard labels to a newly constructed BinaryLabelDataset.
+
+No predict_proba scores are introduced.
+
+The audit records whether ROC changes any predictions.
+
+REPEATABILITY
+
+Execute as independent processes A and B.
+Freeze only after byte-identical A/B output is confirmed.

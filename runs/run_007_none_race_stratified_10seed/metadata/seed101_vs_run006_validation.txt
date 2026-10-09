@@ -1,0 +1,9 @@
+RUN 007 SEED 101 VS FROZEN RUN 006
+===================================
+PASS: accuracy: Run006=0.684343434343, Run007(seed101)=0.684343434343, abs_diff=4.340e-13
+PASS: disparate_impact: Run006=1.904083647404, Run007(seed101)=1.904083647404, abs_diff=3.402e-13
+PASS: statistical_parity_difference: Run006=0.242139677356, Run007(seed101)=0.242139677356, abs_diff=4.810e-13
+PASS: equal_opportunity_difference: Run006=0.218999926627, Run007(seed101)=0.218999926627, abs_diff=4.502e-14
+PASS: predictive_equality_difference: Run006=0.185956340956, Run007(seed101)=0.185956340956, abs_diff=3.410e-13
+
+PASS: Run 007 seed 101 reproduces frozen Run 006.

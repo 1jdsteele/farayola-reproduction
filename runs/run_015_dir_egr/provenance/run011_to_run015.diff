@@ -1,0 +1,596 @@
+--- runs/run_015_dir_egr/provenance/run_011_egr_reference_script.py	2026-09-19 14:25:16
++++ runs/run_015_dir_egr/scripts/run_dir_egr_10seed.py	2026-09-19 14:28:50
+@@ -11,7 +11,10 @@
+ from sklearn.model_selection import train_test_split
+ from sklearn.metrics import accuracy_score, confusion_matrix
+ 
+-from aif360.algorithms.inprocessing import ExponentiatedGradientReduction
++from aif360.algorithms.preprocessing import DisparateImpactRemover
++from aif360.algorithms.inprocessing import (
++    ExponentiatedGradientReduction,
++)
+ from aif360.datasets import BinaryLabelDataset
+ from aif360.metrics import ClassificationMetric
+ 
+@@ -44,7 +47,18 @@
+ 
+ RUN_ROOT = Path(__file__).resolve().parents[1]
+ 
+-DATA_PATH = RUN_ROOT / "data" / "compas_farayola_numeric.csv"
++DATA_PATH = (
++    RUN_ROOT
++    / "data"
++    / "compas_farayola_numeric.csv"
++)
++
++RUN011_RESULTS_PATH = (
++    RUN_ROOT
++    / "provenance"
++    / "run_011_egr_per_seed_results_A.csv"
++)
++
+ METADATA_DIR = RUN_ROOT / "metadata"
+ 
+ 
+@@ -57,6 +71,7 @@
+ )
+ 
+ data = pd.read_csv(DATA_PATH)
++run011_results = pd.read_csv(RUN011_RESULTS_PATH)
+ 
+ assert data.shape == (5278, 12), (
+     f"Unexpected dataset shape: {data.shape}"
+@@ -72,7 +87,9 @@
+     1: 2103,
+ }, "Unexpected race counts"
+ 
+-sha256 = hashlib.sha256(DATA_PATH.read_bytes()).hexdigest()
++sha256 = hashlib.sha256(
++    DATA_PATH.read_bytes()
++).hexdigest()
+ 
+ assert sha256 == EXPECTED_SHA256, (
+     f"Unexpected input SHA256: {sha256}"
+@@ -80,7 +97,7 @@
+ 
+ 
+ # ---------------------------------------------------------------------
+-# Predictors and target
++# Predictors / target
+ # ---------------------------------------------------------------------
+ 
+ X = data.drop(columns=["two_year_recid"])
+@@ -88,17 +105,27 @@
+ 
+ assert "race" in X.columns
+ 
++nonprotected_features = [
++    column
++    for column in X.columns
++    if column != "race"
++]
+ 
++
+ # ---------------------------------------------------------------------
+-# Experimental protocol
++# Protocol
+ # ---------------------------------------------------------------------
+ 
+ SEEDS = list(range(101, 111))
+ 
++DIR_REPAIR_LEVEL = 1.0
++DIR_SENSITIVE_ATTRIBUTE = "race"
++
+ EGR_CONSTRAINT = "DemographicParity"
+ EGR_EPS = 0.02
+ EGR_MAX_ITER = 20
+ EGR_DROP_PROT_ATTR = False
++
+ BASE_LOGREG_MAX_ITER = 1000
+ 
+ favorable_label = 1
+@@ -133,14 +160,11 @@
+     X_test_reset = X_test.reset_index(drop=True)
+     y_test_reset = y_test.reset_index(drop=True)
+ 
+-    # Preserve exact source data before EGR.
+-    X_train_snapshot = X_train_reset.copy(deep=True)
+-    y_train_snapshot = y_train_reset.copy(deep=True)
+     X_test_snapshot = X_test_reset.copy(deep=True)
+     y_test_snapshot = y_test_reset.copy(deep=True)
+ 
+     # -------------------------------------------------------------
+-    # AIF360 datasets
++    # Construct original training BinaryLabelDataset
+     # -------------------------------------------------------------
+ 
+     train_df = pd.concat(
+@@ -177,18 +201,102 @@
+         privileged_protected_attributes=privileged_group,
+     )
+ 
+-    assert "race" in dataset_train_bld.feature_names
+-    assert "race" in dataset_test_bld.feature_names
++    # -------------------------------------------------------------
++    # Stage 1: DIR
++    # -------------------------------------------------------------
+ 
+-    train_features_before = dataset_train_bld.features.copy()
+-    train_labels_before = dataset_train_bld.labels.copy()
+-    train_protected_before = (
+-        dataset_train_bld.protected_attributes.copy()
++    dir_transformer = DisparateImpactRemover(
++        repair_level=DIR_REPAIR_LEVEL,
++        sensitive_attribute=DIR_SENSITIVE_ATTRIBUTE,
+     )
+ 
++    dataset_train_repaired = dir_transformer.fit_transform(
++        dataset_train_bld
++    )
++
++    repaired_df, _ = (
++        dataset_train_repaired.convert_to_dataframe()
++    )
++
++    X_train_repaired = repaired_df[
++        X.columns
++    ].copy()
++
++    repaired_labels = (
++        repaired_df["two_year_recid"]
++        .astype(int)
++        .to_numpy()
++    )
++
++    original_labels = (
++        y_train_reset
++        .astype(int)
++        .to_numpy()
++    )
++
+     # -------------------------------------------------------------
+-    # Individual EGR intervention
++    # DIR integrity
++    # -------------------------------------------------------------
++
++    assert len(X_train_repaired) == len(X_train_reset), (
++        "DIR changed training row count"
++    )
++
++    assert np.array_equal(
++        repaired_labels,
++        original_labels,
++    ), "DIR unexpectedly changed target labels"
++
++    assert np.array_equal(
++        X_train_repaired["race"].to_numpy(),
++        X_train_reset["race"].to_numpy(),
++    ), "DIR unexpectedly changed race"
++
++    feature_change_counts = {}
++
++    for column in nonprotected_features:
++
++        before = X_train_reset[
++            column
++        ].to_numpy(dtype=float)
++
++        after = X_train_repaired[
++            column
++        ].to_numpy(dtype=float)
++
++        changed = ~np.isclose(
++            before,
++            after,
++            rtol=0.0,
++            atol=1e-12,
++            equal_nan=True,
++        )
++
++        feature_change_counts[column] = int(
++            changed.sum()
++        )
++
++    changed_feature_names = [
++        column
++        for column, count
++        in feature_change_counts.items()
++        if count > 0
++    ]
++
++    changed_nonprotected_cells = sum(
++        feature_change_counts.values()
++    )
++
++    assert changed_nonprotected_cells > 0, (
++        "DIR did not change any non-protected feature values"
++    )
++
+     # -------------------------------------------------------------
++    # Stage 2: EGR
++    #
++    # The repaired BinaryLabelDataset itself is passed to EGR,
++    # matching the repository-style integration pathway.
++    # -------------------------------------------------------------
+ 
+     base_classifier = LogisticRegression(
+         solver="lbfgs",
+@@ -203,16 +311,17 @@
+         drop_prot_attr=EGR_DROP_PROT_ATTR,
+     )
+ 
+-    # Explicit reproducibility control for any training-side randomness.
+     np.random.seed(seed)
+ 
+-    egr.fit(dataset_train_bld)
++    egr.fit(
++        dataset_train_repaired
++    )
+ 
+-    # EGR prediction is randomized. Reset NumPy immediately before
+-    # prediction so A/B executions are reproducible.
+     np.random.seed(seed)
+ 
+-    predictions_bld = egr.predict(dataset_test_bld)
++    predictions_bld = egr.predict(
++        dataset_test_bld
++    )
+ 
+     y_pred = (
+         predictions_bld.labels
+@@ -221,20 +330,10 @@
+     )
+ 
+     # -------------------------------------------------------------
+-    # Integrity checks
++    # Test integrity
+     # -------------------------------------------------------------
+ 
+     pd.testing.assert_frame_equal(
+-        X_train_reset,
+-        X_train_snapshot,
+-    )
+-
+-    pd.testing.assert_series_equal(
+-        y_train_reset,
+-        y_train_snapshot,
+-    )
+-
+-    pd.testing.assert_frame_equal(
+         X_test_reset,
+         X_test_snapshot,
+     )
+@@ -244,33 +343,18 @@
+         y_test_snapshot,
+     )
+ 
+-    assert np.array_equal(
+-        dataset_train_bld.features,
+-        train_features_before,
+-    ), "EGR unexpectedly modified training features"
+-
+-    assert np.array_equal(
+-        dataset_train_bld.labels,
+-        train_labels_before,
+-    ), "EGR unexpectedly modified training labels"
+-
+-    assert np.array_equal(
+-        dataset_train_bld.protected_attributes,
+-        train_protected_before,
+-    ), "EGR unexpectedly modified protected attributes"
+-
+     assert len(y_pred) == len(y_test_reset), (
+-        "Unexpected number of EGR predictions"
++        "Unexpected prediction count"
+     )
+ 
+-    unique_predictions = set(np.unique(y_pred).tolist())
+-
+-    assert unique_predictions.issubset({0, 1}), (
+-        f"Unexpected EGR prediction labels: {unique_predictions}"
++    assert set(
++        np.unique(y_pred).tolist()
++    ).issubset({0, 1}), (
++        "Unexpected non-binary predictions"
+     )
+ 
+     # -------------------------------------------------------------
+-    # Evaluation
++    # Metrics
+     # -------------------------------------------------------------
+ 
+     metric = ClassificationMetric(
+@@ -292,8 +376,63 @@
+     )
+ 
+     tn, fp, fn, tp = cm.ravel()
++
++    metric_values = {
++        "accuracy": float(accuracy),
++
++        "disparate_impact": float(
++            metric.disparate_impact()
++        ),
+ 
++        "statistical_parity_difference": float(
++            metric.statistical_parity_difference()
++        ),
++
++        "equal_opportunity_difference": float(
++            metric.equal_opportunity_difference()
++        ),
++
++        "predictive_equality_difference": float(
++            metric.false_positive_rate_difference()
++        ),
++    }
++
+     # -------------------------------------------------------------
++    # Compare to individual EGR Run 011
++    # -------------------------------------------------------------
++
++    run011_row = run011_results.loc[
++        run011_results["seed"] == seed
++    ]
++
++    assert len(run011_row) == 1
++
++    run011_row = run011_row.iloc[0]
++
++    run011_cm_match = (
++        int(run011_row["tn"]) == int(tn)
++        and int(run011_row["fp"]) == int(fp)
++        and int(run011_row["fn"]) == int(fn)
++        and int(run011_row["tp"]) == int(tp)
++    )
++
++    run011_metric_match = True
++
++    for metric_name, value in metric_values.items():
++
++        reference = float(
++            run011_row[metric_name]
++        )
++
++        if not np.isclose(
++            value,
++            reference,
++            rtol=0.0,
++            atol=1e-12,
++        ):
++            run011_metric_match = False
++
++    # -------------------------------------------------------------
+     # Split composition
+     # -------------------------------------------------------------
+ 
+@@ -364,9 +503,22 @@
+         "fn": int(fn),
+         "tp": int(tp),
+ 
+-        "predicted_0": int((y_pred == 0).sum()),
+-        "predicted_1": int((y_pred == 1).sum()),
++        # DIR diagnostics
++        "dir_repair_level": DIR_REPAIR_LEVEL,
++        "dir_sensitive_attribute": DIR_SENSITIVE_ATTRIBUTE,
++        "dir_labels_unchanged": True,
++        "dir_race_unchanged": True,
++        "dir_changed_nonprotected_cells": int(
++            changed_nonprotected_cells
++        ),
++        "dir_changed_nonprotected_features": int(
++            len(changed_feature_names)
++        ),
++        "dir_changed_feature_names": ";".join(
++            changed_feature_names
++        ),
+ 
++        # EGR
+         "egr_constraint": EGR_CONSTRAINT,
+         "egr_eps": EGR_EPS,
+         "egr_max_iter": EGR_MAX_ITER,
+@@ -374,28 +526,18 @@
+         "egr_prediction_seed": seed,
+         "base_logreg_max_iter": BASE_LOGREG_MAX_ITER,
+ 
+-        "egr_train_features_unchanged": True,
+-        "egr_train_labels_unchanged": True,
+-        "egr_race_unchanged": True,
+-        "egr_test_untouched": True,
++        # Comparison against individual EGR
++        "run011_confusion_matrix_match":
++            run011_cm_match,
+ 
+-        "accuracy": float(accuracy),
++        "run011_metric_match":
++            run011_metric_match,
+ 
+-        "disparate_impact": float(
+-            metric.disparate_impact()
+-        ),
++        # Integrity
++        "test_untouched": True,
+ 
+-        "statistical_parity_difference": float(
+-            metric.statistical_parity_difference()
+-        ),
+-
+-        "equal_opportunity_difference": float(
+-            metric.equal_opportunity_difference()
+-        ),
+-
+-        "predictive_equality_difference": float(
+-            metric.false_positive_rate_difference()
+-        ),
++        # Outcomes
++        **metric_values,
+     }
+ 
+     rows.append(row)
+@@ -419,20 +561,31 @@
+ summary_rows = []
+ 
+ n = len(results)
+-t_critical = t.ppf(0.975, df=n - 1)
+ 
++t_critical = t.ppf(
++    0.975,
++    df=n - 1,
++)
++
+ for metric_name in metric_columns:
+ 
+-    values = results[metric_name].astype(float)
++    values = results[
++        metric_name
++    ].astype(float)
+ 
+     mean = values.mean()
+     std = values.std(ddof=1)
+     minimum = values.min()
+     maximum = values.max()
+ 
+-    standard_error = std / math.sqrt(n)
+-    margin = t_critical * standard_error
++    standard_error = (
++        std / math.sqrt(n)
++    )
+ 
++    margin = (
++        t_critical * standard_error
++    )
++
+     summary_rows.append(
+         {
+             "metric": metric_name,
+@@ -446,31 +599,25 @@
+         }
+     )
+ 
+-summary = pd.DataFrame(summary_rows)
++summary = pd.DataFrame(
++    summary_rows
++)
+ 
+ 
+ # ---------------------------------------------------------------------
+-# Preserve machine-readable outputs
++# Outputs
+ # ---------------------------------------------------------------------
+ 
+-results_path = (
+-    METADATA_DIR
+-    / f"per_seed_results_{tag}.csv"
+-)
+-
+-summary_path = (
+-    METADATA_DIR
+-    / f"aggregate_summary_{tag}.csv"
+-)
+-
+ results.to_csv(
+-    results_path,
++    METADATA_DIR
++    / f"per_seed_results_{tag}.csv",
+     index=False,
+     float_format="%.15g",
+ )
+ 
+ summary.to_csv(
+-    summary_path,
++    METADATA_DIR
++    / f"aggregate_summary_{tag}.csv",
+     index=False,
+     float_format="%.15g",
+ )
+@@ -481,23 +628,26 @@
+ # ---------------------------------------------------------------------
+ 
+ print("=" * 78)
+-print("RUN 011 — INDIVIDUAL EXPONENTIATED GRADIENT REDUCTION — COMPAS")
++print("RUN 015 — DIR + EGR (PI) — COMPAS")
+ print("=" * 78)
+ print()
+ 
+ print("IMPORTANT")
+ print("---------")
++
+ print(
+-    "Seeds 101-110 are a predetermined diagnostic set. "
+-    "They are NOT claimed to be the authors' exact ten seeds."
++    "DIR is applied to training data only, followed by EGR."
+ )
++
+ print(
+-    "EGR is the primary scientific change from Run 008."
++    "The unrepaired test dataset is used for evaluation."
+ )
++
+ print(
+-    "NumPy is explicitly reseeded immediately before EGR prediction "
+-    "to control randomized prediction behavior."
++    "EGR prediction randomness is controlled by the current "
++    "experimental seed."
+ )
++
+ print()
+ 
+ print("INPUT")
+@@ -509,7 +659,10 @@
+ 
+ print("PROTOCOL")
+ print("--------")
+-print("Fairness intervention: ExponentiatedGradientReduction")
++print("Stage 1: DisparateImpactRemover")
++print("DIR repair_level:", DIR_REPAIR_LEVEL)
++print("DIR sensitive_attribute:", DIR_SENSITIVE_ATTRIBUTE)
++print("Stage 2: ExponentiatedGradientReduction")
+ print("Base classifier: LogisticRegression(max_iter=1000)")
+ print("Constraint:", EGR_CONSTRAINT)
+ print("eps:", EGR_EPS)
+@@ -519,18 +672,23 @@
+ print("Shuffle: True")
+ print("Stratified on: race")
+ print("Seeds:", SEEDS)
+-print("Number of trials:", len(SEEDS))
+ print()
+ 
+-print("EGR INTEGRITY")
+-print("-------------")
++print("INTEGRATION DIAGNOSTICS")
++print("-----------------------")
+ 
+ for _, row in results.iterrows():
++
+     print(
+         "Seed {seed:.0f} | "
+-        "prediction_seed={egr_prediction_seed:.0f} | "
+-        "predicted_0={predicted_0:.0f} | "
+-        "predicted_1={predicted_1:.0f}"
++        "DIR_changed_cells="
++        "{dir_changed_nonprotected_cells:.0f} | "
++        "DIR_changed_features="
++        "{dir_changed_nonprotected_features:.0f} | "
++        "Run011_CM_match="
++        "{run011_confusion_matrix_match} | "
++        "Run011_metrics_match="
++        "{run011_metric_match}"
+         .format(**row)
+     )
+ 
+@@ -539,6 +697,7 @@
+ print("----------------")
+ 
+ for _, row in results.iterrows():
++
+     print(
+         "Seed {seed:.0f} | "
+         "Accuracy={accuracy:.12f} | "
+@@ -554,6 +713,7 @@
+ print("-----------------")
+ 
+ for _, row in summary.iterrows():
++
+     print(
+         "{metric}: "
+         "mean={mean:.12f}, "

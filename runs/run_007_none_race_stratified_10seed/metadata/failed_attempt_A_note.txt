@@ -1,0 +1,17 @@
+Run 007 execution A initially exited with code 1.
+
+The ten-seed experiment itself completed and printed its results, but the
+Python source file contained an accidental shell/heredoc fragment appended
+after the intended Python program:
+
+PYcat > "$RUN/scripts/$SCRIPT" <<'PY'
+
+Python reached this text after completing the experiment and raised:
+
+NameError: name 'PYcat' is not defined
+
+The failed execution outputs are preserved with "_failed" filenames.
+
+A scikit-learn LBFGS convergence warning also occurred during one or more
+of the ten Logistic Regression fits. This warning did not cause the process
+failure and will be preserved as a separate experimental observation.

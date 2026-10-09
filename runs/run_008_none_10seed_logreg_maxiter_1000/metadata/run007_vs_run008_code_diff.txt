@@ -1,0 +1,11 @@
+--- /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_007_none_race_stratified_10seed/scripts/run_candidate_none_logreg_10seed_sensitivity.py	2026-09-18 17:35:17
++++ /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_008_none_10seed_logreg_maxiter_1000/scripts/run_candidate_none_logreg_10seed_maxiter1000.py	2026-09-18 18:26:09
+@@ -122,7 +122,7 @@
+         stratify=X["race"],
+     )
+ 
+-    classifier = LogisticRegression()
++    classifier = LogisticRegression(max_iter=1000)
+     classifier.fit(X_train, y_train)
+ 
+     y_pred = classifier.predict(X_test)

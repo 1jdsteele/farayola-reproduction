@@ -1,0 +1,14 @@
+RUN 008 PRISTINE STARTING STATE
+===============================
+
+Run 007 source script:
+61d8f16fd0f98cb16540c45eda2c0e379f1a83965efefcc5d75e26db5f85de88  /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_007_none_race_stratified_10seed/scripts/run_candidate_none_logreg_10seed_sensitivity.py
+
+Run 008 copied script:
+61d8f16fd0f98cb16540c45eda2c0e379f1a83965efefcc5d75e26db5f85de88  /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_008_none_10seed_logreg_maxiter_1000/scripts/run_candidate_none_logreg_10seed_maxiter1000.py
+
+Run 007 input:
+6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e  /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_007_none_race_stratified_10seed/data/compas_farayola_numeric.csv
+
+Run 008 input:
+6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e  /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_008_none_10seed_logreg_maxiter_1000/data/compas_farayola_numeric.csv

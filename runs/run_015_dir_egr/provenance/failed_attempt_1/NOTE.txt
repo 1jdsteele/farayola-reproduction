@@ -1,0 +1,19 @@
+Run 015 failed attempt 1
+
+The scientific computation completed for all ten seeds and wrote the per-seed
+and aggregate result files.
+
+The process subsequently exited with status 1 because accidental shell text
+was appended to the end of the Python script:
+
+PYcat > "$RUN/scripts/run_dir_egr_10seed.py" <<'PY'
+
+Python attempted to execute that text after completing the experiment and
+raised:
+
+NameError: name 'PYcat' is not defined
+
+This is a shell-paste artifact, not an algorithmic or experimental failure.
+
+The failed execution and its outputs are preserved here before repairing the
+working Run 015 script.

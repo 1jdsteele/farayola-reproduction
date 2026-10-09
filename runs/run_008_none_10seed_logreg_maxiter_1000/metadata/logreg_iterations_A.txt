@@ -1,0 +1,15 @@
+===== RUN 008 LOGISTIC REGRESSION ITERATIONS =====
+ seed  logreg_iterations
+  101                 84
+  102                 62
+  103                 89
+  104                 78
+  105                111
+  106                 72
+  107                 61
+  108                 74
+  109                 68
+  110                 70
+
+===== SEEDS REACHING 1000 ITERATIONS =====
+None

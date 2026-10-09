@@ -1,0 +1,64 @@
+==============================================================================
+RUN 016 — EGR + EO (IP) — COMPAS
+==============================================================================
+
+IMPORTANT
+---------
+Stage 1 EGR must reproduce frozen Run 011 exactly.
+Stage 2 EO is fit using test-set true labels and EGR test predictions, matching the pinned repository.
+This is test-set calibration/leakage under conventional evaluation practice.
+
+INPUT
+-----
+File: /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_016_egr_eo/data/compas_farayola_numeric.csv
+SHA256: 6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e
+Shape: (5278, 12)
+
+PROTOCOL
+--------
+Stage 1: ExponentiatedGradientReduction
+Constraint: DemographicParity
+eps: 0.02
+EGR max_iter: 20
+drop_prot_attr: False
+Stage 2: EqOddsPostprocessing
+EO seed: current experimental seed
+EO calibrated on test set: True
+Test size: 0.3
+Shuffle: True
+Stratified on: race
+Seeds: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+
+INTEGRATION DIAGNOSTICS
+-----------------------
+Seed 101 | EGR_matches_Run011=True | EO_seed=101 | EO_changed_predictions=79 | EGR_predictions_preserved=True
+Seed 102 | EGR_matches_Run011=True | EO_seed=102 | EO_changed_predictions=109 | EGR_predictions_preserved=True
+Seed 103 | EGR_matches_Run011=True | EO_seed=103 | EO_changed_predictions=63 | EGR_predictions_preserved=True
+Seed 104 | EGR_matches_Run011=True | EO_seed=104 | EO_changed_predictions=60 | EGR_predictions_preserved=True
+Seed 105 | EGR_matches_Run011=True | EO_seed=105 | EO_changed_predictions=121 | EGR_predictions_preserved=True
+Seed 106 | EGR_matches_Run011=True | EO_seed=106 | EO_changed_predictions=31 | EGR_predictions_preserved=True
+Seed 107 | EGR_matches_Run011=True | EO_seed=107 | EO_changed_predictions=65 | EGR_predictions_preserved=True
+Seed 108 | EGR_matches_Run011=True | EO_seed=108 | EO_changed_predictions=39 | EGR_predictions_preserved=True
+Seed 109 | EGR_matches_Run011=True | EO_seed=109 | EO_changed_predictions=45 | EGR_predictions_preserved=True
+Seed 110 | EGR_matches_Run011=True | EO_seed=110 | EO_changed_predictions=70 | EGR_predictions_preserved=True
+
+PER-SEED POST-EO RESULTS
+------------------------
+Seed 101 | Accuracy=0.655303030303 | DI=1.091666760692 | SPD=0.040530944902 | EOD=-0.005099420354 | PED=0.005140332640
+Seed 102 | Accuracy=0.636994949495 | DI=1.083468472765 | SPD=0.037831986071 | EOD=-0.005889169326 | PED=0.006061351418
+Seed 103 | Accuracy=0.648358585859 | DI=1.075944386149 | SPD=0.031773879466 | EOD=-0.005634437683 | PED=0.007579318449
+Seed 104 | Accuracy=0.652146464646 | DI=1.089384848566 | SPD=0.033147471576 | EOD=-0.012636165577 | PED=0.012849934031
+Seed 105 | Accuracy=0.618686868687 | DI=1.072345909941 | SPD=0.031644169800 | EOD=0.003567779961 | PED=-0.004114350571
+Seed 106 | Accuracy=0.659722222222 | DI=1.091602620459 | SPD=0.037599173849 | EOD=-0.002036693878 | PED=0.001387882504
+Seed 107 | Accuracy=0.648989898990 | DI=1.098682010539 | SPD=0.042694435622 | EOD=0.000243504517 | PED=-0.001201978642
+Seed 108 | Accuracy=0.667297979798 | DI=1.088311563001 | SPD=0.036528237628 | EOD=-0.011268603827 | PED=0.004722936638
+Seed 109 | Accuracy=0.654671717172 | DI=1.090105689857 | SPD=0.037555937294 | EOD=0.006250000000 | PED=-0.005821428571
+Seed 110 | Accuracy=0.673611111111 | DI=1.141319037567 | SPD=0.057557833050 | EOD=0.001906984229 | PED=-0.000924965829
+
+AGGREGATE POST-EO SUMMARY
+-------------------------
+accuracy: mean=0.651578282828, std=0.015399238686, min=0.618686868687, max=0.673611111111, 95% CI=[0.640562331088, 0.662594234569]
+disparate_impact: mean=1.092283129954, std=0.018907285513, min=1.072345909941, max=1.141319037567, 95% CI=[1.078757672689, 1.105808587219]
+statistical_parity_difference: mean=0.038686406926, std=0.007538796322, min=0.031644169800, max=0.057557833050, 95% CI=[0.033293476914, 0.044079336937]
+equal_opportunity_difference: mean=-0.003059622194, std=0.006192379577, min=-0.012636165577, max=0.006250000000, 95% CI=[-0.007489383689, 0.001370139301]
+predictive_equality_difference: mean=0.002567903207, std=0.005745898814, min=-0.005821428571, max=0.012849934031, 95% CI=[-0.001542465191, 0.006678271604]

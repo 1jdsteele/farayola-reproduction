@@ -1,0 +1,37 @@
+==============================================================================
+RUN 020 — DIR + EO (PP) — COMPAS
+==============================================================================
+
+INTEGRATION DIAGNOSTICS
+-----------------------
+Seed 101 | DIR_changed_cells=2597 | DIR_changed_features=5 | Run009_preEO_match=True | EO_changed=202 | Run012_final_match=False
+Seed 102 | DIR_changed_cells=2710 | DIR_changed_features=5 | Run009_preEO_match=True | EO_changed=213 | Run012_final_match=False
+Seed 103 | DIR_changed_cells=2424 | DIR_changed_features=5 | Run009_preEO_match=True | EO_changed=219 | Run012_final_match=False
+Seed 104 | DIR_changed_cells=2578 | DIR_changed_features=5 | Run009_preEO_match=True | EO_changed=208 | Run012_final_match=False
+Seed 105 | DIR_changed_cells=2678 | DIR_changed_features=5 | Run009_preEO_match=True | EO_changed=195 | Run012_final_match=False
+Seed 106 | DIR_changed_cells=2831 | DIR_changed_features=5 | Run009_preEO_match=True | EO_changed=218 | Run012_final_match=False
+Seed 107 | DIR_changed_cells=2348 | DIR_changed_features=5 | Run009_preEO_match=True | EO_changed=202 | Run012_final_match=False
+Seed 108 | DIR_changed_cells=3012 | DIR_changed_features=5 | Run009_preEO_match=True | EO_changed=216 | Run012_final_match=False
+Seed 109 | DIR_changed_cells=2996 | DIR_changed_features=5 | Run009_preEO_match=True | EO_changed=185 | Run012_final_match=False
+Seed 110 | DIR_changed_cells=2305 | DIR_changed_features=5 | Run009_preEO_match=True | EO_changed=197 | Run012_final_match=False
+
+PER-SEED RESULTS
+----------------
+Seed 101 | Accuracy=0.640151515152 | DI=1.095043990637 | SPD=0.035246107463 | EOD=-0.020122532834 | PED=0.017323284823
+Seed 102 | Accuracy=0.614267676768 | DI=1.105998698611 | SPD=0.030069361413 | EOD=0.003404924044 | PED=-0.000228398749
+Seed 103 | Accuracy=0.628156565657 | DI=1.085230210120 | SPD=0.027689687915 | EOD=-0.010592742844 | PED=0.013689776733
+Seed 104 | Accuracy=0.630681818182 | DI=1.088510792592 | SPD=0.026791697916 | EOD=-0.027450980392 | PED=0.023104869218
+Seed 105 | Accuracy=0.612373737374 | DI=1.104641781837 | SPD=0.033001132465 | EOD=-0.015921414538 | PED=0.020146130382
+Seed 106 | Accuracy=0.632575757576 | DI=1.082552994546 | SPD=0.034407983464 | EOD=0.003831321681 | PED=0.002859372387
+Seed 107 | Accuracy=0.633207070707 | DI=1.120510129954 | SPD=0.037241640794 | EOD=-0.003482114593 | PED=0.003906430586
+Seed 108 | Accuracy=0.628787878788 | DI=1.098069670556 | SPD=0.031394728134 | EOD=0.011055988661 | PED=-0.004085807809
+Seed 109 | Accuracy=0.636363636364 | DI=1.084918899101 | SPD=0.033509993465 | EOD=0.003674195545 | PED=-0.002285714286
+Seed 110 | Accuracy=0.650252525253 | DI=1.144521061310 | SPD=0.048097342116 | EOD=0.015215642098 | PED=-0.012501767451
+
+AGGREGATE SUMMARY
+-----------------
+accuracy: mean=0.630681818182, std=0.011202720248, min=0.612373737374, max=0.650252525253, 95% CI=[0.622667874887, 0.638695761477]
+disparate_impact: mean=1.100999822926, std=0.019323557241, min=1.082552994546, max=1.144521061310, 95% CI=[1.087176582806, 1.114823063046]
+statistical_parity_difference: mean=0.033744967514, std=0.006014491480, min=0.026791697916, max=0.048097342116, 95% CI=[0.029442459498, 0.038047475531]
+equal_opportunity_difference: mean=-0.004038771317, std=0.014010716433, min=-0.027450980392, max=0.015215642098, 95% CI=[-0.014061434075, 0.005983891441]
+predictive_equality_difference: mean=0.006192817584, std=0.011763402379, min=-0.012501767451, max=0.023104869218, 95% CI=[-0.002222213546, 0.014607848713]

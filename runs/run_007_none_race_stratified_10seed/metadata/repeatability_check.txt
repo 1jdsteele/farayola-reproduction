@@ -1,0 +1,10 @@
+RUN 007 REPEATABILITY
+
+PASS: Execution A exit code = 0.
+PASS: Execution B exit code = 0.
+PASS: per-seed results A and B are identical.
+PASS: aggregate summaries A and B are identical.
+PASS: stdout A and B are identical.
+
+The same Logistic Regression convergence warning occurred under the
+repeated execution because seed 105 reached max_iter=100.

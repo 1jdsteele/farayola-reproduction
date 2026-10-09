@@ -1,0 +1,107 @@
+RUN 013 — Individual Reject Option Classification (ROC), COMPAS
+
+PURPOSE
+Reproduce the paper's individual COMPAS Reject Option Classification
+post-processing intervention using the standardized Run 008 reconstruction
+backbone.
+
+PARENT
+Run 008 — 10-seed race-stratified NONE Logistic Regression baseline.
+
+PRIMARY SCIENTIFIC CHANGE
+Apply AIF360 RejectOptionClassification to predictions produced by the
+unchanged Run 008-style Logistic Regression classifier.
+
+BASE CLASSIFIER
+- LogisticRegression(max_iter=1000)
+- untreated training features and labels
+- no pre-processing intervention
+- no in-processing intervention
+- no StandardScaler
+
+ROC SETTINGS FROM PINNED IF-EA REPOSITORY
+- metric_name = "Equal opportunity difference"
+- low_class_thresh = 0.3
+- high_class_thresh = 0.8
+- num_class_thresh = 100
+- num_ROC_margin = 50
+- metric_ub = 0.05
+- metric_lb = -0.05
+- unprivileged group: race = 0
+- privileged group: race = 1
+
+PAPER / REPOSITORY DISCREPANCY
+The paper states that ROC uses a grid search with Equal Opportunity Difference
+and Average Odds Difference as guiding metrics. The released AIF360
+implementation accepts one metric_name at a time, and the pinned IF-EA
+repository uses only "Equal opportunity difference".
+
+Run 013 reproduces the repository setting rather than inventing an
+undocumented multi-metric search.
+
+ROC SCORE DISCREPANCY
+RejectOptionClassification conceptually operates on prediction scores near a
+decision boundary.
+
+However, the pinned repository constructs a BinaryLabelDataset from hard
+Logistic Regression predictions and does not supply predict_proba scores.
+When no explicit score column is supplied, BinaryLabelDataset uses its labels
+as scores.
+
+Therefore, the repository ROC pathway effectively receives binary 0/1 scores.
+
+Run 013 deliberately preserves this behavior. It does NOT silently replace
+the repository input with continuous Logistic Regression probabilities.
+
+This is an important reproducibility/methodological discrepancy and may help
+explain unexpected ROC behavior.
+
+TEST-SET CALIBRATION
+The pinned repository fits ROC using:
+- the test-set true labels
+- predictions on that same test set
+
+and then evaluates the transformed predictions on the same test set.
+
+Run 013 preserves that repository-supported behavior for reproduction.
+This constitutes test-set calibration/leakage under conventional evaluation
+practice and should not be treated as recommended methodology.
+
+HELD CONSTANT FROM RUN 008
+- reconstructed 5,278-row COMPAS dataset
+- same 11 predictors
+- target: two_year_recid
+- protected attribute: race
+- African-American = 0 = unprivileged
+- Caucasian = 1 = privileged
+- favorable_label = 1
+- unfavorable_label = 0
+- 70/30 split
+- shuffle = True
+- stratify on race
+- diagnostic seeds 101 through 110
+- LogisticRegression(max_iter=1000)
+- same AIF360 metric definitions
+- signed fairness differences preserved
+- same aggregate statistics and 95% t confidence intervals
+
+IMPORTANT RECONSTRUCTION CHOICES
+- Seeds 101-110 are diagnostic and are NOT claimed to be the authors'
+  exact ten seeds.
+- Race stratification operationalizes the paper wording, despite the
+  repository using stratify=y.
+- LogisticRegression(max_iter=1000) is a reconstruction stability choice.
+- No random seed is required by AIF360 RejectOptionClassification itself.
+
+INTEGRITY CHECKS
+For every seed:
+- pre-ROC classifier exactly reproduces frozen Run 008
+- training data remain untouched
+- test data remain untouched
+- baseline predictions remain untouched
+- ROC input scores contain only 0 and 1, reproducing repository behavior
+- post-ROC prediction count equals test row count
+- post-ROC predictions contain only labels 0 and 1
+- selected classification threshold is recorded
+- selected ROC margin is recorded
+- number of predictions changed by ROC is recorded

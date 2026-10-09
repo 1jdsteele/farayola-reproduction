@@ -1,0 +1,62 @@
+==============================================================================
+RUN 035 — COMPAS PP STANDARDSCALER AUDIT
+==============================================================================
+
+UNSCALED REFERENCE REPRODUCTION
+-------------------------------
+run018_unscaled_reference_match: True
+run019_unscaled_reference_match: True
+run020_unscaled_reference_match: True
+run021_unscaled_reference_match: True
+
+REWEIGHING INERTNESS WITH SCALING
+---------------------------------
+re_weights_changed: True
+re_features_unchanged: True
+re_labels_unchanged: True
+re_scaled_parent_equals_scaled_baseline: True
+re_scaled_eo_equals_scaled_baseline_eo: True
+re_scaled_roc_equals_scaled_baseline_roc: True
+
+DIR ACTIVITY
+------------
+dir_labels_unchanged: True
+dir_race_unchanged: True
+DIR active every seed: True
+
+SCALING EFFECT — CHANGED PREDICTIONS
+------------------------------------
+re_parent_scaled_vs_unscaled_changes: min=0, max=3, mean=0.90
+re_eo_scaled_vs_unscaled_changes: min=0, max=148, mean=44.40
+re_roc_scaled_vs_unscaled_changes: min=0, max=3, mean=0.90
+dir_parent_scaled_vs_unscaled_changes: min=0, max=2, mean=1.00
+dir_eo_scaled_vs_unscaled_changes: min=0, max=175, mean=51.90
+dir_roc_scaled_vs_unscaled_changes: min=0, max=2, mean=1.00
+
+ROC ACTIVITY AFTER SCALED HARD PREDICTIONS
+------------------------------------------
+Re+ROC changed from parent: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+DIR+ROC changed from parent: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+AGGREGATE SUMMARY
+-----------------
+Re+EO_scaled | accuracy | mean=0.636426767677 | sd=0.011849904246 | range=[0.617424242424, 0.653409090909]
+Re+EO_scaled | disparate_impact | mean=1.103250977698 | sd=0.019061268942 | range=[1.086390448150, 1.148313740996]
+Re+EO_scaled | statistical_parity_difference | mean=0.034931145785 | sd=0.005841395035 | range=[0.028203537748, 0.048654428504]
+Re+EO_scaled | equal_opportunity_difference | mean=-0.000817661612 | sd=0.013057574812 | range=[-0.020851070934, 0.019389978214]
+Re+EO_scaled | predictive_equality_difference | mean=0.002676983550 | sd=0.011217351252 | range=[-0.015576246068, 0.019909704030]
+Re+ROC_scaled | accuracy | mean=0.679419191919 | sd=0.009536334933 | range=[0.662878787879, 0.698232323232]
+Re+ROC_scaled | disparate_impact | mean=1.884776491849 | sd=0.121852071538 | range=[1.681573643798, 2.049849789418]
+Re+ROC_scaled | statistical_parity_difference | mean=0.235680967435 | sd=0.018687350167 | range=[0.204148048618, 0.261606105002]
+Re+ROC_scaled | equal_opportunity_difference | mean=0.227301650079 | sd=0.019388229158 | range=[0.206200295252, 0.258169934641]
+Re+ROC_scaled | predictive_equality_difference | mean=0.165672207123 | sd=0.026271899267 | range=[0.125812572473, 0.219012318154]
+DIR+EO_scaled | accuracy | mean=0.631250000000 | sd=0.011508653494 | range=[0.612373737374, 0.654040404040]
+DIR+EO_scaled | disparate_impact | mean=1.100764877901 | sd=0.020403421870 | range=[1.082000358304, 1.146829202167]
+DIR+EO_scaled | statistical_parity_difference | mean=0.033541589409 | sd=0.006226458496 | range=[0.026791697916, 0.048632810226]
+DIR+EO_scaled | equal_opportunity_difference | mean=-0.004266327734 | sd=0.014359496991 | range=[-0.027450980392, 0.019061795945]
+DIR+EO_scaled | predictive_equality_difference | mean=0.005704318295 | sd=0.012508908310 | range=[-0.016879153509, 0.023104869218]
+DIR+ROC_scaled | accuracy | mean=0.681502525253 | sd=0.010361787040 | range=[0.665404040404, 0.701388888889]
+DIR+ROC_scaled | disparate_impact | mean=2.095480519134 | sd=0.103670719904 | range=[1.917467807775, 2.255344963274]
+DIR+ROC_scaled | statistical_parity_difference | mean=0.277541103829 | sd=0.017529252863 | range=[0.251540302290, 0.318312510497]
+DIR+ROC_scaled | equal_opportunity_difference | mean=0.278113245116 | sd=0.018956363533 | range=[0.241870358911, 0.302005859815]
+DIR+ROC_scaled | predictive_equality_difference | mean=0.200269608311 | sd=0.033832407583 | range=[0.163864652054, 0.279209631570]

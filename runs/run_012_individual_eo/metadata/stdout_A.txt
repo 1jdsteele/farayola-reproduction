@@ -1,0 +1,61 @@
+==============================================================================
+RUN 012 — INDIVIDUAL EQUALIZED ODDS — COMPAS
+==============================================================================
+
+IMPORTANT
+---------
+EO is the primary scientific change from Run 008.
+Run 012 reproduces the repository structure in which EO is fit using test-set true labels and baseline test predictions.
+This is test-set calibration/leakage under a conventional evaluation design and is preserved explicitly for reproduction.
+EO receives the current experimental seed for deterministic A/B reproduction. This is not claimed as an author setting.
+
+INPUT
+-----
+File: /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_012_individual_eo/data/compas_farayola_numeric.csv
+SHA256: 6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e
+Shape: (5278, 12)
+
+PROTOCOL
+--------
+Base classifier: LogisticRegression(max_iter=1000)
+Fairness intervention: EqOddsPostprocessing
+EO fitted on test labels/predictions: True
+Test size: 0.3
+Shuffle: True
+Stratified on: race
+Seeds: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+Number of trials: 10
+
+EO INTEGRITY
+------------
+Seed 101 | base_matches_run008=True | eo_seed=101 | changed_predictions=166 | predicted_0=973 | predicted_1=611
+Seed 102 | base_matches_run008=True | eo_seed=102 | changed_predictions=153 | predicted_0=1031 | predicted_1=553
+Seed 103 | base_matches_run008=True | eo_seed=103 | changed_predictions=184 | predicted_0=1043 | predicted_1=541
+Seed 104 | base_matches_run008=True | eo_seed=104 | changed_predictions=184 | predicted_0=1090 | predicted_1=494
+Seed 105 | base_matches_run008=True | eo_seed=105 | changed_predictions=165 | predicted_0=1053 | predicted_1=531
+Seed 106 | base_matches_run008=True | eo_seed=106 | changed_predictions=176 | predicted_0=924 | predicted_1=660
+Seed 107 | base_matches_run008=True | eo_seed=107 | changed_predictions=167 | predicted_0=1034 | predicted_1=550
+Seed 108 | base_matches_run008=True | eo_seed=108 | changed_predictions=155 | predicted_0=975 | predicted_1=609
+Seed 109 | base_matches_run008=True | eo_seed=109 | changed_predictions=157 | predicted_0=987 | predicted_1=597
+Seed 110 | base_matches_run008=True | eo_seed=110 | changed_predictions=181 | predicted_0=1018 | predicted_1=566
+
+PER-SEED POST-EO RESULTS
+------------------------
+Seed 101 | Accuracy=0.651515151515 | DI=1.096815548155 | SPD=0.035289344018 | EOD=-0.011647956563 | PED=0.006533264033
+Seed 102 | Accuracy=0.617424242424 | DI=1.106731349261 | SPD=0.035013295241 | EOD=-0.007428925187 | PED=0.014957189875
+Seed 103 | Accuracy=0.650883838384 | DI=1.085230210120 | SPD=0.027689687915 | EOD=-0.015100292991 | PED=0.008695652174
+Seed 104 | Accuracy=0.631313131313 | DI=1.096413137912 | SPD=0.028419720526 | EOD=0.019389978214 | PED=-0.015576246068
+Seed 105 | Accuracy=0.617424242424 | DI=1.104641781837 | SPD=0.033001132465 | EOD=-0.008062868369 | PED=0.011137121373
+Seed 106 | Accuracy=0.640782828283 | DI=1.085876180483 | SPD=0.034023843297 | EOD=-0.022820987963 | PED=0.019909704030
+Seed 107 | Accuracy=0.638888888889 | DI=1.123006810279 | SPD=0.039767653402 | EOD=0.017873231548 | PED=-0.011892654061
+Seed 108 | Accuracy=0.645202020202 | DI=1.091057986222 | SPD=0.033190708132 | EOD=-0.003212851406 | PED=0.002747252747
+Seed 109 | Accuracy=0.632575757576 | DI=1.094704442113 | SPD=0.033769412798 | EOD=-0.002807858911 | PED=0.006029761905
+Seed 110 | Accuracy=0.653409090909 | DI=1.148313740996 | SPD=0.048654428504 | EOD=-0.005028966849 | PED=0.002804354998
+
+AGGREGATE POST-EO SUMMARY
+-------------------------
+accuracy: mean=0.637941919192, std=0.013196474828, min=0.617424242424, max=0.653409090909, 95% CI=[0.628501729790, 0.647382108594]
+disparate_impact: mean=1.103279118738, std=0.019354872256, min=1.085230210120, max=1.148313740996, 95% CI=[1.089433477205, 1.117124760270]
+statistical_parity_difference: mean=0.034881922630, std=0.005921668185, min=0.027689687915, max=0.048654428504, 95% CI=[0.030645816399, 0.039118028861]
+equal_opportunity_difference: mean=-0.003884749848, std=0.013302872909, min=-0.022820987963, max=0.019389978214, 95% CI=[-0.013401051852, 0.005631552157]
+predictive_equality_difference: mean=0.004534540101, std=0.011018424862, min=-0.015576246068, max=0.019909704030, 95% CI=[-0.003347566217, 0.012416646418]

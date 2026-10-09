@@ -1,0 +1,125 @@
+RUN 029 — Adversarial Debiasing + Equalized Odds (AL + EO), COMPAS
+
+PURPOSE
+Execute and diagnose:
+
+Adversarial Debiasing / Adversarial Learning (AL)
+    -> Equalized Odds postprocessing (EO)
+
+REFERENCE RUN
+- Run 026: individual AL
+
+CRITICAL PRE-EO CONTROL
+For every seed, the AL stage must reproduce frozen Run 026 exactly before
+EO is applied.
+
+Required Run 026 matches:
+- binary prediction SHA256
+- continuous AL score SHA256
+- confusion matrix
+- accuracy
+- disparate impact
+- statistical parity difference
+- equal opportunity difference
+- predictive equality / false-positive-rate difference
+
+These checks establish that EO is the only new scientific intervention
+relative to Run 026.
+
+AL SETTINGS
+Paper-faithful:
+- adversary_loss_weight = 0.2
+- num_epochs = 50
+- batch_size = 128
+- debias = True
+
+Library default:
+- classifier_num_hidden_units = 200
+
+The hidden-unit parameter is inherited from AIF360 0.6.1 and is not
+explicitly passed.
+
+CONTROLLED BACKBONE
+- reconstructed COMPAS cohort = 5,278 rows
+- 11 predictors
+- target = two_year_recid
+- race protected attribute
+- African-American = race 0 = unprivileged
+- Caucasian = race 1 = privileged
+- favorable_label = 1
+- unfavorable_label = 0
+- 70/30 train/test split
+- shuffle = True
+- stratify = race
+- seeds = 101 through 110
+- no StandardScaler
+- no invented class balancing
+- race retained as predictor
+- signed fairness differences preserved
+
+TENSORFLOW
+Environment:
+- Python 3.11
+- TensorFlow 2.15
+- tensorflow.compat.v1
+- tf.disable_v2_behavior()
+- AIF360 0.6.1
+
+Every seed receives:
+tf.reset_default_graph()
+-> fresh Session
+-> construct AL
+-> fit
+-> predict
+-> close Session
+
+RANDOMNESS
+AL receives seed=<current experimental seed>.
+
+No external np.random.seed() or tf.set_random_seed() is added.
+
+EO receives seed=<current experimental seed>, consistent with the controlled
+EO pathway already used in earlier runs.
+
+AL SCORES
+AL supplies continuous prediction scores.
+
+Run 029 preserves and verifies the pre-EO AL prediction and score hashes
+against frozen Run 026.
+
+EQUALIZED ODDS
+AIF360 EqOddsPostprocessing is fit using:
+- true labels from the evaluation test set
+- AL predictions from that same test set
+
+It is then evaluated on that same test set.
+
+This reproduces the repository-style postprocessing pathway already used
+elsewhere in the reconstruction.
+
+TEST-SET CALIBRATION CAVEAT
+This constitutes conventional test-set calibration/evaluation leakage.
+
+The behavior is intentionally preserved for reproducibility rather than
+silently redesigned only for AL configurations.
+
+EO DIAGNOSTICS
+For every seed record:
+- number of predictions changed by EO
+- whether the AL input labels remain unchanged after EO
+- whether the AL input scores remain unchanged after EO
+- final prediction SHA256
+- final confusion matrix
+- final five metrics
+
+METRICS
+- accuracy
+- disparate impact
+- statistical parity difference
+- equal opportunity difference
+- predictive equality / false-positive-rate difference
+
+REPRODUCIBILITY
+Run 029 is executed twice as independent Python processes, A and B.
+
+Freeze only after exact A/B reproducibility is confirmed.

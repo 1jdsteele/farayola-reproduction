@@ -1,0 +1,64 @@
+RUN 020 — Disparate Impact Remover + Equalized Odds (PP), COMPAS
+
+PURPOSE
+Reproduce the COMPAS Pre-processing -> Post-processing configuration:
+
+Disparate Impact Remover (DIR) -> Logistic Regression -> Equalized Odds (EO)
+
+REFERENCE RUNS
+- Run 009: individual DIR
+- Run 012: individual EO
+
+REPOSITORY ORDER
+The pinned IF-EA COMPAS PP DIR+EO notebook:
+
+1. applies DisparateImpactRemover to training data;
+2. trains Logistic Regression on repaired training features;
+3. predicts the original/untreated test features;
+4. applies EqOddsPostprocessing using test-set true labels and predictions;
+5. evaluates on that same test set.
+
+RUN 020 CONTROLLED RECONSTRUCTION
+The standardized reproduction backbone is retained:
+- DIR repair_level = 1.0
+- sensitive_attribute = race
+- DIR training only
+- test features unrepaired
+- LogisticRegression(solver="lbfgs", max_iter=1000)
+- no StandardScaler
+- 70/30 race-stratified split
+- seeds 101 through 110
+
+The repository notebook uses StandardScaler and stratify=y, but those are not
+reintroduced because Run 020 changes only the integration relative to the
+validated controlled runs.
+
+CRITICAL PRE-EO CONTROL
+For every seed, the DIR -> LR predictions, confusion matrix, and five metrics
+must reproduce frozen Run 009 exactly before EO is applied.
+
+EO
+- AIF360 EqOddsPostprocessing
+- EO seed = current experimental seed
+- fit using true test labels and DIR-model test predictions
+- evaluated on the same test set
+
+This reproduces the repository-style postprocessing pathway but constitutes
+test-set calibration/leakage under conventional ML evaluation practice.
+
+INTEGRITY CHECKS
+- DIR leaves labels unchanged
+- DIR leaves race unchanged
+- DIR changes at least one non-protected training feature
+- test data remain unrepaired and unchanged
+- pre-EO classifier matches Run 009
+- EO does not mutate stored pre-EO predictions
+- final predictions remain binary
+
+PAPER COMPAS DIR+EO
+Approximate reported values:
+- SPD = 0.032
+- DI = 1.097
+- EOD = 0.007
+- PED = 0.005
+- Accuracy = 0.64

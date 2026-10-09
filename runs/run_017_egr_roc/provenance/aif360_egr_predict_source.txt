@@ -1,0 +1,27 @@
+    def predict(self, dataset):
+        """Obtain the predictions for the provided dataset using the randomized
+        model learned.
+
+        Args:
+            dataset: (Binary label) Dataset containing labels that needs to be
+                transformed.
+
+        Returns:
+            dataset: Transformed (Binary label) dataset.
+        """
+        X_df = pd.DataFrame(dataset.features, columns=dataset.feature_names)
+
+        dataset_new = dataset.copy()
+        dataset_new.labels = self.model.predict(X_df).reshape(-1, 1)
+
+        fav = int(dataset.favorable_label)
+        try:
+            # Probability of favorable label
+            scores = self.model.predict_proba(X_df)[:, fav]
+            dataset_new.scores = scores.reshape(-1, 1)
+        except (AttributeError, NotImplementedError):
+            warning("dataset.scores not updated, underlying model does not "
+                    "support predict_proba")
+
+        return dataset_new
+

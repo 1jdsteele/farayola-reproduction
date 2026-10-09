@@ -1,0 +1,16 @@
+Reporting note:
+
+The Run 006 script was branched directly from Run 002. Its printed heading
+still says:
+
+"RUN 002 — CANDIDATE NONE BASELINE USING LOGISTIC REGRESSION"
+
+This is an inherited reporting label only.
+
+The actual Run 006 execution is confirmed by:
+- execution from runs/run_006_none_race_stratified/
+- the Run 006 input path
+- printed metadata "Stratified on: race"
+- the preserved Run 002 vs Run 006 source diff
+
+No computational behavior is affected by the stale heading.

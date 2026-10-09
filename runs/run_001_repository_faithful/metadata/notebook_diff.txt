@@ -1,0 +1,27 @@
+--- runs/run_001_repository_faithful/metadata/Git_COMPAS_PIP_DIR+EGR+ROC_EO.txt	2026-09-18 10:25:42
++++ runs/run_001_repository_faithful/metadata/repro_COMPAS_PIP_DIR_EGR_ROC_EO.txt	2026-09-18 10:25:43
+@@ -13,16 +13,19 @@
+ from aif360.datasets import StandardDataset, BinaryLabelDataset
+ from aif360.metrics import BinaryLabelDatasetMetric, ClassificationMetric
+ from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
+-from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+-from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+-from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+-from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
++# code from Farayola et al commented out next lines to avoid importing unused imports because opttools requires optional cvxpy dependency
++# from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
++# from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
++# from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
++# from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+ from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+ from aif360.algorithms.postprocessing import EqOddsPostprocessing
+ from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+ from sklearn.model_selection import train_test_split
+ 
+-data = pd.read_csv(COMPAS dataset)
++#code from Farayola et al commented out next line to use my file path of the data
++# data = pd.read_csv(COMPAS dataset)
++data = pd.read_csv("../data/compas_farayola_numeric.csv")
+ 
+ X = data.drop(['two_year_recid'], axis =1)
+ y = data[['two_year_recid']]

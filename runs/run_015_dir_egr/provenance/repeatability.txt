@@ -1,0 +1,14 @@
+Run 015 final A/B repeatability check
+
+A prior Run A execution is preserved under provenance/failed_attempt_1.
+That execution completed all scientific calculations but exited 1 afterward
+because accidental shell text beginning with PYcat was appended to the script.
+
+Final clean Run A exit code: 0
+Final clean Run B exit code: 0
+
+Per-seed comparison status: 0
+Aggregate comparison status: 0
+Stdout comparison status: 0
+
+A status of 0 indicates equality/success.

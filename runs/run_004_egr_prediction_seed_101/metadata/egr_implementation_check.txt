@@ -1,0 +1,23 @@
+PACKAGE VERSIONS
+================
+aif360: 0.6.1
+fairlearn: 0.14.0
+scikit-learn: 1.9.1
+pandas: 3.0.5
+numpy: 2.5.3
+
+AIF360 ExponentiatedGradientReduction constructor
+================================================
+(self, estimator, constraints, eps=0.01, max_iter=50, nu=None, eta0=2.0, run_linprog_step=True, drop_prot_attr=True)
+
+Fairlearn ExponentiatedGradient constructor
+============================================
+(self, estimator, constraints: 'Moment', *, objective: 'Moment | None' = None, eps: 'float' = 0.01, max_iter: 'int' = 50, nu: 'float | None' = None, eta0: 'float' = 2.0, run_linprog_step: 'bool' = True, sample_weight_name: 'str' = 'sample_weight')
+
+Fairlearn ExponentiatedGradient.predict
+========================================
+(self, X, random_state=None)
+
+CHECK PASSED
+AIF360 EGR default outer max_iter = 50.
+Fairlearn ExponentiatedGradient.predict exposes random_state.

@@ -1,0 +1,122 @@
+RUN 025 — Disparate Impact Remover + EGR + Reject Option Classification
+(PIP), COMPAS
+
+PURPOSE
+Reproduce and diagnose:
+
+Disparate Impact Remover (DIR)
+    -> Exponentiated Gradient Reduction (EGR)
+    -> Reject Option Classification (ROC)
+
+REFERENCE RUNS
+- Run 015: DIR + EGR
+- Run 017: EGR + ROC
+
+IMPLEMENTATION BASIS
+Run 025 composes two pathways already established in the controlled
+reconstruction:
+
+1. DIR -> EGR from Run 015.
+2. EGR -> ROC from Run 017.
+
+DIR SETTINGS
+- repair_level = 1.0
+- sensitive_attribute = race
+- training data only
+- protected race attribute unchanged
+- labels unchanged
+- test features remain unrepaired
+
+EGR SETTINGS
+- LogisticRegression(solver="lbfgs", max_iter=1000)
+- constraints = DemographicParity
+- eps = 0.02
+- max_iter = 20
+- drop_prot_attr = False
+
+RANDOMNESS
+For every seed:
+- np.random.seed(seed) immediately before EGR fit
+- np.random.seed(seed) immediately before EGR prediction
+
+These are controlled reconstruction choices and are not claimed to be the
+authors' exact unpublished ten-run seeds.
+
+CRITICAL PRE-ROC CONTROL
+DIR -> EGR must reproduce frozen Run 015 exactly for every seed:
+- confusion matrix
+- accuracy
+- DI
+- SPD
+- EOD
+- PED
+
+This establishes that ROC is the only new intervention relative to Run 015.
+
+EGR SCORES
+As established in Run 017, AIF360 EGR predictions carry nonbinary score
+information usable by ROC.
+
+Machine-precision score excursions are permitted within 1e-12.
+Scores are not clipped or otherwise altered.
+
+ROC SETTINGS
+- metric_name = "Equal opportunity difference"
+- low_class_thresh = 0.3
+- high_class_thresh = 0.8
+- num_class_thresh = 100
+- num_ROC_margin = 50
+- metric_ub = 0.05
+- metric_lb = -0.05
+
+NOTE ON PAPER VS REPOSITORY
+The paper describes ROC as using Equal Opportunity Difference and Average
+Odds Difference in its grid search.
+
+The released/reconstructed repository pathway uses AIF360
+RejectOptionClassification with metric_name =
+"Equal opportunity difference".
+
+The latter is preserved here rather than silently modifying the method.
+
+TEST-SET CALIBRATION
+ROC is fit using:
+- true labels from the evaluation test set
+- DIR+EGR predictions/scores from that same test set
+
+and is evaluated on the same test set.
+
+This reproduces the repository-style pathway but constitutes conventional
+test-set calibration/leakage.
+
+DIAGNOSTIC QUESTIONS
+1. Does ROC receive nonbinary scores? Expected: yes.
+2. Does ROC change any DIR+EGR predictions?
+3. Does final DIR+EGR+ROC equal Run 015 DIR+EGR?
+4. How does final DIR+EGR+ROC differ from Run 017 EGR+ROC?
+
+The paper reports DIR+EGR+ROC with the same rounded COMPAS values as
+DIR+EGR:
+- SPD = 0.055
+- DI = 1.142
+- EOD = 0.038
+- PED = 0.004
+- Accuracy = 0.67
+
+That equality is an observation from the paper, not an outcome imposed on
+this reconstruction.
+
+CONTROLLED BACKBONE
+- reconstructed 5,278-row COMPAS cohort
+- 11 predictors
+- target two_year_recid
+- race protected attribute
+- African-American = 0 = unprivileged
+- Caucasian = 1 = privileged
+- favorable_label = 1
+- 70/30 split
+- stratify on race
+- seeds 101 through 110
+- no StandardScaler
+- signed fairness metrics retained
+- 95% Student-t confidence intervals

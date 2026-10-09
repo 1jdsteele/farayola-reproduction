@@ -1,0 +1,5 @@
+Python: 3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 17.0.0 (clang-1700.6.4.2)]
+pandas: 3.0.5
+scikit-learn: 1.9.1
+aif360: 0.6.1
+fairlearn: 0.14.0

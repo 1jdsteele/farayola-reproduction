@@ -1,0 +1,87 @@
+RUN 015 — Disparate Impact Remover + Exponentiated Gradient Reduction (PI), COMPAS
+
+PURPOSE
+Reproduce the paper's two-stage COMPAS Pre-processing -> In-processing
+configuration:
+
+Disparate Impact Remover (DIR) -> Exponentiated Gradient Reduction (EGR)
+
+REFERENCE RUNS
+- Run 009: individual DIR
+- Run 011: individual EGR
+
+PIPELINE
+For each experimental seed:
+
+1. Perform the standardized 70/30 race-stratified train/test split.
+2. Construct the training BinaryLabelDataset.
+3. Apply AIF360 DisparateImpactRemover to TRAINING DATA ONLY.
+4. Use repair_level=1.0 and sensitive_attribute="race".
+5. Confirm race and labels remain unchanged.
+6. Confirm non-protected training features are changed.
+7. Train AIF360 ExponentiatedGradientReduction on the repaired training dataset.
+8. Predict on the original, unrepaired test dataset.
+9. Evaluate with the same AIF360 fairness metrics used in previous runs.
+
+DIR SETTINGS
+- repair_level = 1.0
+- sensitive_attribute = race
+- training data only
+- race remains unchanged
+- labels remain unchanged
+- test data remain unrepaired
+
+EGR SETTINGS
+- base estimator: LogisticRegression(solver="lbfgs", max_iter=1000)
+- fairness constraint: DemographicParity
+- eps = 0.02
+- max_iter = 20
+- drop_prot_attr = False
+
+RANDOMNESS
+EGR produces randomized predictions.
+
+For each seed:
+- np.random.seed(seed) immediately before EGR fit
+- np.random.seed(seed) immediately before EGR prediction
+
+This is a reconstruction reproducibility control and is NOT claimed to be
+the authors' exact unpublished seeding procedure.
+
+HELD CONSTANT
+- reconstructed 5,278-row COMPAS dataset
+- same 11 predictors
+- target: two_year_recid
+- race = protected attribute
+- African-American = 0 = unprivileged
+- Caucasian = 1 = privileged
+- favorable_label = 1
+- unfavorable_label = 0
+- 70/30 split
+- shuffle = True
+- race stratification
+- diagnostic seeds 101 through 110
+- signed fairness metrics preserved
+- same aggregate summary statistics
+- 95% Student-t confidence intervals
+- no StandardScaler
+
+IMPORTANT RECONSTRUCTION CHOICES
+- Seeds 101-110 are diagnostic and are NOT claimed as the authors' exact seeds.
+- race stratification operationalizes the paper wording.
+- LogisticRegression(max_iter=1000) is a stability choice.
+- EGR max_iter=20 follows the paper.
+- eps=0.02 and drop_prot_attr=False follow the repository-supported pathway.
+- DIR is applied to training data only.
+- test data remain unrepaired.
+
+INTEGRITY CHECKS
+For every seed:
+- DIR row count unchanged
+- labels unchanged
+- race unchanged
+- at least one non-protected training feature changes
+- test data remain untouched
+- prediction count equals test row count
+- prediction labels remain binary
+- results are compared against individual EGR Run 011

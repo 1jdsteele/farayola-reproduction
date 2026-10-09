@@ -1,0 +1,40 @@
+======================================================================
+CELL 2 OUTPUT
+======================================================================
+WARNING:root:No module named 'tensorflow': AdversarialDebiasing will be unavailable. To install, run:
+pip install 'aif360[AdversarialDebiasing]'
+
+WARNING:root:No module named 'tensorflow': AdversarialDebiasing will be unavailable. To install, run:
+pip install 'aif360[AdversarialDebiasing]'
+
+WARNING:root:No module named 'inFairness': SenSeI and SenSR will be unavailable. To install, run:
+pip install 'aif360[inFairness]'
+
+/Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/.venv/lib/python3.14/site-packages/sklearn/preprocessing/_label.py:120: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  y = column_or_1d(y, warn=True)
+
+Performance with fairness intervention (Reject Option Classification):
+Accuracy: 0.679293
+Disparate Impact: 0.868565
+Mean Difference: -0.061212
+Statistical Parity Difference: -0.06121233442692697
+Equal Opportunity Difference: -0.027720658640337792
+Predictive Equality: -0.011375028480291649
+Performance with fairness intervention (Equalized Odds Optimization):
+Accuracy: 0.670455
+Disparate Impact: 1.102904
+Mean Difference: 0.041626
+Statistical Parity Difference: 0.04162582735402165
+Equal Opportunity Difference: -0.0056822641154034015
+Difference in True Positive Rates (Unprivileged - Privileged) = -0.005682
+Difference in False Positive Rates (Unprivileged - Privileged) = 0.006830
+
+Performance with fairness intervention (Reject Option Classification):
+Accuracy: 0.680556
+Disparate Impact: 1.096814
+Mean Difference: 0.036979
+Statistical Parity Difference: 0.03697873628576337
+Equal Opportunity Difference: 0.010195111997111761
+Difference in True Positive Rates (Unprivileged - Privileged) = 0.010195
+Difference in False Positive Rates (Unprivileged - Privileged) = -0.018575
+

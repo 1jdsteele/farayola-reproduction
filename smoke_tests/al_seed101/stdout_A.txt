@@ -1,0 +1,125 @@
+epoch 0; iter: 0; batch classifier loss: 1.106144; batch adversarial loss: 0.719292
+epoch 1; iter: 0; batch classifier loss: 0.784183; batch adversarial loss: 0.719898
+epoch 2; iter: 0; batch classifier loss: 0.796408; batch adversarial loss: 0.696878
+epoch 3; iter: 0; batch classifier loss: 0.632696; batch adversarial loss: 0.690169
+epoch 4; iter: 0; batch classifier loss: 0.712295; batch adversarial loss: 0.686175
+epoch 5; iter: 0; batch classifier loss: 0.656370; batch adversarial loss: 0.690437
+epoch 6; iter: 0; batch classifier loss: 0.582973; batch adversarial loss: 0.685636
+epoch 7; iter: 0; batch classifier loss: 0.617599; batch adversarial loss: 0.670351
+epoch 8; iter: 0; batch classifier loss: 0.642990; batch adversarial loss: 0.673217
+epoch 9; iter: 0; batch classifier loss: 0.572574; batch adversarial loss: 0.664937
+epoch 10; iter: 0; batch classifier loss: 0.623174; batch adversarial loss: 0.651778
+epoch 11; iter: 0; batch classifier loss: 0.531124; batch adversarial loss: 0.676846
+epoch 12; iter: 0; batch classifier loss: 0.655759; batch adversarial loss: 0.668627
+epoch 13; iter: 0; batch classifier loss: 0.557053; batch adversarial loss: 0.657386
+epoch 14; iter: 0; batch classifier loss: 0.584567; batch adversarial loss: 0.668434
+epoch 15; iter: 0; batch classifier loss: 0.585917; batch adversarial loss: 0.682563
+epoch 16; iter: 0; batch classifier loss: 0.580617; batch adversarial loss: 0.635581
+epoch 17; iter: 0; batch classifier loss: 0.558462; batch adversarial loss: 0.655439
+epoch 18; iter: 0; batch classifier loss: 0.588549; batch adversarial loss: 0.665374
+epoch 19; iter: 0; batch classifier loss: 0.558537; batch adversarial loss: 0.684040
+epoch 20; iter: 0; batch classifier loss: 0.646420; batch adversarial loss: 0.668935
+epoch 21; iter: 0; batch classifier loss: 0.578873; batch adversarial loss: 0.661755
+epoch 22; iter: 0; batch classifier loss: 0.530741; batch adversarial loss: 0.673385
+epoch 23; iter: 0; batch classifier loss: 0.643357; batch adversarial loss: 0.663737
+epoch 24; iter: 0; batch classifier loss: 0.557865; batch adversarial loss: 0.657383
+epoch 25; iter: 0; batch classifier loss: 0.586182; batch adversarial loss: 0.645154
+epoch 26; iter: 0; batch classifier loss: 0.619118; batch adversarial loss: 0.659750
+epoch 27; iter: 0; batch classifier loss: 0.582189; batch adversarial loss: 0.662255
+epoch 28; iter: 0; batch classifier loss: 0.614901; batch adversarial loss: 0.668815
+epoch 29; iter: 0; batch classifier loss: 0.578197; batch adversarial loss: 0.690387
+epoch 30; iter: 0; batch classifier loss: 0.621306; batch adversarial loss: 0.640125
+epoch 31; iter: 0; batch classifier loss: 0.670815; batch adversarial loss: 0.660614
+epoch 32; iter: 0; batch classifier loss: 0.589359; batch adversarial loss: 0.657920
+epoch 33; iter: 0; batch classifier loss: 0.687134; batch adversarial loss: 0.672569
+epoch 34; iter: 0; batch classifier loss: 0.582086; batch adversarial loss: 0.636528
+epoch 35; iter: 0; batch classifier loss: 0.605063; batch adversarial loss: 0.658719
+epoch 36; iter: 0; batch classifier loss: 0.544804; batch adversarial loss: 0.657448
+epoch 37; iter: 0; batch classifier loss: 0.590635; batch adversarial loss: 0.683439
+epoch 38; iter: 0; batch classifier loss: 0.602219; batch adversarial loss: 0.652529
+epoch 39; iter: 0; batch classifier loss: 0.607159; batch adversarial loss: 0.675187
+epoch 40; iter: 0; batch classifier loss: 0.591847; batch adversarial loss: 0.684527
+epoch 41; iter: 0; batch classifier loss: 0.605225; batch adversarial loss: 0.636621
+epoch 42; iter: 0; batch classifier loss: 0.672464; batch adversarial loss: 0.652171
+epoch 43; iter: 0; batch classifier loss: 0.601172; batch adversarial loss: 0.665830
+epoch 44; iter: 0; batch classifier loss: 0.631423; batch adversarial loss: 0.667449
+epoch 45; iter: 0; batch classifier loss: 0.608300; batch adversarial loss: 0.666881
+epoch 46; iter: 0; batch classifier loss: 0.550691; batch adversarial loss: 0.681555
+epoch 47; iter: 0; batch classifier loss: 0.624938; batch adversarial loss: 0.642733
+epoch 48; iter: 0; batch classifier loss: 0.553270; batch adversarial loss: 0.656874
+epoch 49; iter: 0; batch classifier loss: 0.612813; batch adversarial loss: 0.656951
+
+==============================================================================
+AL SEED-101 COMPAS SMOKE TEST
+==============================================================================
+
+STATUS
+------
+This is a diagnostic smoke test. It is NOT Run 026.
+
+INPUT
+-----
+File: /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/data/compas_farayola_numeric.csv
+SHA256: 6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e
+Shape: (5278, 12)
+
+PROTOCOL
+--------
+Seed: 101
+Test size: 0.3
+Shuffle: True
+Stratified on: race
+StandardScaler: False
+Class balancing added: False
+External NumPy seed: False
+TensorFlow global seed: False
+
+AL
+--
+adversary_loss_weight: 0.2
+num_epochs: 50
+batch_size: 128
+classifier_num_hidden_units: 200 [library default]
+debias: True
+
+PREDICTIONS
+-----------
+Prediction count: 1584
+Unique labels: [0, 1]
+Predicted 0: 818
+Predicted 1: 766
+
+SCORES
+------
+Min: 0.09659615904092789
+Max: 0.9912829995155334
+Mean: 0.5130733966008958
+Unique count: 1408
+Hard 0/1 only: False
+Scores differing exactly from labels: 1584
+
+CONFUSION MATRIX
+----------------
+TN: 596
+FP: 285
+FN: 222
+TP: 481
+
+METRICS
+-------
+Accuracy: 0.679924242424
+DI: 1.162281926820
+SPD: 0.071496633369
+EOD: 0.032577591900
+PED/FPR difference: 0.020140332640
+
+REPRODUCIBILITY HASHES
+----------------------
+Predictions: 5f5f5ada3bcf462cb768773bae9586eb4d28bb6843c5e5187b8091cab9ce59f6
+Scores: 1df6559f9f5d1b37fcbe8e833c2c1626f5cc0b55af63207f41a2f2c0f8373376
+Train indices: db883dde9864689948334065e30b9aaf628d4e406c7d565df492b5cfa96021cb
+Test indices: a9d9f03486e3577a0eac1345527af731b9f473450cb33a53a0330c71d7a42de5
+
+RESULT FILE
+-----------
+/Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/smoke_tests/al_seed101/result_A.json

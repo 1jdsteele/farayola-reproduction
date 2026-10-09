@@ -1,0 +1,65 @@
+==============================================================================
+RUN 015 — DIR + EGR (PI) — COMPAS
+==============================================================================
+
+IMPORTANT
+---------
+DIR is applied to training data only, followed by EGR.
+The unrepaired test dataset is used for evaluation.
+EGR prediction randomness is controlled by the current experimental seed.
+
+INPUT
+-----
+File: /Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_015_dir_egr/data/compas_farayola_numeric.csv
+SHA256: 6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e
+Shape: (5278, 12)
+
+PROTOCOL
+--------
+Stage 1: DisparateImpactRemover
+DIR repair_level: 1.0
+DIR sensitive_attribute: race
+Stage 2: ExponentiatedGradientReduction
+Base classifier: LogisticRegression(max_iter=1000)
+Constraint: DemographicParity
+eps: 0.02
+EGR max_iter: 20
+drop_prot_attr: False
+Test size: 0.3
+Shuffle: True
+Stratified on: race
+Seeds: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+
+INTEGRATION DIAGNOSTICS
+-----------------------
+Seed 101 | DIR_changed_cells=2597 | DIR_changed_features=5 | Run011_CM_match=False | Run011_metrics_match=False
+Seed 102 | DIR_changed_cells=2710 | DIR_changed_features=5 | Run011_CM_match=False | Run011_metrics_match=False
+Seed 103 | DIR_changed_cells=2424 | DIR_changed_features=5 | Run011_CM_match=False | Run011_metrics_match=False
+Seed 104 | DIR_changed_cells=2578 | DIR_changed_features=5 | Run011_CM_match=False | Run011_metrics_match=False
+Seed 105 | DIR_changed_cells=2678 | DIR_changed_features=5 | Run011_CM_match=False | Run011_metrics_match=False
+Seed 106 | DIR_changed_cells=2831 | DIR_changed_features=5 | Run011_CM_match=False | Run011_metrics_match=False
+Seed 107 | DIR_changed_cells=2348 | DIR_changed_features=5 | Run011_CM_match=False | Run011_metrics_match=False
+Seed 108 | DIR_changed_cells=3012 | DIR_changed_features=5 | Run011_CM_match=False | Run011_metrics_match=False
+Seed 109 | DIR_changed_cells=2996 | DIR_changed_features=5 | Run011_CM_match=False | Run011_metrics_match=False
+Seed 110 | DIR_changed_cells=2305 | DIR_changed_features=5 | Run011_CM_match=False | Run011_metrics_match=False
+
+PER-SEED RESULTS
+----------------
+Seed 101 | Accuracy=0.674873737374 | DI=1.059894908614 | SPD=0.024964121974 | EOD=-0.017627852374 | PED=-0.020150727651
+Seed 102 | Accuracy=0.660353535354 | DI=1.029408620246 | SPD=0.012350688376 | EOD=0.002523929711 | PED=-0.058341239444
+Seed 103 | Accuracy=0.668560606061 | DI=1.051751553798 | SPD=0.021323936589 | EOD=-0.011043497859 | PED=-0.014806110458
+Seed 104 | Accuracy=0.674873737374 | DI=1.129669004621 | SPD=0.046853459673 | EOD=0.043355119826 | PED=-0.019984617597
+Seed 105 | Accuracy=0.643939393939 | DI=1.014101428867 | SPD=0.006011544160 | EOD=0.013532416503 | PED=-0.072072072072
+Seed 106 | Accuracy=0.676767676768 | DI=1.169658787936 | SPD=0.069100330427 | EOD=0.026877681508 | PED=0.027701911822
+Seed 107 | Accuracy=0.668560606061 | DI=1.097377541252 | SPD=0.038734964904 | EOD=0.015243382765 | PED=-0.029806758818
+Seed 108 | Accuracy=0.672979797980 | DI=1.100936156204 | SPD=0.040790364235 | EOD=-0.001417434444 | PED=0.002174421323
+Seed 109 | Accuracy=0.657828282828 | DI=1.112979287199 | SPD=0.046015335674 | EOD=0.021929146040 | PED=-0.004517857143
+Seed 110 | Accuracy=0.688762626263 | DI=1.201830574832 | SPD=0.076126270697 | EOD=0.057209526875 | PED=-0.019536220955
+
+AGGREGATE SUMMARY
+-----------------
+accuracy: mean=0.668750000000, std=0.012306738435, min=0.643939393939, max=0.688762626263, 95% CI=[0.659946289670, 0.677553710330]
+disparate_impact: mean=1.096760786357, std=0.060066066776, min=1.014101428867, max=1.201830574832, 95% CI=[1.053792110674, 1.139729462039]
+statistical_parity_difference: mean=0.038227101671, std=0.022853292199, min=0.006011544160, max=0.076126270697, 95% CI=[0.021878841272, 0.054575362069]
+equal_opportunity_difference: mean=0.015058241855, std=0.023440121095, min=-0.017627852374, max=0.057209526875, 95% CI=[-0.001709810647, 0.031826294357]
+predictive_equality_difference: mean=-0.020933927099, std=0.028486040026, min=-0.072072072072, max=0.027701911822, 95% CI=[-0.041311612556, -0.000556241643]
