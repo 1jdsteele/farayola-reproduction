@@ -1,0 +1,293 @@
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:24:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:132:# - adversary_loss_weight=0.2
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:133:# - num_epochs=50
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:134:# - batch_size=128
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:135:# - debias=True
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:137:# classifier_num_hidden_units is intentionally NOT supplied.
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:145:# We are intentionally testing whether AdversarialDebiasing(seed=101)
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:233:# Legacy AdversarialDebiasing
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:240:tf.reset_default_graph()
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:242:sess = tf.Session()
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:245:    model = AdversarialDebiasing(
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:250:        seed=SEED,
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:251:        adversary_loss_weight=0.2,
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:252:        num_epochs=50,
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:253:        batch_size=128,
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:254:        debias=True,
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:255:        # classifier_num_hidden_units intentionally omitted:
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:443:    "adversary_loss_weight": 0.2,
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:444:    "num_epochs": 50,
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:445:    "batch_size": 128,
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:446:    "classifier_num_hidden_units": 200,
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:447:    "classifier_num_hidden_units_source": "AIF360 0.6.1 library default",
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:558:print("adversary_loss_weight: 0.2")
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:559:print("num_epochs: 50")
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:560:print("batch_size: 128")
+runs/run_026_individual_al/provenance/smoke_al_seed101_reference.py:561:print("classifier_num_hidden_units: 200 [library default]")
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:19:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:64:# It is NOT explicitly passed to AdversarialDebiasing.
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:216:    tf.reset_default_graph()
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:218:    sess = tf.Session()
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:222:        model = AdversarialDebiasing(
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:227:            seed=seed,
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:228:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:229:            num_epochs=AL_NUM_EPOCHS,
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:230:            batch_size=AL_BATCH_SIZE,
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:231:            debias=AL_DEBIAS,
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:374:    if seed == 101:
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:430:            "al_adversary_loss_weight":
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:433:            "al_num_epochs":
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:436:            "al_batch_size":
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:639:    f"adversary_loss_weight={AL_ADVERSARY_LOSS_WEIGHT}, "
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:640:    f"num_epochs={AL_NUM_EPOCHS}, "
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:641:    f"batch_size={AL_BATCH_SIZE}, "
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:642:    f"debias={AL_DEBIAS}"
+runs/run_026_individual_al/scripts/run_individual_al_10seed.py:645:    "classifier_num_hidden_units=200 "
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:19:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:64:# It is NOT explicitly passed to AdversarialDebiasing.
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:216:    tf.reset_default_graph()
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:218:    sess = tf.Session()
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:222:        model = AdversarialDebiasing(
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:227:            seed=seed,
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:228:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:229:            num_epochs=AL_NUM_EPOCHS,
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:230:            batch_size=AL_BATCH_SIZE,
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:231:            debias=AL_DEBIAS,
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:374:    if seed == 101:
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:430:            "al_adversary_loss_weight":
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:433:            "al_num_epochs":
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:436:            "al_batch_size":
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:639:    f"adversary_loss_weight={AL_ADVERSARY_LOSS_WEIGHT}, "
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:640:    f"num_epochs={AL_NUM_EPOCHS}, "
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:641:    f"batch_size={AL_BATCH_SIZE}, "
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:642:    f"debias={AL_DEBIAS}"
+runs/run_027_reweighing_al/provenance/run_026_al_reference_script.py:645:    "classifier_num_hidden_units=200 "
+runs/run_027_reweighing_al/scripts/run_reweighing_al_10seed.py:20:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_027_reweighing_al/scripts/run_reweighing_al_10seed.py:278:    tf.reset_default_graph()
+runs/run_027_reweighing_al/scripts/run_reweighing_al_10seed.py:280:    sess = tf.Session()
+runs/run_027_reweighing_al/scripts/run_reweighing_al_10seed.py:284:        model = AdversarialDebiasing(
+runs/run_027_reweighing_al/scripts/run_reweighing_al_10seed.py:289:            seed=seed,
+runs/run_027_reweighing_al/scripts/run_reweighing_al_10seed.py:290:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_027_reweighing_al/scripts/run_reweighing_al_10seed.py:291:            num_epochs=AL_NUM_EPOCHS,
+runs/run_027_reweighing_al/scripts/run_reweighing_al_10seed.py:292:            batch_size=AL_BATCH_SIZE,
+runs/run_027_reweighing_al/scripts/run_reweighing_al_10seed.py:293:            debias=AL_DEBIAS,
+runs/run_027_reweighing_al/scripts/run_reweighing_al_10seed.py:565:            "al_adversary_loss_weight":
+runs/run_027_reweighing_al/scripts/run_reweighing_al_10seed.py:568:            "al_num_epochs":
+runs/run_027_reweighing_al/scripts/run_reweighing_al_10seed.py:571:            "al_batch_size":
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:19:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:64:# It is NOT explicitly passed to AdversarialDebiasing.
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:216:    tf.reset_default_graph()
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:218:    sess = tf.Session()
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:222:        model = AdversarialDebiasing(
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:227:            seed=seed,
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:228:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:229:            num_epochs=AL_NUM_EPOCHS,
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:230:            batch_size=AL_BATCH_SIZE,
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:231:            debias=AL_DEBIAS,
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:374:    if seed == 101:
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:430:            "al_adversary_loss_weight":
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:433:            "al_num_epochs":
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:436:            "al_batch_size":
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:639:    f"adversary_loss_weight={AL_ADVERSARY_LOSS_WEIGHT}, "
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:640:    f"num_epochs={AL_NUM_EPOCHS}, "
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:641:    f"batch_size={AL_BATCH_SIZE}, "
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:642:    f"debias={AL_DEBIAS}"
+runs/run_028_dir_al/provenance/run_026_al_reference_script.py:645:    "classifier_num_hidden_units=200 "
+runs/run_028_dir_al/scripts/run_dir_al_10seed.py:20:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_028_dir_al/scripts/run_dir_al_10seed.py:300:    tf.reset_default_graph()
+runs/run_028_dir_al/scripts/run_dir_al_10seed.py:302:    sess = tf.Session()
+runs/run_028_dir_al/scripts/run_dir_al_10seed.py:306:        model = AdversarialDebiasing(
+runs/run_028_dir_al/scripts/run_dir_al_10seed.py:311:            seed=seed,
+runs/run_028_dir_al/scripts/run_dir_al_10seed.py:312:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_028_dir_al/scripts/run_dir_al_10seed.py:313:            num_epochs=AL_NUM_EPOCHS,
+runs/run_028_dir_al/scripts/run_dir_al_10seed.py:314:            batch_size=AL_BATCH_SIZE,
+runs/run_028_dir_al/scripts/run_dir_al_10seed.py:315:            debias=AL_DEBIAS,
+runs/run_028_dir_al/scripts/run_dir_al_10seed.py:580:            "al_adversary_loss_weight":
+runs/run_028_dir_al/scripts/run_dir_al_10seed.py:583:            "al_num_epochs":
+runs/run_028_dir_al/scripts/run_dir_al_10seed.py:586:            "al_batch_size":
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:19:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:64:# It is NOT explicitly passed to AdversarialDebiasing.
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:216:    tf.reset_default_graph()
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:218:    sess = tf.Session()
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:222:        model = AdversarialDebiasing(
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:227:            seed=seed,
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:228:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:229:            num_epochs=AL_NUM_EPOCHS,
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:230:            batch_size=AL_BATCH_SIZE,
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:231:            debias=AL_DEBIAS,
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:374:    if seed == 101:
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:430:            "al_adversary_loss_weight":
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:433:            "al_num_epochs":
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:436:            "al_batch_size":
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:639:    f"adversary_loss_weight={AL_ADVERSARY_LOSS_WEIGHT}, "
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:640:    f"num_epochs={AL_NUM_EPOCHS}, "
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:641:    f"batch_size={AL_BATCH_SIZE}, "
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:642:    f"debias={AL_DEBIAS}"
+runs/run_029_al_eo/provenance/run_026_al_reference_script.py:645:    "classifier_num_hidden_units=200 "
+runs/run_029_al_eo/scripts/run_al_eo_10seed.py:19:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_029_al_eo/scripts/run_al_eo_10seed.py:213:    tf.reset_default_graph()
+runs/run_029_al_eo/scripts/run_al_eo_10seed.py:215:    sess = tf.Session()
+runs/run_029_al_eo/scripts/run_al_eo_10seed.py:219:        model = AdversarialDebiasing(
+runs/run_029_al_eo/scripts/run_al_eo_10seed.py:224:            seed=seed,
+runs/run_029_al_eo/scripts/run_al_eo_10seed.py:225:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_029_al_eo/scripts/run_al_eo_10seed.py:226:            num_epochs=AL_NUM_EPOCHS,
+runs/run_029_al_eo/scripts/run_al_eo_10seed.py:227:            batch_size=AL_BATCH_SIZE,
+runs/run_029_al_eo/scripts/run_al_eo_10seed.py:228:            debias=AL_DEBIAS,
+runs/run_029_al_eo/scripts/run_al_eo_10seed.py:460:        seed=seed,
+runs/run_029_al_eo/scripts/run_al_eo_10seed.py:603:            "al_adversary_loss_weight":
+runs/run_029_al_eo/scripts/run_al_eo_10seed.py:606:            "al_num_epochs":
+runs/run_029_al_eo/scripts/run_al_eo_10seed.py:609:            "al_batch_size":
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:19:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:64:# It is NOT explicitly passed to AdversarialDebiasing.
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:216:    tf.reset_default_graph()
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:218:    sess = tf.Session()
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:222:        model = AdversarialDebiasing(
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:227:            seed=seed,
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:228:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:229:            num_epochs=AL_NUM_EPOCHS,
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:230:            batch_size=AL_BATCH_SIZE,
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:231:            debias=AL_DEBIAS,
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:374:    if seed == 101:
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:430:            "al_adversary_loss_weight":
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:433:            "al_num_epochs":
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:436:            "al_batch_size":
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:639:    f"adversary_loss_weight={AL_ADVERSARY_LOSS_WEIGHT}, "
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:640:    f"num_epochs={AL_NUM_EPOCHS}, "
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:641:    f"batch_size={AL_BATCH_SIZE}, "
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:642:    f"debias={AL_DEBIAS}"
+runs/run_030_al_roc/provenance/run_026_al_reference_script.py:645:    "classifier_num_hidden_units=200 "
+runs/run_030_al_roc/scripts/run_al_roc_10seed.py:19:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_030_al_roc/scripts/run_al_roc_10seed.py:223:    tf.reset_default_graph()
+runs/run_030_al_roc/scripts/run_al_roc_10seed.py:225:    sess = tf.Session()
+runs/run_030_al_roc/scripts/run_al_roc_10seed.py:229:        model = AdversarialDebiasing(
+runs/run_030_al_roc/scripts/run_al_roc_10seed.py:234:            seed=seed,
+runs/run_030_al_roc/scripts/run_al_roc_10seed.py:235:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_030_al_roc/scripts/run_al_roc_10seed.py:236:            num_epochs=AL_NUM_EPOCHS,
+runs/run_030_al_roc/scripts/run_al_roc_10seed.py:237:            batch_size=AL_BATCH_SIZE,
+runs/run_030_al_roc/scripts/run_al_roc_10seed.py:238:            debias=AL_DEBIAS,
+runs/run_030_al_roc/scripts/run_al_roc_10seed.py:614:            "al_adversary_loss_weight":
+runs/run_030_al_roc/scripts/run_al_roc_10seed.py:617:            "al_num_epochs":
+runs/run_030_al_roc/scripts/run_al_roc_10seed.py:620:            "al_batch_size":
+runs/run_031_reweighing_al_eo/provenance/run_029_al_eo_reference_script.py:19:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_031_reweighing_al_eo/provenance/run_029_al_eo_reference_script.py:213:    tf.reset_default_graph()
+runs/run_031_reweighing_al_eo/provenance/run_029_al_eo_reference_script.py:215:    sess = tf.Session()
+runs/run_031_reweighing_al_eo/provenance/run_029_al_eo_reference_script.py:219:        model = AdversarialDebiasing(
+runs/run_031_reweighing_al_eo/provenance/run_029_al_eo_reference_script.py:224:            seed=seed,
+runs/run_031_reweighing_al_eo/provenance/run_029_al_eo_reference_script.py:225:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_031_reweighing_al_eo/provenance/run_029_al_eo_reference_script.py:226:            num_epochs=AL_NUM_EPOCHS,
+runs/run_031_reweighing_al_eo/provenance/run_029_al_eo_reference_script.py:227:            batch_size=AL_BATCH_SIZE,
+runs/run_031_reweighing_al_eo/provenance/run_029_al_eo_reference_script.py:228:            debias=AL_DEBIAS,
+runs/run_031_reweighing_al_eo/provenance/run_029_al_eo_reference_script.py:460:        seed=seed,
+runs/run_031_reweighing_al_eo/provenance/run_029_al_eo_reference_script.py:603:            "al_adversary_loss_weight":
+runs/run_031_reweighing_al_eo/provenance/run_029_al_eo_reference_script.py:606:            "al_num_epochs":
+runs/run_031_reweighing_al_eo/provenance/run_029_al_eo_reference_script.py:609:            "al_batch_size":
+runs/run_031_reweighing_al_eo/provenance/run_027_reweighing_al_reference_script.py:20:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_031_reweighing_al_eo/provenance/run_027_reweighing_al_reference_script.py:278:    tf.reset_default_graph()
+runs/run_031_reweighing_al_eo/provenance/run_027_reweighing_al_reference_script.py:280:    sess = tf.Session()
+runs/run_031_reweighing_al_eo/provenance/run_027_reweighing_al_reference_script.py:284:        model = AdversarialDebiasing(
+runs/run_031_reweighing_al_eo/provenance/run_027_reweighing_al_reference_script.py:289:            seed=seed,
+runs/run_031_reweighing_al_eo/provenance/run_027_reweighing_al_reference_script.py:290:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_031_reweighing_al_eo/provenance/run_027_reweighing_al_reference_script.py:291:            num_epochs=AL_NUM_EPOCHS,
+runs/run_031_reweighing_al_eo/provenance/run_027_reweighing_al_reference_script.py:292:            batch_size=AL_BATCH_SIZE,
+runs/run_031_reweighing_al_eo/provenance/run_027_reweighing_al_reference_script.py:293:            debias=AL_DEBIAS,
+runs/run_031_reweighing_al_eo/provenance/run_027_reweighing_al_reference_script.py:565:            "al_adversary_loss_weight":
+runs/run_031_reweighing_al_eo/provenance/run_027_reweighing_al_reference_script.py:568:            "al_num_epochs":
+runs/run_031_reweighing_al_eo/provenance/run_027_reweighing_al_reference_script.py:571:            "al_batch_size":
+runs/run_031_reweighing_al_eo/scripts/run_reweighing_al_eo_10seed.py:20:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_031_reweighing_al_eo/scripts/run_reweighing_al_eo_10seed.py:273:    tf.reset_default_graph()
+runs/run_031_reweighing_al_eo/scripts/run_reweighing_al_eo_10seed.py:275:    sess = tf.Session()
+runs/run_031_reweighing_al_eo/scripts/run_reweighing_al_eo_10seed.py:279:        model = AdversarialDebiasing(
+runs/run_031_reweighing_al_eo/scripts/run_reweighing_al_eo_10seed.py:284:            seed=seed,
+runs/run_031_reweighing_al_eo/scripts/run_reweighing_al_eo_10seed.py:285:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_031_reweighing_al_eo/scripts/run_reweighing_al_eo_10seed.py:286:            num_epochs=AL_NUM_EPOCHS,
+runs/run_031_reweighing_al_eo/scripts/run_reweighing_al_eo_10seed.py:287:            batch_size=AL_BATCH_SIZE,
+runs/run_031_reweighing_al_eo/scripts/run_reweighing_al_eo_10seed.py:288:            debias=AL_DEBIAS,
+runs/run_031_reweighing_al_eo/scripts/run_reweighing_al_eo_10seed.py:516:        seed=seed,
+runs/run_031_reweighing_al_eo/scripts/run_reweighing_al_eo_10seed.py:735:            "al_adversary_loss_weight":
+runs/run_031_reweighing_al_eo/scripts/run_reweighing_al_eo_10seed.py:738:            "al_num_epochs":
+runs/run_031_reweighing_al_eo/scripts/run_reweighing_al_eo_10seed.py:741:            "al_batch_size":
+runs/run_032_reweighing_al_roc/provenance/run_030_al_roc_reference_script.py:19:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_032_reweighing_al_roc/provenance/run_030_al_roc_reference_script.py:223:    tf.reset_default_graph()
+runs/run_032_reweighing_al_roc/provenance/run_030_al_roc_reference_script.py:225:    sess = tf.Session()
+runs/run_032_reweighing_al_roc/provenance/run_030_al_roc_reference_script.py:229:        model = AdversarialDebiasing(
+runs/run_032_reweighing_al_roc/provenance/run_030_al_roc_reference_script.py:234:            seed=seed,
+runs/run_032_reweighing_al_roc/provenance/run_030_al_roc_reference_script.py:235:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_032_reweighing_al_roc/provenance/run_030_al_roc_reference_script.py:236:            num_epochs=AL_NUM_EPOCHS,
+runs/run_032_reweighing_al_roc/provenance/run_030_al_roc_reference_script.py:237:            batch_size=AL_BATCH_SIZE,
+runs/run_032_reweighing_al_roc/provenance/run_030_al_roc_reference_script.py:238:            debias=AL_DEBIAS,
+runs/run_032_reweighing_al_roc/provenance/run_030_al_roc_reference_script.py:614:            "al_adversary_loss_weight":
+runs/run_032_reweighing_al_roc/provenance/run_030_al_roc_reference_script.py:617:            "al_num_epochs":
+runs/run_032_reweighing_al_roc/provenance/run_030_al_roc_reference_script.py:620:            "al_batch_size":
+runs/run_032_reweighing_al_roc/provenance/run_027_reweighing_al_reference_script.py:20:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_032_reweighing_al_roc/provenance/run_027_reweighing_al_reference_script.py:278:    tf.reset_default_graph()
+runs/run_032_reweighing_al_roc/provenance/run_027_reweighing_al_reference_script.py:280:    sess = tf.Session()
+runs/run_032_reweighing_al_roc/provenance/run_027_reweighing_al_reference_script.py:284:        model = AdversarialDebiasing(
+runs/run_032_reweighing_al_roc/provenance/run_027_reweighing_al_reference_script.py:289:            seed=seed,
+runs/run_032_reweighing_al_roc/provenance/run_027_reweighing_al_reference_script.py:290:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_032_reweighing_al_roc/provenance/run_027_reweighing_al_reference_script.py:291:            num_epochs=AL_NUM_EPOCHS,
+runs/run_032_reweighing_al_roc/provenance/run_027_reweighing_al_reference_script.py:292:            batch_size=AL_BATCH_SIZE,
+runs/run_032_reweighing_al_roc/provenance/run_027_reweighing_al_reference_script.py:293:            debias=AL_DEBIAS,
+runs/run_032_reweighing_al_roc/provenance/run_027_reweighing_al_reference_script.py:565:            "al_adversary_loss_weight":
+runs/run_032_reweighing_al_roc/provenance/run_027_reweighing_al_reference_script.py:568:            "al_num_epochs":
+runs/run_032_reweighing_al_roc/provenance/run_027_reweighing_al_reference_script.py:571:            "al_batch_size":
+runs/run_032_reweighing_al_roc/scripts/run_reweighing_al_roc_10seed.py:20:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_032_reweighing_al_roc/scripts/run_reweighing_al_roc_10seed.py:283:    tf.reset_default_graph()
+runs/run_032_reweighing_al_roc/scripts/run_reweighing_al_roc_10seed.py:285:    sess = tf.Session()
+runs/run_032_reweighing_al_roc/scripts/run_reweighing_al_roc_10seed.py:289:        model = AdversarialDebiasing(
+runs/run_032_reweighing_al_roc/scripts/run_reweighing_al_roc_10seed.py:294:            seed=seed,
+runs/run_032_reweighing_al_roc/scripts/run_reweighing_al_roc_10seed.py:295:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_032_reweighing_al_roc/scripts/run_reweighing_al_roc_10seed.py:296:            num_epochs=AL_NUM_EPOCHS,
+runs/run_032_reweighing_al_roc/scripts/run_reweighing_al_roc_10seed.py:297:            batch_size=AL_BATCH_SIZE,
+runs/run_032_reweighing_al_roc/scripts/run_reweighing_al_roc_10seed.py:298:            debias=AL_DEBIAS,
+runs/run_032_reweighing_al_roc/scripts/run_reweighing_al_roc_10seed.py:778:            "al_adversary_loss_weight":
+runs/run_032_reweighing_al_roc/scripts/run_reweighing_al_roc_10seed.py:781:            "al_num_epochs":
+runs/run_032_reweighing_al_roc/scripts/run_reweighing_al_roc_10seed.py:784:            "al_batch_size":
+runs/run_033_dir_al_eo/provenance/run_028_dir_al_reference_script.py:20:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_033_dir_al_eo/provenance/run_028_dir_al_reference_script.py:300:    tf.reset_default_graph()
+runs/run_033_dir_al_eo/provenance/run_028_dir_al_reference_script.py:302:    sess = tf.Session()
+runs/run_033_dir_al_eo/provenance/run_028_dir_al_reference_script.py:306:        model = AdversarialDebiasing(
+runs/run_033_dir_al_eo/provenance/run_028_dir_al_reference_script.py:311:            seed=seed,
+runs/run_033_dir_al_eo/provenance/run_028_dir_al_reference_script.py:312:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_033_dir_al_eo/provenance/run_028_dir_al_reference_script.py:313:            num_epochs=AL_NUM_EPOCHS,
+runs/run_033_dir_al_eo/provenance/run_028_dir_al_reference_script.py:314:            batch_size=AL_BATCH_SIZE,
+runs/run_033_dir_al_eo/provenance/run_028_dir_al_reference_script.py:315:            debias=AL_DEBIAS,
+runs/run_033_dir_al_eo/provenance/run_028_dir_al_reference_script.py:580:            "al_adversary_loss_weight":
+runs/run_033_dir_al_eo/provenance/run_028_dir_al_reference_script.py:583:            "al_num_epochs":
+runs/run_033_dir_al_eo/provenance/run_028_dir_al_reference_script.py:586:            "al_batch_size":
+runs/run_033_dir_al_eo/scripts/run_dir_al_eo_10seed.py:20:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_033_dir_al_eo/scripts/run_dir_al_eo_10seed.py:308:    tf.reset_default_graph()
+runs/run_033_dir_al_eo/scripts/run_dir_al_eo_10seed.py:310:    sess = tf.Session()
+runs/run_033_dir_al_eo/scripts/run_dir_al_eo_10seed.py:314:        model = AdversarialDebiasing(
+runs/run_033_dir_al_eo/scripts/run_dir_al_eo_10seed.py:319:            seed=seed,
+runs/run_033_dir_al_eo/scripts/run_dir_al_eo_10seed.py:320:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_033_dir_al_eo/scripts/run_dir_al_eo_10seed.py:321:            num_epochs=AL_NUM_EPOCHS,
+runs/run_033_dir_al_eo/scripts/run_dir_al_eo_10seed.py:322:            batch_size=AL_BATCH_SIZE,
+runs/run_033_dir_al_eo/scripts/run_dir_al_eo_10seed.py:323:            debias=AL_DEBIAS,
+runs/run_033_dir_al_eo/scripts/run_dir_al_eo_10seed.py:551:        seed=seed,
+runs/run_033_dir_al_eo/scripts/run_dir_al_eo_10seed.py:760:            "al_adversary_loss_weight":
+runs/run_033_dir_al_eo/scripts/run_dir_al_eo_10seed.py:763:            "al_num_epochs":
+runs/run_033_dir_al_eo/scripts/run_dir_al_eo_10seed.py:766:            "al_batch_size":
+runs/run_034_dir_al_roc/provenance/run_028_dir_al_reference_script.py:20:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_034_dir_al_roc/provenance/run_028_dir_al_reference_script.py:300:    tf.reset_default_graph()
+runs/run_034_dir_al_roc/provenance/run_028_dir_al_reference_script.py:302:    sess = tf.Session()
+runs/run_034_dir_al_roc/provenance/run_028_dir_al_reference_script.py:306:        model = AdversarialDebiasing(
+runs/run_034_dir_al_roc/provenance/run_028_dir_al_reference_script.py:311:            seed=seed,
+runs/run_034_dir_al_roc/provenance/run_028_dir_al_reference_script.py:312:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_034_dir_al_roc/provenance/run_028_dir_al_reference_script.py:313:            num_epochs=AL_NUM_EPOCHS,
+runs/run_034_dir_al_roc/provenance/run_028_dir_al_reference_script.py:314:            batch_size=AL_BATCH_SIZE,
+runs/run_034_dir_al_roc/provenance/run_028_dir_al_reference_script.py:315:            debias=AL_DEBIAS,
+runs/run_034_dir_al_roc/provenance/run_028_dir_al_reference_script.py:580:            "al_adversary_loss_weight":
+runs/run_034_dir_al_roc/provenance/run_028_dir_al_reference_script.py:583:            "al_num_epochs":
+runs/run_034_dir_al_roc/provenance/run_028_dir_al_reference_script.py:586:            "al_batch_size":
+runs/run_034_dir_al_roc/scripts/run_dir_al_roc_10seed.py:20:from aif360.algorithms.inprocessing import AdversarialDebiasing
+runs/run_034_dir_al_roc/scripts/run_dir_al_roc_10seed.py:322:    tf.reset_default_graph()
+runs/run_034_dir_al_roc/scripts/run_dir_al_roc_10seed.py:324:    sess = tf.Session()
+runs/run_034_dir_al_roc/scripts/run_dir_al_roc_10seed.py:328:        model = AdversarialDebiasing(
+runs/run_034_dir_al_roc/scripts/run_dir_al_roc_10seed.py:333:            seed=seed,
+runs/run_034_dir_al_roc/scripts/run_dir_al_roc_10seed.py:334:            adversary_loss_weight=AL_ADVERSARY_LOSS_WEIGHT,
+runs/run_034_dir_al_roc/scripts/run_dir_al_roc_10seed.py:335:            num_epochs=AL_NUM_EPOCHS,
+runs/run_034_dir_al_roc/scripts/run_dir_al_roc_10seed.py:336:            batch_size=AL_BATCH_SIZE,
+runs/run_034_dir_al_roc/scripts/run_dir_al_roc_10seed.py:337:            debias=AL_DEBIAS,
+runs/run_034_dir_al_roc/scripts/run_dir_al_roc_10seed.py:833:            "al_adversary_loss_weight":
+runs/run_034_dir_al_roc/scripts/run_dir_al_roc_10seed.py:836:            "al_num_epochs":
+runs/run_034_dir_al_roc/scripts/run_dir_al_roc_10seed.py:839:            "al_batch_size":

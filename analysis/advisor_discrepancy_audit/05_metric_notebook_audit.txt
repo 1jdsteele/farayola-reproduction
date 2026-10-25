@@ -1,0 +1,497 @@
+====================================================================================================
+IF-EA/Git_COMPAS_IP_AD+ROC_EO.ipynb
+====================================================================================================
+  88:                               unprivileged_groups=unprivileged_group,
+  89:                               privileged_groups=privileged_group)
+  90: 
+  91: accuracy = metric_predicted_dataset.accuracy()
+  92: disparate_impact = metric_predicted_dataset.disparate_impact()
+  93: # Add any other metrics you are interested in
+  94: 
+  95: print(f"Accuracy: {accuracy}")
+  96: print(f"Disparate Impact: {disparate_impact}")
+  97: # Print other metrics
+  98: print("Performance with fairness intervention (Reject Option Classification):")
+---
+  99: print("Accuracy: {:.6f}".format(metric_predicted_dataset.accuracy()))
+ 100: print("Disparate Impact: {:.6f}".format(metric_predicted_dataset.disparate_impact()))
+ 101: print("Mean Difference: {:.6f}".format(metric_predicted_dataset.mean_difference()))
+ 102: print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+---
+ 103: print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+ 104: print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+ 105: 
+ 106: # Apply Reject Option Classification on Adversarial Debiaing Output
+---
+ 107: ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+ 108:                                   privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+---
+ 109:                                  low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+---
+ 110:                                  metric_ub=0.05, metric_lb=-0.05)
+---
+ 119: )
+ 120: 
+ 121: print("Performance with fairness intervention (Reject Option Classification):")
+ 122: print("Accuracy: {:.2f}".format(metric_with_fairness.accuracy()))
+ 123: print("Disparate Impact: {:.2f}".format(metric_with_fairness.disparate_impact()))
+ 124: print("Mean Difference: {:.2f}".format(metric_with_fairness.mean_difference()))
+ 125: 
+ 126: # Calculate fairness metrics
+ 127: statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+ 128: disparate_impact = metric_with_fairness.disparate_impact()
+ 129: equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+---
+ 130: 
+ 131: # Print out the metrics
+ 132: print(f"Statistical Parity Difference: {statistical_parity_difference}")
+ 133: print(f"Disparate Impact: {disparate_impact}")
+---
+ 134: print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+---
+ 135: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+---
+ 136: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+ 137: 
+ 138: # Apply EqualOdds Optimisation on Adversarial Debiaing Output
+---
+ 139: # Initialize EqualizedOdds
+---
+ 140: eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+---
+ 141:                                   privileged_groups=privileged_group, seed = 101)
+ 142: 
+---
+ 154: print("Performance with fairness intervention (Reject Option Classification):")
+ 155: print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+ 156: print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+ 157: # Calculate fairness metrics
+ 158: statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+ 159: disparate_impact = metric_with_fairness.disparate_impact()
+ 160: equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+ 161: print(f"Statistical Parity Difference: {statistical_parity_difference}")
+ 162: print(f"Disparate Impact: {disparate_impact}")
+ 163: print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+ 164: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+---
+ 165: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+---
+ 166: 
+---
+ 167: 
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_IP_EGR+EO_ROC.ipynb
+====================================================================================================
+  78: print(f"Accuracy: {accuracy:.2f}")
+  79: print("Performance with fairness intervention (Reject Option Classification):")
+  80: print("Accuracy: {:.2f}".format(metric_predicted_dataset.accuracy()))
+  81: print("Mean Difference: {:.2f}".format(metric_predicted_dataset.mean_difference()))
+  82: print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+  83: print(f"Disparate Impact: {metric_predicted_dataset.disparate_impact()}")
+  84: print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+  85: print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+  86: 
+  87: # Apply Reject Option Classification
+  88: ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+---
+  89:                                   privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+---
+  90:                                  low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+---
+  91:                                  metric_ub=0.05, metric_lb=-0.05)
+---
+ 101: )
+ 102: 
+ 103: print("Performance with fairness intervention (Reject Option Classification):")
+ 104: print("Accuracy: {:.2f}".format(metric_with_fairness.accuracy()))
+ 105: print("Disparate Impact: {:.2f}".format(metric_with_fairness.disparate_impact()))
+ 106: print("Mean Difference: {:.2f}".format(metric_with_fairness.mean_difference()))
+ 107: 
+ 108: statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+ 109: equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+ 110: print(f"Statistical Parity Difference: {statistical_parity_difference}")
+ 111: print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+---
+ 112: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+ 113: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+ 114: 
+---
+ 115: # Initialize EqualizedOdds
+---
+ 116: eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+---
+ 117:                                   privileged_groups=privileged_group, seed = 101)
+---
+ 118: 
+ 119: # Fit the EqualizedOdds model
+---
+ 128: )
+ 129: 
+ 130: print("Performance with fairness intervention (Reject Option Classification):")
+ 131: print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+ 132: print("Disparate Impact: {:.6f}".format(metric_with_fairness.disparate_impact()))
+ 133: print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+ 134: 
+ 135: statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+ 136: equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+ 137: print(f"Statistical Parity Difference: {statistical_parity_difference}")
+ 138: print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+---
+ 139: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+ 140: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_DIR+AL+ROC_EO.ipynb
+====================================================================================================
+  92: 
+  93: # Print metrics
+  94: print("Performance with fairness intervention (Reject Option Classification):")
+  95: print("Accuracy: {:.6f}".format(metric_predicted_dataset.accuracy()))
+  96: print("Disparate Impact: {:.6f}".format(metric_predicted_dataset.disparate_impact()))
+  97: print("Mean Difference: {:.6f}".format(metric_predicted_dataset.mean_difference()))
+  98: print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+  99: print(f"Disparate Impact: {metric_predicted_dataset.disparate_impact()}")
+ 100: print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+ 101: print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+ 102: 
+---
+ 103: #Implementing the ROC on AL output
+ 104: ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+---
+ 105:                                   privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+---
+ 106:                                  low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+---
+ 107:                                  metric_ub=0.05, metric_lb=-0.05)
+---
+ 118: 
+ 119: print("Performance with fairness intervention (Reject Option Classification):")
+ 120: print("Accuracy: {:.2f}".format(metric_with_fairness.accuracy()))
+ 121: # Calculate fairness metrics
+ 122: statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+ 123: disparate_impact = metric_with_fairness.disparate_impact()
+ 124: equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+ 125: 
+ 126: # Print out the metrics
+ 127: print(f"Statistical Parity Difference: {statistical_parity_difference}")
+ 128: print(f"Disparate Impact: {disparate_impact}")
+---
+ 129: print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+---
+ 130: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+---
+ 131: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+ 132: 
+ 133: #Implementing the EO on AL output
+---
+ 134: # Initialize EqualizedOdds
+---
+ 135: eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+---
+ 136:                                   privileged_groups=privileged_group, seed = 101)
+ 137: 
+---
+ 148: 
+ 149: print("Performance with fairness intervention (Equalized Odds):")
+ 150: print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+ 151: # Calculate fairness metrics
+ 152: statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+ 153: disparate_impact = metric_with_fairness.disparate_impact()
+ 154: equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+ 155: # Print out the metrics
+ 156: print(f"Statistical Parity Difference: {statistical_parity_difference}")
+ 157: print(f"Disparate Impact: {disparate_impact}")
+ 158: print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+---
+ 159: # Print out the equality of odds metrics
+---
+ 160: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+---
+ 161: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+ 162: 
+---
+ 163: 
+---
+ 164: 
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_DIR+EGR+ROC_EO.ipynb
+====================================================================================================
+  82: metric_predicted_dataset = ClassificationMetric(dataset_test_bld, predictions, privileged_group, unprivileged_group)
+  83: 
+  84: print("Performance with fairness intervention (Reject Option Classification):")
+  85: print("Accuracy: {:.6f}".format(metric_predicted_dataset.accuracy()))
+  86: print("Disparate Impact: {:.6f}".format(metric_predicted_dataset.disparate_impact()))
+  87: print("Mean Difference: {:.6f}".format(metric_predicted_dataset.mean_difference()))
+  88: print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+  89: print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+  90: print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+  91: 
+  92: #Apply EO
+---
+  93: # Initialize EqualizedOdds
+  94: eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+---
+  95:                                   privileged_groups=privileged_group)
+---
+  96: 
+---
+ 106: )
+ 107: 
+ 108: print("Performance with fairness intervention (Equalized Odds Optimization):")
+ 109: print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+ 110: print("Disparate Impact: {:.6f}".format(metric_with_fairness.disparate_impact()))
+ 111: print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+ 112: 
+ 113: # Calculate fairness metrics
+ 114: statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+ 115: equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+ 116: print(f"Statistical Parity Difference: {statistical_parity_difference}")
+---
+ 117: print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+ 118: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+ 119: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+ 120: 
+---
+ 121: # Apply Reject Option Classification
+---
+ 122: ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+---
+ 123:                                   privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+---
+ 124:                                  low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+ 125:                                  metric_ub=0.05, metric_lb=-0.05)
+---
+ 135: )
+ 136: 
+ 137: print("Performance with fairness intervention (Reject Option Classification):")
+ 138: print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+ 139: print("Disparate Impact: {:.6f}".format(metric_with_fairness.disparate_impact()))
+ 140: print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+ 141: 
+ 142: statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+ 143: equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+ 144: print(f"Statistical Parity Difference: {statistical_parity_difference}")
+ 145: print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+---
+ 146: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+ 147: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_RE+EGR+EO_ROC.ipynb
+====================================================================================================
+  80: 
+  81: print(f"Accuracy: {accuracy:.2f}")
+  82: print("Performance with fairness intervention (Reject Option Classification):")
+  83: print("Accuracy: {:.2f}".format(metric_predicted_dataset.accuracy()))
+  84: print("Disparate Impact: {:.2f}".format(metric_predicted_dataset.disparate_impact()))
+  85: print("Mean Difference: {:.2f}".format(metric_predicted_dataset.mean_difference()))
+  86: print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+  87: print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+  88: print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+  89: 
+  90: #Applying the Postprocessing: EO
+---
+  91: # Initialize EqualizedOdds
+  92: eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+---
+  93:                                   privileged_groups=privileged_group)
+---
+  94: 
+---
+ 103: )
+ 104: 
+ 105: print("Performance with fairness intervention (EO):")
+ 106: print("Accuracy: {:.2f}".format(metric_with_fairness.accuracy()))
+ 107: print("Disparate Impact: {:.2f}".format(metric_with_fairness.disparate_impact()))
+ 108: print("Mean Difference: {:.2f}".format(metric_with_fairness.mean_difference()))
+ 109: statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+ 110: equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+ 111: print(f"Statistical Parity Difference: {statistical_parity_difference}")
+ 112: print(f"Disparate Impact: {disparate_impact}")
+ 113: print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+---
+ 114: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+ 115: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+---
+ 116: 
+---
+ 117: #Applying thee Postprocessing: ROC
+---
+ 118: ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+---
+ 119:                                   privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+---
+ 120:                                  low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+ 121:                                  metric_ub=0.05, metric_lb=-0.05)
+---
+ 131: )
+ 132: 
+ 133: print("Performance with fairness intervention (Reject Option Classification):")
+ 134: print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+ 135: print("Disparate Impact: {:.6f}".format(metric_with_fairness.disparate_impact()))
+ 136: print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+ 137: statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+ 138: equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+ 139: print(f"Statistical Parity Difference: {statistical_parity_difference}")
+ 140: print(f"Disparate Impact: {disparate_impact}")
+ 141: print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+---
+ 142: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+ 143: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_Re+AD+ROC_EO.ipynb
+====================================================================================================
+  91:                               unprivileged_groups=unprivileged_group,
+  92:                               privileged_groups=privileged_group)
+  93: 
+  94: accuracy = metric_predicted_dataset.accuracy()
+  95: disparate_impact = metric_predicted_dataset.disparate_impact()
+  96: # Add any other metrics you are interested in
+  97: 
+  98: print(f"Accuracy: {accuracy}")
+  99: print(f"Disparate Impact: {disparate_impact}")
+ 100: print("Performance with fairness intervention (Reject Option Classification):")
+ 101: print("Accuracy: {:.6f}".format(metric_predicted_dataset.accuracy()))
+---
+ 102: print("Mean Difference: {:.6f}".format(metric_predicted_dataset.mean_difference()))
+ 103: print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+ 104: print(f"Disparate Impact: {metric_predicted_dataset.disparate_impact()}")
+ 105: print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+---
+ 106: print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+ 107: 
+ 108: # Apply Reject Option Classification
+ 109: ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+---
+ 110:                                   privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+---
+ 111:                                  low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+---
+ 112:                                  metric_ub=0.05, metric_lb=-0.05)
+---
+ 122: )
+ 123: 
+ 124: print("Performance with fairness intervention (Reject Option Classification):")
+ 125: print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+ 126: print("Disparate Impact: {:.6f}".format(metric_with_fairness.disparate_impact()))
+ 127: print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+ 128: 
+ 129: statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+ 130: equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+ 131: print(f"Statistical Parity Difference: {statistical_parity_difference}")
+ 132: print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+---
+ 133: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+ 134: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+ 135: 
+---
+ 136: # Initialize EqualizedOdds
+---
+ 137: eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+---
+ 138:                                   privileged_groups=privileged_group, seed = 101)
+---
+ 139: 
+ 140: # Fit the EqualizedOdds model
+---
+ 151: print("Performance with fairness intervention (Reject Option Classification):")
+ 152: print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+ 153: print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+ 154: 
+ 155: statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+ 156: equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+ 157: print(f"Statistical Parity Difference: {statistical_parity_difference}")
+ 158: print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+ 159: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+ 160: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PP_DIR+ROC_EO.ipynb
+====================================================================================================
+ 129: )
+ 130: 
+ 131: print("Performance with fairness intervention (EqualizedOdds):")
+ 132: print("Accuracy: {:.6f}".format(metric_predicted_dataset.accuracy()))
+ 133: print("Disparate Impact: {:.6f}".format(metric_predicted_dataset.disparate_impact()))
+ 134: print("Mean Difference: {:.6f}".format(metric_predicted_dataset.mean_difference()))
+ 135: print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+ 136: print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+ 137: print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+ 138: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+ 139: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+---
+ 140: 
+ 141: # Apply Reject Option Classification
+---
+ 142: ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+---
+ 143:                                   privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+---
+ 144:                                  low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+ 145:                                  metric_ub=0.05, metric_lb=-0.05)
+---
+ 155: )
+ 156: 
+ 157: print("Performance with fairness intervention (EqualizedOdds):")
+ 158: print("Accuracy: {:.6f}".format(metric_predicted_dataset.accuracy()))
+ 159: print("Disparate Impact: {:.6f}".format(metric_predicted_dataset.disparate_impact()))
+ 160: print("Mean Difference: {:.6f}".format(metric_predicted_dataset.mean_difference()))
+ 161: print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+ 162: print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+ 163: print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+ 164: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+ 165: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PP_Re+EO_ROC.ipynb
+====================================================================================================
+ 124: )
+ 125: 
+ 126: print("Performance with fairness intervention (Equalized Odds Optimization):")
+ 127: print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+ 128: print("Disparate Impact: {:.6f}".format(metric_with_fairness.disparate_impact()))
+ 129: print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+ 130: statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+ 131: equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+ 132: print(f"Statistical Parity Difference: {statistical_parity_difference}")
+ 133: print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+ 134: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+---
+ 135: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+ 136: 
+---
+ 137: # Apply Reject Option Classification
+---
+ 138: ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+---
+ 139:                                   privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+---
+ 140:                                  low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+ 141:                                  metric_ub=0.05, metric_lb=-0.05)
+---
+ 151: )
+ 152: 
+ 153: print("Performance with fairness intervention (Reject Option Classification):")
+ 154: print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+ 155: print("Disparate Impact: {:.6f}".format(metric_with_fairness.disparate_impact()))
+ 156: print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+ 157: 
+ 158: statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+ 159: equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+ 160: print(f"Statistical Parity Difference: {statistical_parity_difference}")
+ 161: print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+---
+ 162: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+ 163: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+---
+

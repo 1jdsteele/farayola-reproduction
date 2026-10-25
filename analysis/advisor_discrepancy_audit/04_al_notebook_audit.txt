@@ -1,0 +1,227 @@
+====================================================================================================
+IF-EA/Git_COMPAS_IP_AD+ROC_EO.ipynb
+====================================================================================================
+  58:                                       unfavorable_label=unfavorable_label,
+  59:                                       protected_attribute_names=protected_attribute_names,
+  60:                                       privileged_protected_attributes=privileged_group)
+  61: 
+  62: import tensorflow.compat.v1 as tf
+  63: tf.disable_v2_behavior()
+  64: 
+  65: #Implementing the Adversarial Debiasing
+  66: from aif360.algorithms.inprocessing import AdversarialDebiasing
+  67: 
+  68: sess = tf.Session()
+  69: 
+  70: # Use a different scope name if re-running the fitting process
+  71: debias_model = AdversarialDebiasing(privileged_groups=[{'race': 1}],
+  72:                                     unprivileged_groups=[{'race': 0}],
+  73:                                     scope_name='debias_model_unique_scope',  # Change the scope name for each new instance
+  74:                                     debias=True,
+---
+  75:                                     sess=sess,
+  76:                                     seed = 101)
+  77: 
+  78: debias_model.fit(dataset_train_bld)
+  79: 
+---
+  80: # Predict with the debias_model
+  81: predictions = debias_model.predict(dataset_test_bld)
+  82: 
+---
+  83: from aif360.metrics import ClassificationMetric
+  84: 
+  85: # Dataset_test_bld is the original test dataset with true labels
+---
+  86: # and predictions is the dataset with your model's predictions
+  87: metric_predicted_dataset = ClassificationMetric(dataset_test_bld, predictions,
+---
+ 136: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+ 137: 
+ 138: # Apply EqualOdds Optimisation on Adversarial Debiaing Output
+ 139: # Initialize EqualizedOdds
+ 140: eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+ 141:                                   privileged_groups=privileged_group, seed = 101)
+ 142: 
+ 143: # Fit the EqualizedOdds model
+ 144: test_predictions = eo.fit_predict(dataset_test_bld, predictions)
+ 145: 
+ 146: # Evaluate the classifier's performance with fairness intervention
+ 147: metric_with_fairness = ClassificationMetric(
+ 148:     dataset_test_bld,
+ 149:     test_predictions,
+ 150:     unprivileged_groups=unprivileged_group,
+ 151:     privileged_groups=privileged_group
+ 152: )
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_IP_EGR+EO_ROC.ipynb
+====================================================================================================
+ 112: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+ 113: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+ 114: 
+ 115: # Initialize EqualizedOdds
+ 116: eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+ 117:                                   privileged_groups=privileged_group, seed = 101)
+ 118: 
+ 119: # Fit the EqualizedOdds model
+ 120: test_predictions = eo.fit_predict(dataset_test_bld, predictions)
+ 121: 
+ 122: # Evaluate the classifier's performance with fairness intervention
+ 123: metric_with_fairness = ClassificationMetric(
+ 124:     dataset_test_bld,
+ 125:     test_predictions,
+ 126:     unprivileged_groups=unprivileged_group,
+ 127:     privileged_groups=privileged_group
+ 128: )
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_DIR+AL+ROC_EO.ipynb
+====================================================================================================
+  64: # Fit and transform the training data
+  65: dir_dataset = dir.fit_transform(dataset_train_bld)
+  66: 
+  67: from aif360.algorithms.inprocessing import AdversarialDebiasing
+  68: 
+  69: sess = tf.Session()
+  70: 
+  71: # Use a different scope name if re-running the fitting process
+  72: debias_model = AdversarialDebiasing(privileged_groups=[{'race': 1}],
+  73:                                     unprivileged_groups=[{'race': 0}],
+  74:                                     scope_name='debias_model_unique_scope',  # Change the scope name for each new instance
+  75:                                     debias=True,
+  76:                                     sess=sess,
+  77:                                     seed = 101)
+  78: 
+  79: debias_model.fit(dir_dataset)
+  80: 
+---
+  81: # Predict with the debias_model
+  82: predictions = debias_model.predict(dataset_test_bld)
+  83: 
+---
+  84: from aif360.metrics import ClassificationMetric
+  85: 
+  86: # Assuming dataset_test_bld is the original test dataset with true labels
+---
+  87: # and predictions is the dataset with your model's predictions
+  88: metric_predicted_dataset = ClassificationMetric(dataset_test_bld, predictions,
+---
+ 131: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+ 132: 
+ 133: #Implementing the EO on AL output
+ 134: # Initialize EqualizedOdds
+ 135: eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+ 136:                                   privileged_groups=privileged_group, seed = 101)
+ 137: 
+ 138: # Fit the EqualizedOdds model
+ 139: test_predictions = eo.fit_predict(dataset_test_bld, predictions)
+ 140: 
+ 141: # Evaluate the classifier's performance with fairness intervention
+ 142: metric_with_fairness = ClassificationMetric(
+ 143:     dataset_test_bld,
+ 144:     test_predictions,
+ 145:     unprivileged_groups=unprivileged_group,
+ 146:     privileged_groups=privileged_group
+ 147: )
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_Re+AD+ROC_EO.ipynb
+====================================================================================================
+  65: 
+  66: # Fit and transform the training data
+  67: dir_dataset = RW.fit_transform(dataset_train_bld)
+  68: 
+  69: import tensorflow.compat.v1 as tf
+  70: tf.disable_v2_behavior()
+  71: 
+  72: sess = tf.Session()
+  73: 
+  74: # Use a different scope name if re-running the fitting process
+  75: debias_model = AdversarialDebiasing(privileged_groups=[{'race': 1}],
+  76:                                     unprivileged_groups=[{'race': 0}],
+  77:                                     scope_name='debias_model_unique_scope1',  # Change the scope name for each new instance
+  78:                                     debias=True,
+  79:                                     sess=sess, seed = 101)
+  80: 
+  81: debias_model.fit(dir_dataset)
+---
+  82: 
+  83: # Predict with the debias_model
+---
+  84: predictions = debias_model.predict(dataset_test_bld)
+  85: 
+  86: from aif360.metrics import ClassificationMetric
+---
+  87: 
+  88: # Assuming dataset_test_bld is the original test dataset with true labels
+  89: # and predictions is the dataset with your model's predictions
+---
+  90: metric_predicted_dataset = ClassificationMetric(dataset_test_bld, predictions,
+---
+ 133: print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+ 134: print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+ 135: 
+ 136: # Initialize EqualizedOdds
+ 137: eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+ 138:                                   privileged_groups=privileged_group, seed = 101)
+ 139: 
+ 140: # Fit the EqualizedOdds model
+ 141: test_predictions = eo.fit_predict(dataset_test_bld, predictions)
+ 142: 
+ 143: # Evaluate the classifier's performance with fairness intervention
+ 144: metric_with_fairness = ClassificationMetric(
+ 145:     dataset_test_bld,
+ 146:     test_predictions,
+ 147:     unprivileged_groups=unprivileged_group,
+ 148:     privileged_groups=privileged_group
+ 149: )
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PP_DIR+ROC_EO.ipynb
+====================================================================================================
+ 113: predictions = dataset_test_bld.copy()
+ 114: predictions.labels = y_pred.reshape(-1,1)
+ 115: 
+ 116: # Initialize EqualizedOdds
+ 117: eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+ 118:                                   privileged_groups=privileged_group, seed = 101)
+ 119: 
+ 120: # Fit the EqualizedOdds model
+ 121: test_predictions = eo.fit_predict(dataset_test, dataset_testpred)
+ 122: 
+ 123: # Evaluate the classifier's performance with fairness intervention
+ 124: metric_with_fairness = ClassificationMetric(
+ 125:     dataset_test_bld,
+ 126:     test_predictions,
+ 127:     unprivileged_groups=unprivileged_group,
+ 128:     privileged_groups=privileged_group
+ 129: )
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PP_Re+EO_ROC.ipynb
+====================================================================================================
+ 108:                                          privileged_protected_attributes=privileged_group)
+ 109: 
+ 110: #Apply Postprocessing: EO
+ 111: # Initialize EqualizedOdds
+ 112: eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+ 113:                                   privileged_groups=privileged_group, seed = 101)
+ 114: 
+ 115: # Fit the EqualizedOdds model
+ 116: test_predictions = eo.fit_predict(dataset_test, dataset_testpred)
+ 117: 
+ 118: # Evaluate the classifier's performance with fairness intervention
+ 119: metric_with_fairness = ClassificationMetric(
+ 120:     dataset_test_bld,
+ 121:     test_predictions,
+ 122:     unprivileged_groups=unprivileged_group,
+ 123:     privileged_groups=privileged_group
+ 124: )
+---
+

@@ -1,0 +1,373 @@
+====================================================================================================
+IF-EA/Git_COMPAS_IP_AD+ROC_EO.ipynb
+====================================================================================================
+   4: import matplotlib.pyplot as plt
+   5: import numpy as np
+   6: 
+   7: # Machine Learning
+   8: from sklearn.linear_model import LogisticRegression
+   9: from sklearn.preprocessing import StandardScaler
+  10: from sklearn.metrics import accuracy_score
+  11: 
+  12: # AIF360 fairness library
+  13: from aif360.datasets import StandardDataset, BinaryLabelDataset
+---
+  16: from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+  17: from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+  18: from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+  19: from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+  20: from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+  21: from aif360.algorithms.postprocessing import EqOddsPostprocessing
+  22: from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+  23: from sklearn.model_selection import train_test_split
+  24: 
+  25: data = pd.read_csv(COMPAS dataset)
+---
+  62: import tensorflow.compat.v1 as tf
+  63: tf.disable_v2_behavior()
+  64: 
+  65: #Implementing the Adversarial Debiasing
+  66: from aif360.algorithms.inprocessing import AdversarialDebiasing
+  67: 
+  68: sess = tf.Session()
+  69: 
+  70: # Use a different scope name if re-running the fitting process
+  71: debias_model = AdversarialDebiasing(privileged_groups=[{'race': 1}],
+---
+  74:                                     debias=True,
+  75:                                     sess=sess,
+  76:                                     seed = 101)
+  77: 
+  78: debias_model.fit(dataset_train_bld)
+  79: 
+  80: # Predict with the debias_model
+  81: predictions = debias_model.predict(dataset_test_bld)
+  82: 
+  83: from aif360.metrics import ClassificationMetric
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_IP_EGR+EO_ROC.ipynb
+====================================================================================================
+   4: import matplotlib.pyplot as plt
+   5: import numpy as np
+   6: 
+   7: # Machine Learning
+   8: from sklearn.linear_model import LogisticRegression
+   9: from sklearn.preprocessing import StandardScaler
+  10: from sklearn.metrics import accuracy_score
+  11: 
+  12: # AIF360 fairness library
+  13: from aif360.datasets import StandardDataset, BinaryLabelDataset
+---
+  16: from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+  17: from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+  18: from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+  19: from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+  20: from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+  21: from aif360.algorithms.postprocessing import EqOddsPostprocessing
+  22: from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+  23: from sklearn.model_selection import train_test_split
+  24: 
+  25: data = pd.read_csv(COMPAS dataset)
+---
+  58:                                       unfavorable_label=unfavorable_label,
+  59:                                       protected_attribute_names=protected_attribute_names,
+  60:                                       privileged_protected_attributes=privileged_group)
+  61: 
+  62: from aif360.algorithms.inprocessing import ExponentiatedGradientReduction
+  63: 
+  64: base_classifier = LogisticRegression(solver='lbfgs', max_iter=1000)
+  65: 
+  66: inprocess_algorithm = ExponentiatedGradientReduction(base_classifier, constraints="DemographicParity",
+  67:                                                      eps = 0.02, drop_prot_attr = False)
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_DIR+AL+ROC_EO.ipynb
+====================================================================================================
+   4: import matplotlib.pyplot as plt
+   5: import numpy as np
+   6: 
+   7: # Machine Learning
+   8: from sklearn.linear_model import LogisticRegression
+   9: from sklearn.preprocessing import StandardScaler
+  10: from sklearn.metrics import accuracy_score
+  11: 
+  12: # AIF360 fairness library
+  13: from aif360.datasets import StandardDataset, BinaryLabelDataset
+---
+  16: from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+  17: from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+  18: from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+  19: from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+  20: from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+  21: from aif360.algorithms.postprocessing import EqOddsPostprocessing
+  22: from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+  23: from sklearn.model_selection import train_test_split
+  24: 
+  25: data = pd.read_csv(COMPAS dataset)
+---
+  61:                                       protected_attribute_names=protected_attribute_names,
+  62:                                       privileged_protected_attributes=privileged_group)
+  63: 
+  64: # Fit and transform the training data
+  65: dir_dataset = dir.fit_transform(dataset_train_bld)
+  66: 
+  67: from aif360.algorithms.inprocessing import AdversarialDebiasing
+  68: 
+  69: sess = tf.Session()
+  70: 
+---
+  75:                                     debias=True,
+  76:                                     sess=sess,
+  77:                                     seed = 101)
+  78: 
+  79: debias_model.fit(dir_dataset)
+  80: 
+  81: # Predict with the debias_model
+  82: predictions = debias_model.predict(dataset_test_bld)
+  83: 
+  84: from aif360.metrics import ClassificationMetric
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_DIR+EGR+ROC_EO.ipynb
+====================================================================================================
+   4: import matplotlib.pyplot as plt
+   5: import numpy as np
+   6: 
+   7: # Machine Learning
+   8: from sklearn.linear_model import LogisticRegression
+   9: from sklearn.preprocessing import StandardScaler
+  10: from sklearn.metrics import accuracy_score
+  11: 
+  12: # AIF360 fairness library
+  13: from aif360.datasets import StandardDataset, BinaryLabelDataset
+---
+  16: from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+  17: from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+  18: from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+  19: from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+  20: from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+  21: from aif360.algorithms.postprocessing import EqOddsPostprocessing
+  22: from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+  23: from sklearn.model_selection import train_test_split
+  24: 
+  25: data = pd.read_csv(COMPAS dataset)
+---
+  62: # Applying DisparateImpactRemover
+  63: dir = DisparateImpactRemover(repair_level=1, sensitive_attribute="race")
+  64: 
+  65: # Fit and transform the training data
+  66: dir_dataset = dir.fit_transform(dataset_train_bld)
+  67: 
+  68: # Apply Exponentiated Gradient Reduction (EG) in-processing technique
+  69: # You can choose a suitable base learner (e.g., logistic regression)
+  70: base_classifier = LogisticRegression()
+  71: 
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_RE+EGR+EO_ROC.ipynb
+====================================================================================================
+   4: import matplotlib.pyplot as plt
+   5: import numpy as np
+   6: 
+   7: # Machine Learning
+   8: from sklearn.linear_model import LogisticRegression
+   9: from sklearn.preprocessing import StandardScaler
+  10: from sklearn.metrics import accuracy_score
+  11: 
+  12: # AIF360 fairness library
+  13: from aif360.datasets import StandardDataset, BinaryLabelDataset
+---
+  55:                                       protected_attribute_names=protected_attribute_names,
+  56:                                       privileged_protected_attributes=privileged_group)
+  57: 
+  58: #Preprocessing technique
+  59: # Applying Reweighing
+  60: RW = Reweighing(unprivileged_groups=unprivileged_group, privileged_groups=privileged_group)
+  61: 
+  62: # Fit and transform the training data
+  63: re_dataset = RW.fit_transform(dataset_train_bld)
+  64: 
+---
+  65: #setting the base classifier
+  66: base_classifier = LogisticRegression(solver='lbfgs', max_iter=1000)
+  67: 
+  68: #Inprocessing technique
+  69: inprocess_algorithm = ExponentiatedGradientReduction(base_classifier, constraints="DemographicParity",
+  70:                                                      eps = 0.02, drop_prot_attr = False)
+  71: 
+  72: inprocess_algorithm.fit(re_dataset)
+  73: 
+  74: # Predict on the test set
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_Re+AD+ROC_EO.ipynb
+====================================================================================================
+   4: import matplotlib.pyplot as plt
+   5: import numpy as np
+   6: 
+   7: # Machine Learning
+   8: from sklearn.linear_model import LogisticRegression
+   9: from sklearn.preprocessing import StandardScaler
+  10: from sklearn.metrics import accuracy_score
+  11: 
+  12: # AIF360 fairness library
+  13: from aif360.datasets import StandardDataset, BinaryLabelDataset
+---
+  16: from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+  17: from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+  18: from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+  19: from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+  20: from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+  21: from aif360.algorithms.postprocessing import EqOddsPostprocessing
+  22: from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+  23: from sklearn.model_selection import train_test_split
+  24: 
+  25: data = pd.read_csv(COMPAS dataset)
+---
+  58:                                       unfavorable_label=unfavorable_label,
+  59:                                       protected_attribute_names=protected_attribute_names,
+  60:                                       privileged_protected_attributes=privileged_group)
+  61: 
+  62: # Apply Reweighing
+  63: from aif360.algorithms.preprocessing import Reweighing
+  64: RW = Reweighing(unprivileged_groups=unprivileged_group, privileged_groups=privileged_group)
+  65: 
+  66: # Fit and transform the training data
+  67: dir_dataset = RW.fit_transform(dataset_train_bld)
+---
+  71: 
+  72: sess = tf.Session()
+  73: 
+  74: # Use a different scope name if re-running the fitting process
+  75: debias_model = AdversarialDebiasing(privileged_groups=[{'race': 1}],
+  76:                                     unprivileged_groups=[{'race': 0}],
+  77:                                     scope_name='debias_model_unique_scope1',  # Change the scope name for each new instance
+  78:                                     debias=True,
+  79:                                     sess=sess, seed = 101)
+  80: 
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PP_DIR+ROC_EO.ipynb
+====================================================================================================
+   4: import matplotlib.pyplot as plt
+   5: import numpy as np
+   6: 
+   7: # Machine Learning
+   8: from sklearn.linear_model import LogisticRegression
+   9: from sklearn.preprocessing import StandardScaler
+  10: from sklearn.metrics import accuracy_score
+  11: 
+  12: # AIF360 fairness library
+  13: from aif360.datasets import StandardDataset, BinaryLabelDataset
+---
+  16: from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+  17: from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+  18: from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+  19: from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+  20: from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+  21: from aif360.algorithms.postprocessing import EqOddsPostprocessing
+  22: from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+  23: from sklearn.model_selection import train_test_split
+  24: 
+  25: data = pd.read_csv(COMPAS dataset)
+---
+  62: # Applying DisparateImpactRemover
+  63: dir = DisparateImpactRemover(repair_level=1, sensitive_attribute="race")
+  64: 
+  65: # Fit and transform the training data
+  66: dir_dataset = dir.fit_transform(dataset_train_bld)
+  67: 
+  68: # Define features and target variable
+  69: X_train = dir_dataset.features
+  70: y_train = dir_dataset.labels.ravel()
+  71: X_test = dataset_test_bld.features
+---
+  72: y_test = dataset_test_bld.labels.ravel()
+  73: 
+  74: # Scale the features using StandardScaler
+  75: scaler = StandardScaler()
+  76: X_train_scaled = scaler.fit_transform(X_train)
+  77: X_test_scaled = scaler.transform(X_test)
+  78: 
+  79: X_train_scaled = pd.DataFrame(X_train_scaled, columns=X.columns)
+  80: X_test_scaled = pd.DataFrame(X_test_scaled, columns=X.columns)
+  81: y_train = pd.DataFrame(y_train, columns = y.columns)
+---
+  83: 
+  84: dataset_train = pd.concat([X_train_scaled, y_train], axis=1)
+  85: dataset_test = pd.concat([X_test_scaled, y_test], axis=1)
+  86: 
+  87: model = LogisticRegression()
+  88: model.fit(X_train_scaled, y_train['two_year_recid'])
+  89: y_pred = model.predict(X_test_scaled)
+  90: 
+  91: y_pred = pd.DataFrame(y_pred, columns=['two_year_recid'])
+  92: X_test = pd.DataFrame(X_test, columns=X.columns)
+---
+
+====================================================================================================
+IF-EA/Git_COMPAS_PP_Re+EO_ROC.ipynb
+====================================================================================================
+   4: import matplotlib.pyplot as plt
+   5: import numpy as np
+   6: 
+   7: # Machine Learning
+   8: from sklearn.linear_model import LogisticRegression
+   9: from sklearn.preprocessing import StandardScaler
+  10: from sklearn.metrics import accuracy_score
+  11: 
+  12: # AIF360 fairness library
+  13: from aif360.datasets import StandardDataset, BinaryLabelDataset
+---
+  16: from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+  17: from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+  18: from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+  19: from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+  20: from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+  21: from aif360.algorithms.postprocessing import EqOddsPostprocessing
+  22: from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+  23: from sklearn.model_selection import train_test_split
+  24: 
+  25: data = pd.read_csv(COMPAS dataset)
+---
+  58:                                       unfavorable_label=unfavorable_label,
+  59:                                       protected_attribute_names=protected_attribute_names,
+  60:                                       privileged_protected_attributes=privileged_group)
+  61: 
+  62: # Apply Reweighing
+  63: RW = Reweighing(unprivileged_groups=unprivileged_group, privileged_groups=privileged_group)
+  64: 
+  65: # Fit and transform the training data
+  66: dir_dataset = RW.fit_transform(dataset_train_bld)
+  67: 
+---
+  72: y_test = dataset_test_bld.labels.ravel()
+  73: 
+  74: # Scale the features using StandardScaler
+  75: scaler = StandardScaler()
+  76: X_train_scaled = scaler.fit_transform(X_train)
+  77: X_test_scaled = scaler.transform(X_test)
+  78: 
+  79: X_train_scaled = pd.DataFrame(X_train_scaled, columns=X.columns)
+  80: X_test_scaled = pd.DataFrame(X_test_scaled, columns=X.columns)
+  81: y_train = pd.DataFrame(y_train, columns = y.columns)
+---
+  82: y_test = pd.DataFrame(y_test, columns = y.columns)
+  83: 
+  84: model = LogisticRegression()
+  85: 
+  86: model.fit(X_train_scaled, y_train['two_year_recid'])
+  87: 
+  88: y_pred = model.predict(X_test_scaled)
+  89: y_pred = pd.DataFrame(y_pred, columns=['two_year_recid'])
+  90: X_test = pd.DataFrame(X_test, columns=X.columns)
+  91: 
+---
+

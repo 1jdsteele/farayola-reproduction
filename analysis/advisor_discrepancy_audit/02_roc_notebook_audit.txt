@@ -1,0 +1,1300 @@
+====================================================================================================
+IF-EA/Git_COMPAS_IP_AD+ROC_EO.ipynb
+====================================================================================================
+
+--- CODE CELL 2 ---
+# Data handling and visualization
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Machine Learning
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
+# AIF360 fairness library
+from aif360.datasets import StandardDataset, BinaryLabelDataset
+from aif360.metrics import BinaryLabelDatasetMetric, ClassificationMetric
+from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
+from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+
+data = pd.read_csv(COMPAS dataset)
+
+X = data.drop(['two_year_recid'], axis =1)
+y = data[['two_year_recid']]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+
+dataset_train = pd.concat([X_train, y_train], axis=1)
+dataset_test = pd.concat([X_test, y_test], axis=1)
+
+dataset_train = dataset_train.reset_index(drop=True)
+dataset_test = dataset_test.reset_index(drop=True)
+
+# Define favorable and unfavorable labels
+favorable_label = 1
+unfavorable_label = 0
+
+# Define protected attribute names and privileged group
+protected_attribute_names = ['race']
+privileged_group = [{'race': 1}]
+unprivileged_group = [{'race' : 0}]
+
+# Convert the training and test set to Binary label datasets
+dataset_train_bld = BinaryLabelDataset(df=dataset_train,
+                             label_names=['two_year_recid'],
+                             favorable_label=favorable_label,
+                             unfavorable_label=unfavorable_label,
+                             protected_attribute_names=protected_attribute_names,
+                             privileged_protected_attributes=privileged_group)
+
+dataset_test_bld = BinaryLabelDataset(df=dataset_test,
+                                      label_names=['two_year_recid'],
+                                      favorable_label=favorable_label,
+                                      unfavorable_label=unfavorable_label,
+                                      protected_attribute_names=protected_attribute_names,
+                                      privileged_protected_attributes=privileged_group)
+
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+
+#Implementing the Adversarial Debiasing
+from aif360.algorithms.inprocessing import AdversarialDebiasing
+
+sess = tf.Session()
+
+# Use a different scope name if re-running the fitting process
+debias_model = AdversarialDebiasing(privileged_groups=[{'race': 1}],
+                                    unprivileged_groups=[{'race': 0}],
+                                    scope_name='debias_model_unique_scope',  # Change the scope name for each new instance
+                                    debias=True,
+                                    sess=sess,
+                                    seed = 101)
+
+debias_model.fit(dataset_train_bld)
+
+# Predict with the debias_model
+predictions = debias_model.predict(dataset_test_bld)
+
+from aif360.metrics import ClassificationMetric
+
+# Dataset_test_bld is the original test dataset with true labels
+# and predictions is the dataset with your model's predictions
+metric_predicted_dataset = ClassificationMetric(dataset_test_bld, predictions,
+                              unprivileged_groups=unprivileged_group,
+                              privileged_groups=privileged_group)
+
+accuracy = metric_predicted_dataset.accuracy()
+disparate_impact = metric_predicted_dataset.disparate_impact()
+# Add any other metrics you are interested in
+
+print(f"Accuracy: {accuracy}")
+print(f"Disparate Impact: {disparate_impact}")
+# Print other metrics
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.6f}".format(metric_predicted_dataset.accuracy()))
+print("Disparate Impact: {:.6f}".format(metric_predicted_dataset.disparate_impact()))
+print("Mean Difference: {:.6f}".format(metric_predicted_dataset.mean_difference()))
+print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+
+# Apply Reject Option Classification on Adversarial Debiaing Output
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+                                 low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+                                 metric_ub=0.05, metric_lb=-0.05)
+
+test_predictions = ROC.fit_predict(dataset_test_bld, predictions)
+# Evaluate the classifier's performance with fairness intervention
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.2f}".format(metric_with_fairness.accuracy()))
+print("Disparate Impact: {:.2f}".format(metric_with_fairness.disparate_impact()))
+print("Mean Difference: {:.2f}".format(metric_with_fairness.mean_difference()))
+
+# Calculate fairness metrics
+statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+disparate_impact = metric_with_fairness.disparate_impact()
+equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+
+# Print out the metrics
+print(f"Statistical Parity Difference: {statistical_parity_difference}")
+print(f"Disparate Impact: {disparate_impact}")
+print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+# Apply EqualOdds Optimisation on Adversarial Debiaing Output
+# Initialize EqualizedOdds
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, seed = 101)
+
+# Fit the EqualizedOdds model
+test_predictions = eo.fit_predict(dataset_test_bld, predictions)
+
+# Evaluate the classifier's performance with fairness intervention
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+# Calculate fairness metrics
+statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+disparate_impact = metric_with_fairness.disparate_impact()
+equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+print(f"Statistical Parity Difference: {statistical_parity_difference}")
+print(f"Disparate Impact: {disparate_impact}")
+print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+
+
+
+====================================================================================================
+IF-EA/Git_COMPAS_IP_EGR+EO_ROC.ipynb
+====================================================================================================
+
+--- CODE CELL 2 ---
+# Data handling and visualization
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Machine Learning
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
+# AIF360 fairness library
+from aif360.datasets import StandardDataset, BinaryLabelDataset
+from aif360.metrics import BinaryLabelDatasetMetric, ClassificationMetric
+from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
+from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+
+data = pd.read_csv(COMPAS dataset)
+
+X = data.drop(['two_year_recid'], axis =1)
+y = data[['two_year_recid']]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+
+dataset_train = pd.concat([X_train, y_train], axis=1)
+dataset_test = pd.concat([X_test, y_test], axis=1)
+
+dataset_train = dataset_train.reset_index(drop=True)
+dataset_test = dataset_test.reset_index(drop=True)
+
+# Define favorable and unfavorable labels
+favorable_label = 1
+unfavorable_label = 0
+
+# Define protected attribute names and privileged group
+protected_attribute_names = ['race']
+privileged_group = [{'race': 1}]
+unprivileged_group = [{'race' : 0}]
+
+# Convert the training and test set to Binary label datasets
+dataset_train_bld = BinaryLabelDataset(df=dataset_train,
+                             label_names=['two_year_recid'],
+                             favorable_label=favorable_label,
+                             unfavorable_label=unfavorable_label,
+                             protected_attribute_names=protected_attribute_names,
+                             privileged_protected_attributes=privileged_group)
+
+dataset_test_bld = BinaryLabelDataset(df=dataset_test,
+                                      label_names=['two_year_recid'],
+                                      favorable_label=favorable_label,
+                                      unfavorable_label=unfavorable_label,
+                                      protected_attribute_names=protected_attribute_names,
+                                      privileged_protected_attributes=privileged_group)
+
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction
+
+base_classifier = LogisticRegression(solver='lbfgs', max_iter=1000)
+
+inprocess_algorithm = ExponentiatedGradientReduction(base_classifier, constraints="DemographicParity",
+                                                     eps = 0.02, drop_prot_attr = False)
+
+inprocess_algorithm.fit(dataset_train_bld)
+
+# Predict on the test set
+predictions = inprocess_algorithm.predict(dataset_test_bld)
+
+# Evaluate the model's accuracy and fairness using AIF360 metrics
+accuracy = accuracy_score(dataset_test_bld.labels, predictions.labels)
+metric_predicted_dataset = ClassificationMetric(dataset_test_bld, predictions, privileged_group, unprivileged_group)
+
+print(f"Accuracy: {accuracy:.2f}")
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.2f}".format(metric_predicted_dataset.accuracy()))
+print("Mean Difference: {:.2f}".format(metric_predicted_dataset.mean_difference()))
+print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+print(f"Disparate Impact: {metric_predicted_dataset.disparate_impact()}")
+print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+
+# Apply Reject Option Classification
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+                                 low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+                                 metric_ub=0.05, metric_lb=-0.05)
+
+test_predictions = ROC.fit_predict(dataset_test_bld, predictions)
+
+# Evaluate the classifier's performance with fairness intervention
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.2f}".format(metric_with_fairness.accuracy()))
+print("Disparate Impact: {:.2f}".format(metric_with_fairness.disparate_impact()))
+print("Mean Difference: {:.2f}".format(metric_with_fairness.mean_difference()))
+
+statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+print(f"Statistical Parity Difference: {statistical_parity_difference}")
+print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+# Initialize EqualizedOdds
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, seed = 101)
+
+# Fit the EqualizedOdds model
+test_predictions = eo.fit_predict(dataset_test_bld, predictions)
+
+# Evaluate the classifier's performance with fairness intervention
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+print("Disparate Impact: {:.6f}".format(metric_with_fairness.disparate_impact()))
+print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+
+statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+print(f"Statistical Parity Difference: {statistical_parity_difference}")
+print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_DIR+AL+ROC_EO.ipynb
+====================================================================================================
+
+--- CODE CELL 2 ---
+# Data handling and visualization
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Machine Learning
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
+# AIF360 fairness library
+from aif360.datasets import StandardDataset, BinaryLabelDataset
+from aif360.metrics import BinaryLabelDatasetMetric, ClassificationMetric
+from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
+from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+
+data = pd.read_csv(COMPAS dataset)
+
+X = data.drop(['two_year_recid'], axis =1)
+y = data[['two_year_recid']]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+
+dataset_train = pd.concat([X_train, y_train], axis=1)
+dataset_test = pd.concat([X_test, y_test], axis=1)
+
+dataset_train = dataset_train.reset_index(drop=True)
+dataset_test = dataset_test.reset_index(drop=True)
+
+# Define favorable and unfavorable labels
+favorable_label = 1
+unfavorable_label = 0
+
+# Define protected attribute names and privileged group
+protected_attribute_names = ['race']
+privileged_group = [{'race': 1}]
+unprivileged_group = [{'race' : 0}]
+
+dir = DisparateImpactRemover(repair_level=1, sensitive_attribute="race")
+
+# Convert the training and test set to Binary label datasets
+dataset_train_bld = BinaryLabelDataset(df=dataset_train,
+                             label_names=['two_year_recid'],
+                             favorable_label=favorable_label,
+                             unfavorable_label=unfavorable_label,
+                             protected_attribute_names=protected_attribute_names,
+                             privileged_protected_attributes=privileged_group)
+
+dataset_test_bld = BinaryLabelDataset(df=dataset_test,
+                                      label_names=['two_year_recid'],
+                                      favorable_label=favorable_label,
+                                      unfavorable_label=unfavorable_label,
+                                      protected_attribute_names=protected_attribute_names,
+                                      privileged_protected_attributes=privileged_group)
+
+# Fit and transform the training data
+dir_dataset = dir.fit_transform(dataset_train_bld)
+
+from aif360.algorithms.inprocessing import AdversarialDebiasing
+
+sess = tf.Session()
+
+# Use a different scope name if re-running the fitting process
+debias_model = AdversarialDebiasing(privileged_groups=[{'race': 1}],
+                                    unprivileged_groups=[{'race': 0}],
+                                    scope_name='debias_model_unique_scope',  # Change the scope name for each new instance
+                                    debias=True,
+                                    sess=sess,
+                                    seed = 101)
+
+debias_model.fit(dir_dataset)
+
+# Predict with the debias_model
+predictions = debias_model.predict(dataset_test_bld)
+
+from aif360.metrics import ClassificationMetric
+
+# Assuming dataset_test_bld is the original test dataset with true labels
+# and predictions is the dataset with your model's predictions
+metric_predicted_dataset = ClassificationMetric(dataset_test_bld, predictions,
+                              unprivileged_groups=unprivileged_group,
+                              privileged_groups=privileged_group)
+
+
+# Print metrics
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.6f}".format(metric_predicted_dataset.accuracy()))
+print("Disparate Impact: {:.6f}".format(metric_predicted_dataset.disparate_impact()))
+print("Mean Difference: {:.6f}".format(metric_predicted_dataset.mean_difference()))
+print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+print(f"Disparate Impact: {metric_predicted_dataset.disparate_impact()}")
+print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+
+#Implementing the ROC on AL output
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+                                 low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+                                 metric_ub=0.05, metric_lb=-0.05)
+
+test_predictions = ROC.fit_predict(dataset_test_bld, predictions)
+
+# Evaluate the classifier's performance with ROC intervention
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.2f}".format(metric_with_fairness.accuracy()))
+# Calculate fairness metrics
+statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+disparate_impact = metric_with_fairness.disparate_impact()
+equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+
+# Print out the metrics
+print(f"Statistical Parity Difference: {statistical_parity_difference}")
+print(f"Disparate Impact: {disparate_impact}")
+print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+#Implementing the EO on AL output
+# Initialize EqualizedOdds
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, seed = 101)
+
+# Fit the EqualizedOdds model
+test_predictions = eo.fit_predict(dataset_test_bld, predictions)
+
+# Evaluate the classifier's performance with fairness intervention
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (Equalized Odds):")
+print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+# Calculate fairness metrics
+statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+disparate_impact = metric_with_fairness.disparate_impact()
+equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+# Print out the metrics
+print(f"Statistical Parity Difference: {statistical_parity_difference}")
+print(f"Disparate Impact: {disparate_impact}")
+print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+# Print out the equality of odds metrics
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+
+
+
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_DIR+EGR+ROC_EO.ipynb
+====================================================================================================
+
+--- CODE CELL 2 ---
+# Data handling and visualization
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Machine Learning
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
+# AIF360 fairness library
+from aif360.datasets import StandardDataset, BinaryLabelDataset
+from aif360.metrics import BinaryLabelDatasetMetric, ClassificationMetric
+from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
+from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+
+data = pd.read_csv(COMPAS dataset)
+
+X = data.drop(['two_year_recid'], axis =1)
+y = data[['two_year_recid']]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+
+dataset_train = pd.concat([X_train, y_train], axis=1)
+dataset_test = pd.concat([X_test, y_test], axis=1)
+
+dataset_train = dataset_train.reset_index(drop=True)
+dataset_test = dataset_test.reset_index(drop=True)
+
+# Define favorable and unfavorable labels
+favorable_label = 1
+unfavorable_label = 0
+
+# Define protected attribute names and privileged group
+protected_attribute_names = ['race']
+privileged_group = [{'race': 1}]
+unprivileged_group = [{'race' : 0}]
+
+# Convert the training and test set to Binary label datasets
+dataset_train_bld = BinaryLabelDataset(df=dataset_train,
+                             label_names=['two_year_recid'],
+                             favorable_label=favorable_label,
+                             unfavorable_label=unfavorable_label,
+                             protected_attribute_names=protected_attribute_names,
+                             privileged_protected_attributes=privileged_group)
+
+dataset_test_bld = BinaryLabelDataset(df=dataset_test,
+                                      label_names=['two_year_recid'],
+                                      favorable_label=favorable_label,
+                                      unfavorable_label=unfavorable_label,
+                                      protected_attribute_names=protected_attribute_names,
+                                      privileged_protected_attributes=privileged_group)
+
+# Applying DisparateImpactRemover
+dir = DisparateImpactRemover(repair_level=1, sensitive_attribute="race")
+
+# Fit and transform the training data
+dir_dataset = dir.fit_transform(dataset_train_bld)
+
+# Apply Exponentiated Gradient Reduction (EG) in-processing technique
+# You can choose a suitable base learner (e.g., logistic regression)
+base_classifier = LogisticRegression()
+
+inprocess_algorithm = ExponentiatedGradientReduction(base_classifier, constraints="DemographicParity",
+                                                     eps = 0.02, drop_prot_attr = False)
+
+inprocess_algorithm.fit(dir_dataset)
+
+# Predict on the test set
+predictions = inprocess_algorithm.predict(dataset_test_bld)
+
+# Evaluate the model's accuracy and fairness using AIF360 metrics
+accuracy = accuracy_score(dataset_test_bld.labels, predictions.labels)
+metric_predicted_dataset = ClassificationMetric(dataset_test_bld, predictions, privileged_group, unprivileged_group)
+
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.6f}".format(metric_predicted_dataset.accuracy()))
+print("Disparate Impact: {:.6f}".format(metric_predicted_dataset.disparate_impact()))
+print("Mean Difference: {:.6f}".format(metric_predicted_dataset.mean_difference()))
+print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+
+#Apply EO
+# Initialize EqualizedOdds
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group)
+
+# Fit the EqualizedOdds model
+test_predictions = eo.fit_predict(dataset_test_bld, predictions)
+
+# Evaluate the classifier's performance with fairness intervention
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (Equalized Odds Optimization):")
+print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+print("Disparate Impact: {:.6f}".format(metric_with_fairness.disparate_impact()))
+print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+
+# Calculate fairness metrics
+statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+print(f"Statistical Parity Difference: {statistical_parity_difference}")
+print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+# Apply Reject Option Classification
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+                                 low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+                                 metric_ub=0.05, metric_lb=-0.05)
+
+test_predictions = ROC.fit_predict(dataset_test_bld, predictions)
+
+# Evaluate the classifier's performance with fairness intervention
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+print("Disparate Impact: {:.6f}".format(metric_with_fairness.disparate_impact()))
+print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+
+statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+print(f"Statistical Parity Difference: {statistical_parity_difference}")
+print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_RE+EGR+EO_ROC.ipynb
+====================================================================================================
+
+--- CODE CELL 2 ---
+# Data handling and visualization
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Machine Learning
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
+# AIF360 fairness library
+from aif360.datasets import StandardDataset, BinaryLabelDataset
+from aif360.metrics import BinaryLabelDatasetMetric, ClassificationMetric
+from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+
+data = pd.read_csv(COMPAS dataset)
+
+X = data.drop(['two_year_recid'], axis =1)
+y = data[['two_year_recid']]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+
+dataset_train = pd.concat([X_train, y_train], axis=1)
+dataset_test = pd.concat([X_test, y_test], axis=1)
+
+dataset_train = dataset_train.reset_index(drop=True)
+dataset_test = dataset_test.reset_index(drop=True)
+
+# Define favorable and unfavorable labels
+favorable_label = 1
+unfavorable_label = 0
+
+# Define protected attribute names and privileged group
+protected_attribute_names = ['race']
+privileged_group = [{'race': 1}]
+unprivileged_group = [{'race' : 0}]
+
+# Convert the training and test set to Binary label datasets
+dataset_train_bld = BinaryLabelDataset(df=dataset_train,
+                             label_names=['two_year_recid'],
+                             favorable_label=favorable_label,
+                             unfavorable_label=unfavorable_label,
+                             protected_attribute_names=protected_attribute_names,
+                             privileged_protected_attributes=privileged_group)
+
+dataset_test_bld = BinaryLabelDataset(df=dataset_test,
+                                      label_names=['two_year_recid'],
+                                      favorable_label=favorable_label,
+                                      unfavorable_label=unfavorable_label,
+                                      protected_attribute_names=protected_attribute_names,
+                                      privileged_protected_attributes=privileged_group)
+
+#Preprocessing technique
+# Applying Reweighing
+RW = Reweighing(unprivileged_groups=unprivileged_group, privileged_groups=privileged_group)
+
+# Fit and transform the training data
+re_dataset = RW.fit_transform(dataset_train_bld)
+
+#setting the base classifier
+base_classifier = LogisticRegression(solver='lbfgs', max_iter=1000)
+
+#Inprocessing technique
+inprocess_algorithm = ExponentiatedGradientReduction(base_classifier, constraints="DemographicParity",
+                                                     eps = 0.02, drop_prot_attr = False)
+
+inprocess_algorithm.fit(re_dataset)
+
+# Predict on the test set
+predictions = inprocess_algorithm.predict(dataset_test_bld)
+
+# Evaluate the model's accuracy and fairness
+accuracy = accuracy_score(dataset_test_bld.labels, predictions.labels)
+metric_predicted_dataset = ClassificationMetric(dataset_test_bld, predictions, privileged_group, unprivileged_group)
+
+print(f"Accuracy: {accuracy:.2f}")
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.2f}".format(metric_predicted_dataset.accuracy()))
+print("Disparate Impact: {:.2f}".format(metric_predicted_dataset.disparate_impact()))
+print("Mean Difference: {:.2f}".format(metric_predicted_dataset.mean_difference()))
+print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+
+#Applying the Postprocessing: EO
+# Initialize EqualizedOdds
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group)
+
+# Fit the EqualizedOdds model
+test_predictions = eo.fit_predict(dataset_test_bld, predictions)
+
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (EO):")
+print("Accuracy: {:.2f}".format(metric_with_fairness.accuracy()))
+print("Disparate Impact: {:.2f}".format(metric_with_fairness.disparate_impact()))
+print("Mean Difference: {:.2f}".format(metric_with_fairness.mean_difference()))
+statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+print(f"Statistical Parity Difference: {statistical_parity_difference}")
+print(f"Disparate Impact: {disparate_impact}")
+print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+#Applying thee Postprocessing: ROC
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+                                 low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+                                 metric_ub=0.05, metric_lb=-0.05)
+
+
+test_predictions = ROC.fit_predict(dataset_test_bld, predictions)
+
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+print("Disparate Impact: {:.6f}".format(metric_with_fairness.disparate_impact()))
+print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+print(f"Statistical Parity Difference: {statistical_parity_difference}")
+print(f"Disparate Impact: {disparate_impact}")
+print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_Re+AD+ROC_EO.ipynb
+====================================================================================================
+
+--- CODE CELL 2 ---
+# Data handling and visualization
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Machine Learning
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
+# AIF360 fairness library
+from aif360.datasets import StandardDataset, BinaryLabelDataset
+from aif360.metrics import BinaryLabelDatasetMetric, ClassificationMetric
+from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
+from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+
+data = pd.read_csv(COMPAS dataset)
+
+X = data.drop(['two_year_recid'], axis =1)
+y = data[['two_year_recid']]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+
+dataset_train = pd.concat([X_train, y_train], axis=1)
+dataset_test = pd.concat([X_test, y_test], axis=1)
+
+dataset_train = dataset_train.reset_index(drop=True)
+dataset_test = dataset_test.reset_index(drop=True)
+
+# Define favorable and unfavorable labels
+favorable_label = 1
+unfavorable_label = 0
+
+# Define protected attribute names and privileged group
+protected_attribute_names = ['race']
+privileged_group = [{'race': 1}]
+unprivileged_group = [{'race' : 0}]
+
+# Convert the training and test set to Binary label datasets
+dataset_train_bld = BinaryLabelDataset(df=dataset_train,
+                             label_names=['two_year_recid'],
+                             favorable_label=favorable_label,
+                             unfavorable_label=unfavorable_label,
+                             protected_attribute_names=protected_attribute_names,
+                             privileged_protected_attributes=privileged_group)
+
+dataset_test_bld = BinaryLabelDataset(df=dataset_test,
+                                      label_names=['two_year_recid'],
+                                      favorable_label=favorable_label,
+                                      unfavorable_label=unfavorable_label,
+                                      protected_attribute_names=protected_attribute_names,
+                                      privileged_protected_attributes=privileged_group)
+
+# Apply Reweighing
+from aif360.algorithms.preprocessing import Reweighing
+RW = Reweighing(unprivileged_groups=unprivileged_group, privileged_groups=privileged_group)
+
+# Fit and transform the training data
+dir_dataset = RW.fit_transform(dataset_train_bld)
+
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+
+sess = tf.Session()
+
+# Use a different scope name if re-running the fitting process
+debias_model = AdversarialDebiasing(privileged_groups=[{'race': 1}],
+                                    unprivileged_groups=[{'race': 0}],
+                                    scope_name='debias_model_unique_scope1',  # Change the scope name for each new instance
+                                    debias=True,
+                                    sess=sess, seed = 101)
+
+debias_model.fit(dir_dataset)
+
+# Predict with the debias_model
+predictions = debias_model.predict(dataset_test_bld)
+
+from aif360.metrics import ClassificationMetric
+
+# Assuming dataset_test_bld is the original test dataset with true labels
+# and predictions is the dataset with your model's predictions
+metric_predicted_dataset = ClassificationMetric(dataset_test_bld, predictions,
+                              unprivileged_groups=unprivileged_group,
+                              privileged_groups=privileged_group)
+
+accuracy = metric_predicted_dataset.accuracy()
+disparate_impact = metric_predicted_dataset.disparate_impact()
+# Add any other metrics you are interested in
+
+print(f"Accuracy: {accuracy}")
+print(f"Disparate Impact: {disparate_impact}")
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.6f}".format(metric_predicted_dataset.accuracy()))
+print("Mean Difference: {:.6f}".format(metric_predicted_dataset.mean_difference()))
+print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+print(f"Disparate Impact: {metric_predicted_dataset.disparate_impact()}")
+print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+
+# Apply Reject Option Classification
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+                                 low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+                                 metric_ub=0.05, metric_lb=-0.05)
+
+test_predictions = ROC.fit_predict(dataset_test_bld, predictions)
+
+# Evaluate the classifier's performance with fairness intervention
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+print("Disparate Impact: {:.6f}".format(metric_with_fairness.disparate_impact()))
+print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+
+statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+print(f"Statistical Parity Difference: {statistical_parity_difference}")
+print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+# Initialize EqualizedOdds
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, seed = 101)
+
+# Fit the EqualizedOdds model
+test_predictions = eo.fit_predict(dataset_test_bld, predictions)
+
+# Evaluate the classifier's performance with fairness intervention
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+
+statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+print(f"Statistical Parity Difference: {statistical_parity_difference}")
+print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+====================================================================================================
+IF-EA/Git_COMPAS_PP_DIR+ROC_EO.ipynb
+====================================================================================================
+
+--- CODE CELL 2 ---
+# Data handling and visualization
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Machine Learning
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
+# AIF360 fairness library
+from aif360.datasets import StandardDataset, BinaryLabelDataset
+from aif360.metrics import BinaryLabelDatasetMetric, ClassificationMetric
+from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
+from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+
+data = pd.read_csv(COMPAS dataset)
+
+X = data.drop(['two_year_recid'], axis =1)
+y = data[['two_year_recid']]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+
+dataset_train = pd.concat([X_train, y_train], axis=1)
+dataset_test = pd.concat([X_test, y_test], axis=1)
+
+dataset_train = dataset_train.reset_index(drop=True)
+dataset_test = dataset_test.reset_index(drop=True)
+
+# Define favorable and unfavorable labels
+favorable_label = 1
+unfavorable_label = 0
+
+# Define protected attribute names and privileged group
+protected_attribute_names = ['race']
+privileged_group = [{'race': 1}]
+unprivileged_group = [{'race' : 0}]
+
+# Convert the training and test set to Binary label datasets
+dataset_train_bld = BinaryLabelDataset(df=dataset_train,
+                             label_names=['two_year_recid'],
+                             favorable_label=favorable_label,
+                             unfavorable_label=unfavorable_label,
+                             protected_attribute_names=protected_attribute_names,
+                             privileged_protected_attributes=privileged_group)
+
+dataset_test_bld = BinaryLabelDataset(df=dataset_test,
+                                      label_names=['two_year_recid'],
+                                      favorable_label=favorable_label,
+                                      unfavorable_label=unfavorable_label,
+                                      protected_attribute_names=protected_attribute_names,
+                                      privileged_protected_attributes=privileged_group)
+
+# Applying DisparateImpactRemover
+dir = DisparateImpactRemover(repair_level=1, sensitive_attribute="race")
+
+# Fit and transform the training data
+dir_dataset = dir.fit_transform(dataset_train_bld)
+
+# Define features and target variable
+X_train = dir_dataset.features
+y_train = dir_dataset.labels.ravel()
+X_test = dataset_test_bld.features
+y_test = dataset_test_bld.labels.ravel()
+
+# Scale the features using StandardScaler
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+X_train_scaled = pd.DataFrame(X_train_scaled, columns=X.columns)
+X_test_scaled = pd.DataFrame(X_test_scaled, columns=X.columns)
+y_train = pd.DataFrame(y_train, columns = y.columns)
+y_test = pd.DataFrame(y_test, columns = y.columns)
+
+dataset_train = pd.concat([X_train_scaled, y_train], axis=1)
+dataset_test = pd.concat([X_test_scaled, y_test], axis=1)
+
+model = LogisticRegression()
+model.fit(X_train_scaled, y_train['two_year_recid'])
+y_pred = model.predict(X_test_scaled)
+
+y_pred = pd.DataFrame(y_pred, columns=['two_year_recid'])
+X_test = pd.DataFrame(X_test, columns=X.columns)
+
+dataset_test = pd.concat([X_test, y_test], axis=1)
+dataset_testpred = pd.concat([X_test, y_pred], axis=1)
+
+# Convert DataFrames back to AIF360 BinaryLabelDataset
+dataset_test = BinaryLabelDataset(df=dataset_test,
+                                          label_names=['two_year_recid'],
+                                          favorable_label=favorable_label,
+                                          unfavorable_label=unfavorable_label,
+                                          protected_attribute_names=protected_attribute_names,
+                                          privileged_protected_attributes=privileged_group)
+
+dataset_testpred = BinaryLabelDataset(df=dataset_testpred,
+                                         label_names=['two_year_recid'],
+                                         favorable_label=favorable_label,
+                                         unfavorable_label=unfavorable_label,
+                                         protected_attribute_names=protected_attribute_names,
+                                         privileged_protected_attributes=privileged_group)
+
+# Wrap the true labels and the predictions into BinaryLabelDataset objects
+predictions = dataset_test_bld.copy()
+predictions.labels = y_pred.reshape(-1,1)
+
+# Initialize EqualizedOdds
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, seed = 101)
+
+# Fit the EqualizedOdds model
+test_predictions = eo.fit_predict(dataset_test, dataset_testpred)
+
+# Evaluate the classifier's performance with fairness intervention
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (EqualizedOdds):")
+print("Accuracy: {:.6f}".format(metric_predicted_dataset.accuracy()))
+print("Disparate Impact: {:.6f}".format(metric_predicted_dataset.disparate_impact()))
+print("Mean Difference: {:.6f}".format(metric_predicted_dataset.mean_difference()))
+print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+# Apply Reject Option Classification
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+                                 low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+                                 metric_ub=0.05, metric_lb=-0.05)
+
+test_predictions = ROC.fit_predict(dataset_test, dataset_testpred)
+
+# Evaluate the classifier's performance with fairness intervention
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (EqualizedOdds):")
+print("Accuracy: {:.6f}".format(metric_predicted_dataset.accuracy()))
+print("Disparate Impact: {:.6f}".format(metric_predicted_dataset.disparate_impact()))
+print("Mean Difference: {:.6f}".format(metric_predicted_dataset.mean_difference()))
+print(f"Statistical Parity Difference: {metric_predicted_dataset.statistical_parity_difference()}")
+print(f"Equal Opportunity Difference: {metric_predicted_dataset.equal_opportunity_difference()}")
+print(f"Predictive Equality: {metric_predicted_dataset.false_positive_rate_difference()}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+
+====================================================================================================
+IF-EA/Git_COMPAS_PP_Re+EO_ROC.ipynb
+====================================================================================================
+
+--- CODE CELL 2 ---
+# Data handling and visualization
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Machine Learning
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
+# AIF360 fairness library
+from aif360.datasets import StandardDataset, BinaryLabelDataset
+from aif360.metrics import BinaryLabelDatasetMetric, ClassificationMetric
+from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
+from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
+from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+
+data = pd.read_csv(COMPAS dataset)
+
+X = data.drop(['two_year_recid'], axis =1)
+y = data[['two_year_recid']]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+
+dataset_train = pd.concat([X_train, y_train], axis=1)
+dataset_test = pd.concat([X_test, y_test], axis=1)
+
+dataset_train = dataset_train.reset_index(drop=True)
+dataset_test = dataset_test.reset_index(drop=True)
+
+# Define favorable and unfavorable labels
+favorable_label = 1
+unfavorable_label = 0
+
+# Define protected attribute names and privileged group
+protected_attribute_names = ['race']
+privileged_group = [{'race': 1}]
+unprivileged_group = [{'race' : 0}]
+
+# Convert the training and test set to Binary label datasets
+dataset_train_bld = BinaryLabelDataset(df=dataset_train,
+                             label_names=['two_year_recid'],
+                             favorable_label=favorable_label,
+                             unfavorable_label=unfavorable_label,
+                             protected_attribute_names=protected_attribute_names,
+                             privileged_protected_attributes=privileged_group)
+
+dataset_test_bld = BinaryLabelDataset(df=dataset_test,
+                                      label_names=['two_year_recid'],
+                                      favorable_label=favorable_label,
+                                      unfavorable_label=unfavorable_label,
+                                      protected_attribute_names=protected_attribute_names,
+                                      privileged_protected_attributes=privileged_group)
+
+# Apply Reweighing
+RW = Reweighing(unprivileged_groups=unprivileged_group, privileged_groups=privileged_group)
+
+# Fit and transform the training data
+dir_dataset = RW.fit_transform(dataset_train_bld)
+
+# Define features and target variable
+X_train = dir_dataset.features
+y_train = dir_dataset.labels.ravel()
+X_test = dataset_test_bld.features
+y_test = dataset_test_bld.labels.ravel()
+
+# Scale the features using StandardScaler
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+X_train_scaled = pd.DataFrame(X_train_scaled, columns=X.columns)
+X_test_scaled = pd.DataFrame(X_test_scaled, columns=X.columns)
+y_train = pd.DataFrame(y_train, columns = y.columns)
+y_test = pd.DataFrame(y_test, columns = y.columns)
+
+model = LogisticRegression()
+
+model.fit(X_train_scaled, y_train['two_year_recid'])
+
+y_pred = model.predict(X_test_scaled)
+y_pred = pd.DataFrame(y_pred, columns=['two_year_recid'])
+X_test = pd.DataFrame(X_test, columns=X.columns)
+
+dataset_test = pd.concat([X_test, y_test], axis=1)
+dataset_testpred = pd.concat([X_test, y_pred], axis=1)
+
+# Convert DataFrames back to BinaryLabelDataset
+dataset_test = BinaryLabelDataset(df=dataset_test,
+                                          label_names=['two_year_recid'],
+                                          favorable_label=favorable_label,
+                                          unfavorable_label=unfavorable_label,
+                                          protected_attribute_names=protected_attribute_names,
+                                          privileged_protected_attributes=privileged_group)
+
+dataset_testpred = BinaryLabelDataset(df=dataset_testpred,
+                                         label_names=['two_year_recid'],
+                                         favorable_label=favorable_label,
+                                         unfavorable_label=unfavorable_label,
+                                         protected_attribute_names=protected_attribute_names,
+                                         privileged_protected_attributes=privileged_group)
+
+#Apply Postprocessing: EO
+# Initialize EqualizedOdds
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, seed = 101)
+
+# Fit the EqualizedOdds model
+test_predictions = eo.fit_predict(dataset_test, dataset_testpred)
+
+# Evaluate the classifier's performance with fairness intervention
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (Equalized Odds Optimization):")
+print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+print("Disparate Impact: {:.6f}".format(metric_with_fairness.disparate_impact()))
+print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+print(f"Statistical Parity Difference: {statistical_parity_difference}")
+print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+
+# Apply Reject Option Classification
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, metric_name="Equal opportunity difference",
+                                 low_class_thresh=0.3, high_class_thresh=0.8, num_class_thresh=100, num_ROC_margin=50,
+                                 metric_ub=0.05, metric_lb=-0.05)
+
+test_predictions = ROC.fit_predict(dataset_test, dataset_testpred)
+
+# Evaluate the classifier's performance with fairness intervention
+metric_with_fairness = ClassificationMetric(
+    dataset_test_bld,
+    test_predictions,
+    unprivileged_groups=unprivileged_group,
+    privileged_groups=privileged_group
+)
+
+print("Performance with fairness intervention (Reject Option Classification):")
+print("Accuracy: {:.6f}".format(metric_with_fairness.accuracy()))
+print("Disparate Impact: {:.6f}".format(metric_with_fairness.disparate_impact()))
+print("Mean Difference: {:.6f}".format(metric_with_fairness.mean_difference()))
+
+statistical_parity_difference = metric_with_fairness.statistical_parity_difference()
+equal_opportunity_difference = metric_with_fairness.equal_opportunity_difference()
+print(f"Statistical Parity Difference: {statistical_parity_difference}")
+print(f"Equal Opportunity Difference: {equal_opportunity_difference}")
+print("Difference in True Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.true_positive_rate_difference())
+print("Difference in False Positive Rates (Unprivileged - Privileged) = %f" % metric_with_fairness.false_positive_rate_difference())
+

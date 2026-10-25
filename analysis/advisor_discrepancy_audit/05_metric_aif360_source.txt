@@ -1,0 +1,60 @@
+====================================================================================================
+statistical_parity_difference
+====================================================================================================
+    def statistical_parity_difference(self):
+        r"""
+        .. math::
+           Pr(\hat{Y} = 1 | D = \text{unprivileged})
+           - Pr(\hat{Y} = 1 | D = \text{privileged})
+        """
+        return self.difference(self.selection_rate)
+
+
+====================================================================================================
+disparate_impact
+====================================================================================================
+    def disparate_impact(self):
+        r"""
+        .. math::
+           \frac{Pr(\hat{Y} = 1 | D = \text{unprivileged})}
+           {Pr(\hat{Y} = 1 | D = \text{privileged})}
+        """
+        return self.ratio(self.selection_rate)
+
+
+====================================================================================================
+equal_opportunity_difference
+====================================================================================================
+    def equal_opportunity_difference(self):
+        """Alias of :meth:`true_positive_rate_difference`."""
+        return self.true_positive_rate_difference()
+
+
+====================================================================================================
+false_positive_rate_difference
+====================================================================================================
+    def false_positive_rate_difference(self):
+        r""":math:`FPR_{D = \text{unprivileged}} - FPR_{D = \text{privileged}}`
+        """
+        return self.difference(self.false_positive_rate)
+
+
+====================================================================================================
+difference
+====================================================================================================
+    def difference(self, metric_fun):
+        """Compute difference of the metric for unprivileged and privileged
+        groups.
+        """
+        return metric_fun(privileged=False) - metric_fun(privileged=True)
+
+
+====================================================================================================
+ratio
+====================================================================================================
+    def ratio(self, metric_fun):
+        """Compute ratio of the metric for unprivileged and privileged groups.
+        """
+        return metric_fun(privileged=False) / metric_fun(privileged=True)
+
+

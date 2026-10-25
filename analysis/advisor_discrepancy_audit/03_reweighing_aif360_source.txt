@@ -1,0 +1,50 @@
+====================================================================================================
+REWEIGHING TRANSFORM
+====================================================================================================
+    def transform(self, dataset):
+        """Transform the dataset to a new dataset based on the estimated
+        transformation.
+
+        Args:
+            dataset (BinaryLabelDataset): Dataset that needs to be transformed.
+        Returns:
+            dataset (BinaryLabelDataset): Dataset with transformed
+                instance_weights attribute.
+        """
+
+        dataset_transformed = dataset.copy(deepcopy=True)
+
+        (_, _, _, _, cond_p_fav, cond_p_unfav, cond_up_fav, cond_up_unfav) =\
+                            self._obtain_conditionings(dataset)
+
+        # apply reweighing
+        dataset_transformed.instance_weights[cond_p_fav] *= self.w_p_fav
+        dataset_transformed.instance_weights[cond_p_unfav] *= self.w_p_unfav
+        dataset_transformed.instance_weights[cond_up_fav] *= self.w_up_fav
+        dataset_transformed.instance_weights[cond_up_unfav] *= self.w_up_unfav
+
+        return dataset_transformed
+
+
+====================================================================================================
+EGR FIT
+====================================================================================================
+    def fit(self, dataset):
+        """Learns randomized model with less bias
+
+        Args:
+            dataset: (Binary label) Dataset containing true labels.
+
+        Returns:
+            ExponentiatedGradientReduction: Returns self.
+        """
+        #set prot_attr
+        self.model.prot_attr = dataset.protected_attribute_names
+
+        X_df = pd.DataFrame(dataset.features, columns=dataset.feature_names)
+        Y = dataset.labels
+
+        self.model.fit(X_df, Y)
+
+        return self
+

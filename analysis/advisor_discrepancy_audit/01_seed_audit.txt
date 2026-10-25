@@ -1,0 +1,131 @@
+====================================================================================================
+COMPAS RANDOMNESS / SEED AUDIT
+====================================================================================================
+
+Found 8 COMPAS notebooks.
+
+====================================================================================================
+IF-EA/Git_COMPAS_IP_AD+ROC_EO.ipynb
+====================================================================================================
+
+--- code cell 2 ---
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+from aif360.algorithms.inprocessing import AdversarialDebiasing
+debias_model = AdversarialDebiasing(privileged_groups=[{'race': 1}],
+                                    seed = 101)
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, seed = 101)
+
+====================================================================================================
+IF-EA/Git_COMPAS_IP_EGR+EO_ROC.ipynb
+====================================================================================================
+
+--- code cell 2 ---
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction
+inprocess_algorithm = ExponentiatedGradientReduction(base_classifier, constraints="DemographicParity",
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, seed = 101)
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_DIR+AL+ROC_EO.ipynb
+====================================================================================================
+
+--- code cell 2 ---
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+from aif360.algorithms.inprocessing import AdversarialDebiasing
+debias_model = AdversarialDebiasing(privileged_groups=[{'race': 1}],
+                                    seed = 101)
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, seed = 101)
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_DIR+EGR+ROC_EO.ipynb
+====================================================================================================
+
+--- code cell 2 ---
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+inprocess_algorithm = ExponentiatedGradientReduction(base_classifier, constraints="DemographicParity",
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_RE+EGR+EO_ROC.ipynb
+====================================================================================================
+
+--- code cell 2 ---
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+inprocess_algorithm = ExponentiatedGradientReduction(base_classifier, constraints="DemographicParity",
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+
+====================================================================================================
+IF-EA/Git_COMPAS_PIP_Re+AD+ROC_EO.ipynb
+====================================================================================================
+
+--- code cell 2 ---
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+debias_model = AdversarialDebiasing(privileged_groups=[{'race': 1}],
+                                    sess=sess, seed = 101)
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, seed = 101)
+
+====================================================================================================
+IF-EA/Git_COMPAS_PP_DIR+ROC_EO.ipynb
+====================================================================================================
+
+--- code cell 2 ---
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, seed = 101)
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+
+====================================================================================================
+IF-EA/Git_COMPAS_PP_Re+EO_ROC.ipynb
+====================================================================================================
+
+--- code cell 2 ---
+from aif360.algorithms.inprocessing import ExponentiatedGradientReduction, AdversarialDebiasing
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.algorithms.postprocessing.reject_option_classification import RejectOptionClassification
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state=101, shuffle =True, stratify = y)
+eo = EqOddsPostprocessing(unprivileged_groups=unprivileged_group,
+                                  privileged_groups=privileged_group, seed = 101)
+ROC = RejectOptionClassification(unprivileged_groups=unprivileged_group,
+
+====================================================================================================
+END AUDIT
+====================================================================================================
