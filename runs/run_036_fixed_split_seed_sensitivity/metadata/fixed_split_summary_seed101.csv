@@ -1,0 +1,2 @@
+split_seed,train_rows,test_rows,train_row_id_sha256,test_row_id_sha256,train_race_0,train_race_1,test_race_0,test_race_1,train_target_0,train_target_1,test_target_0,test_target_1
+101,3694,1584,db883dde9864689948334065e30b9aaf628d4e406c7d565df492b5cfa96021cb,a9d9f03486e3577a0eac1345527af731b9f473450cb33a53a0330c71d7a42de5,2222,1472,953,631,1914,1780,881,703
