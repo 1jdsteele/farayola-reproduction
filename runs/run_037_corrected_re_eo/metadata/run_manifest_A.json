@@ -1,0 +1,36 @@
+{
+  "experiment": "037_corrected_re_eo",
+  "data_sha256": "6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e",
+  "reference_sha256": {
+    "008": "fdc2541f09dc7f5be228d0b7b8e72782c1afab731479c608b5ae3be8d3f7600b",
+    "010": "9f6884c47fe8a74790807c5da9fc6107b96eeb31c25c8e71ae184cc6376fbcee",
+    "012": "38f51b3ceb51f97678ba67f449bc4cd6c8fea9127fd6649d98d55bce762a140e",
+    "018": "3b138d349e29b8c2a8e62af9eb54b46fe769f8de38e0f1c27a06cb4133ac925c"
+  },
+  "versions": {
+    "python": "3.14.7",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "scipy": "1.18.1",
+    "sklearn": "1.9.1",
+    "aif360": "0.6.1"
+  },
+  "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+  ],
+  "test_fraction": 0.3,
+  "stratify": "race",
+  "eo_seed": "experimental seed",
+  "eo_calibration": "test (leakage; intentional)",
+  "classifier": "LogisticRegression(solver='lbfgs', max_iter=1000)",
+  "scientific_change": "pass sample_weight=re_dataset.instance_weights to LR.fit"
+}
