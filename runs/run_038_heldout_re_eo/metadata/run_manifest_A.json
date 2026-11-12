@@ -1,0 +1,47 @@
+{
+  "experiment": "038_heldout_re_eo",
+  "description": "Held-out EO vs. corrected weighted Reweighing + EO",
+  "input_data_sha256": "6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e",
+  "reference_sha256": {
+    "008": "fdc2541f09dc7f5be228d0b7b8e72782c1afab731479c608b5ae3be8d3f7600b",
+    "010": "9f6884c47fe8a74790807c5da9fc6107b96eeb31c25c8e71ae184cc6376fbcee"
+  },
+  "script_sha256": "cfb829acb3d23784beffa84a44e41551de6131ef8cf56dc25cfd895fc1258eb4",
+  "versions": {
+    "python": "3.14.7",
+    "aif360": "0.6.1",
+    "scikit_learn": "1.9.1",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "scipy": "1.18.1"
+  },
+  "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+  ],
+  "outer_test_size": 0.3,
+  "calibration_fraction_of_outer": 0.5,
+  "proportions": {
+    "train": 0.7,
+    "calibration": 0.15,
+    "test": 0.15
+  },
+  "outer_split_stratification": "race",
+  "calibration_test_stratification": "race + target joint strata",
+  "calibration_test_split_random_state": "seed+10000",
+  "eo_random_seed": "seed",
+  "eo_policy_fit_rows": "calibration only",
+  "eo_policy_predict_rows": "test (and separately calibration diagnostics)",
+  "test_labels_used_for_training_or_calibration": false,
+  "model": "LogisticRegression(solver='lbfgs', max_iter=1000)",
+  "comparability": "Run 038 shares the training cohort and upstream model definition with Run 037, but EO policy learning and evaluation populations differ. Do not directly compare Run 038 and Run 037 metrics as a paired treatment effect.",
+  "outcome_data_not_used_for_model_selection": true
+}
