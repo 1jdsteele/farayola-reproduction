@@ -1,0 +1,27 @@
+{
+  "run": 42,
+  "tag": "SMOKE",
+  "seeds": [
+    101
+  ],
+  "source": "reweighing_handoff.zip",
+  "dataset_sha256": "6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e",
+  "method": "Approach A: per-oracle EGR sample_weight * AIF360 Re weights; mass-normalized",
+  "scope": "Only EGR internal LogisticRegression oracle fits; EGR fairness moments and objective remain unweighted",
+  "control_requirement": "unity oracle predictions exactly match legacy EGR and frozen Run 011",
+  "training_split": "70/30 race-stratified train/test, test unseen in EGR fitting",
+  "settings": {
+    "constraint": "DemographicParity",
+    "eps": 0.02,
+    "max_iter": 20,
+    "base_classifier": "LogisticRegression(solver=lbfgs, max_iter=1000)",
+    "drop_prot_attr": false
+  },
+  "versions": {
+    "aif360": "0.6.1",
+    "fairlearn": "0.14.0",
+    "scikit-learn": "1.9.1",
+    "pandas": "3.0.5",
+    "numpy": "2.5.3"
+  }
+}

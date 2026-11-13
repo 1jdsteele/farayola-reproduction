@@ -1,0 +1,4 @@
+arm,accuracy_mean,accuracy_std,disparate_impact_mean,disparate_impact_std,statistical_parity_difference_mean,statistical_parity_difference_std,equal_opportunity_difference_mean,equal_opportunity_difference_std,predictive_equality_difference_mean,predictive_equality_difference_std,changed_predictions_vs_legacy_mean,changed_predictions_vs_legacy_std,oracle_calls_mean,oracle_calls_std
+legacy_egr,0.674873737373737,,0.91842399214704,,-0.0360692649619269,,-0.0495909457773864,,-0.102967775467775,,0,,28,
+reweighted_oracle,0.664772727272727,,0.917508619397392,,-0.0366047330724728,,-0.0579738058551618,,-0.0934147609147609,,58,,23,
+unity_oracle,0.674873737373737,,0.91842399214704,,-0.0360692649619269,,-0.0495909457773864,,-0.102967775467775,,0,,28,
