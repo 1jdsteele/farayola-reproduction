@@ -1,0 +1,46 @@
+{
+  "experiment": "run_040_corrected_re_roc",
+  "tag": "SMOKE",
+  "seeds": [
+    101
+  ],
+  "dataset_sha256": "6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e",
+  "reference_sha256": {
+    "008": "fdc2541f09dc7f5be228d0b7b8e72782c1afab731479c608b5ae3be8d3f7600b",
+    "010": "9f6884c47fe8a74790807c5da9fc6107b96eeb31c25c8e71ae184cc6376fbcee"
+  },
+  "optional_reference_sources": {
+    "013": "/Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_013_individual_roc/metadata/per_seed_results_A.csv",
+    "019": "/Users/jsteele/Desktop/gradSchool/fairness_thesis/repos/farayola-reproduction/runs/run_019_reweighing_roc/metadata/per_seed_results_A.csv"
+  },
+  "data_protocol": {
+    "split": "70/30",
+    "stratify": "race",
+    "ROC_calibration": "test, same as evaluation (historical protocol; leakage)",
+    "label": "two_year_recid=1",
+    "groups": {
+      "unprivileged": 0,
+      "privileged": 1
+    }
+  },
+  "LR": "LogisticRegression(solver=lbfgs,max_iter=1000)",
+  "reweighing": "training only; sample_weight passed for weighted arms",
+  "ROC_parameters": {
+    "metric_name": "Equal opportunity difference",
+    "low_class_thresh": 0.3,
+    "high_class_thresh": 0.8,
+    "num_class_thresh": 100,
+    "num_ROC_margin": 50,
+    "metric_lb": -0.05,
+    "metric_ub": 0.05
+  },
+  "ROC_scores": "A/B hard 0/1 labels; C/D actual LR.predict_proba probability scores",
+  "versions": {
+    "python": "3.14.7",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "scipy": "1.18.1",
+    "sklearn": "1.9.1",
+    "aif360": "0.6.1"
+  }
+}
