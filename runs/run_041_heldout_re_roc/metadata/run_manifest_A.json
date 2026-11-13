@@ -1,0 +1,54 @@
+{
+  "experiment": "run_041_heldout_re_roc",
+  "tag": "A",
+  "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+  ],
+  "script_sha256": "d703f32db7a0701fbeb5cde31f432adcfdf9b40b38d5ca225d9fe4eadfc09c6e",
+  "input_sha256": "6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e",
+  "reference_sha256": {
+    "008": "fdc2541f09dc7f5be228d0b7b8e72782c1afab731479c608b5ae3be8d3f7600b",
+    "010": "9f6884c47fe8a74790807c5da9fc6107b96eeb31c25c8e71ae184cc6376fbcee"
+  },
+  "protocol": "70% training, 15% ROC calibration, 15% final held-out test",
+  "split": {
+    "outer": "70/30 race-stratified, random_state=seed",
+    "inner": "50/50 within 30%, stratified by race+label, random_state=seed+10000"
+  },
+  "target": "two_year_recid=1",
+  "privileged": 1,
+  "unprivileged": 0,
+  "base_model": "LogisticRegression(solver=lbfgs, max_iter=1000)",
+  "reweighing": "fit on train only, weights consumed for B/D",
+  "ROC_parameters": {
+    "metric_name": "Equal opportunity difference",
+    "low_class_thresh": 0.3,
+    "high_class_thresh": 0.8,
+    "num_class_thresh": 100,
+    "num_ROC_margin": 50,
+    "metric_lb": -0.05,
+    "metric_ub": 0.05
+  },
+  "ROC_fit_labels": "calibration labels only",
+  "ROC_predict": "calibration diagnostics and disjoint final-test rows",
+  "test_labels_used_for_roc_fit": false,
+  "score_modes": "A/B hard 0/1 ROC scores; C/D LR.predict_proba scores",
+  "comparability": "Same outer training cohorts as Run 040 and same inner split pattern as Run 038. Results use only half the old 30% evaluation set and independently calibrated ROC; do not treat Run 040 and Run 041 as paired performance comparisons.",
+  "versions": {
+    "python": "3.14.7",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "scipy": "1.18.1",
+    "sklearn": "1.9.1",
+    "aif360": "0.6.1"
+  }
+}

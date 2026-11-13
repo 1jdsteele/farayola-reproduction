@@ -1,0 +1,6 @@
+seed,comparison,intervention_arm,reference_arm,delta_test_post_roc_accuracy,delta_test_post_roc_disparate_impact,delta_test_post_roc_statistical_parity_difference,delta_test_post_roc_equal_opportunity_difference,delta_test_post_roc_predictive_equality_difference,delta_test_roc_changes
+101,B_minus_A,B_hard_weighted,A_hard_unweighted,-0.0202020202020202,-0.879178088347639,-0.234868630996702,-0.188340151957919,-0.265833333333333,0
+101,C_minus_A,C_prob_unweighted,A_hard_unweighted,-0.0618686868686869,1.14474966457171,-0.149266035528135,-0.0784628872004675,-0.16,249
+101,D_minus_B,D_prob_weighted,B_hard_weighted,-0.00505050505050508,0.198297500818509,0.088128922455058,0.0585914669783753,0.11,62
+101,D_minus_C,D_prob_weighted,C_prob_unweighted,0.0366161616161615,-1.82563025210084,0.00252632698649081,-0.0512857977790766,0.00416666666666664,-187
+101,D_minus_A,D_prob_weighted,A_hard_unweighted,-0.0252525252525253,-0.680880587529129,-0.146739708541644,-0.129748684979544,-0.155833333333333,62
