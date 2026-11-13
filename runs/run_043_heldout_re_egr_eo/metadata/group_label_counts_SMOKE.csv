@@ -1,0 +1,4 @@
+seed,split,rows,race_0_label_0,race_0_label_1,race_1_label_0,race_1_label_1
+101,train,3694,1033,1189,881,591
+101,calibration,792,241,236,200,115
+101,test,792,240,236,200,116

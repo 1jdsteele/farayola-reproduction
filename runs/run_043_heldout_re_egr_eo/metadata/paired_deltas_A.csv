@@ -1,0 +1,65 @@
+split,comparison,stage,metric,n,mean_delta,sample_std,ci95_lower,ci95_upper,seeds_with_nonzero_change
+calibration,Corrected Re+EGR vs EGR,pre_eo,accuracy,10,0.0029040404040405,0.00395040405059186,7.80915850751222e-05,0.00572998922300587,7
+calibration,Corrected Re+EGR vs EGR,pre_eo,statistical_parity_difference,10,0.00861576236258375,0.0145451527348255,-0.00178921309467175,0.0190207378198393,10
+calibration,Corrected Re+EGR vs EGR,pre_eo,disparate_impact,10,0.01826725851204,0.0326529129547895,-0.00509122827022762,0.0416257452943076,10
+calibration,Corrected Re+EGR vs EGR,pre_eo,equal_opportunity_difference,10,0.00687750238720076,0.0265435404729132,-0.0121106025990095,0.0258656073734111,10
+calibration,Corrected Re+EGR vs EGR,pre_eo,predictive_equality_difference,10,0.00879147699640581,0.0238757461705211,-0.00828820291187914,0.0258711569046908,10
+calibration,Corrected Re+EGR vs EGR,pre_eo,abs_statistical_parity_difference,10,-0.00899765670140359,0.013470205711643,-0.0186336613820729,0.000638347979265741,10
+calibration,Corrected Re+EGR vs EGR,pre_eo,abs_equal_opportunity_difference,10,-0.00451303182269972,0.0254694094810902,-0.0227327497859924,0.0137066861405929,10
+calibration,Corrected Re+EGR vs EGR,pre_eo,abs_predictive_equality_difference,10,-0.00768650462071519,0.0242957207977339,-0.0250666162789092,0.00969360703747887,10
+calibration,Corrected Re+EGR vs EGR,post_eo,accuracy,10,-0.00138888888888911,0.0134344330942217,-0.0109993033806414,0.00822152560286321,10
+calibration,Corrected Re+EGR vs EGR,post_eo,statistical_parity_difference,10,0.000181994778645481,0.0022948108131512,-0.00145961398443839,0.00182360354172935,10
+calibration,Corrected Re+EGR vs EGR,post_eo,disparate_impact,10,0.00270250391078204,0.00797355924856196,-0.00300143676284302,0.0084064445844071,10
+calibration,Corrected Re+EGR vs EGR,post_eo,equal_opportunity_difference,10,-0.00524376931531178,0.019267606065065,-0.0190269843754783,0.00853944574485474,10
+calibration,Corrected Re+EGR vs EGR,post_eo,predictive_equality_difference,10,0.00541252117921059,0.0164231514888093,-0.00633589365611154,0.0171609360145327,10
+calibration,Corrected Re+EGR vs EGR,post_eo,abs_statistical_parity_difference,10,0.000181994778645481,0.0022948108131512,-0.00145961398443839,0.00182360354172935,10
+calibration,Corrected Re+EGR vs EGR,post_eo,abs_equal_opportunity_difference,10,0.000127887948832279,0.00898623347197124,-0.00630047622400709,0.00655625212167165,10
+calibration,Corrected Re+EGR vs EGR,post_eo,abs_predictive_equality_difference,10,-0.00037891771367305,0.00641313656580689,-0.004966599244956,0.0042087638176099,10
+calibration,Unity vs legacy (must be zero),pre_eo,accuracy,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),pre_eo,statistical_parity_difference,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),pre_eo,disparate_impact,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),pre_eo,equal_opportunity_difference,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),pre_eo,predictive_equality_difference,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),pre_eo,abs_statistical_parity_difference,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),pre_eo,abs_equal_opportunity_difference,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),pre_eo,abs_predictive_equality_difference,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),post_eo,accuracy,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),post_eo,statistical_parity_difference,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),post_eo,disparate_impact,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),post_eo,equal_opportunity_difference,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),post_eo,predictive_equality_difference,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),post_eo,abs_statistical_parity_difference,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),post_eo,abs_equal_opportunity_difference,10,0,0,0,0,0
+calibration,Unity vs legacy (must be zero),post_eo,abs_predictive_equality_difference,10,0,0,0,0,0
+test,Corrected Re+EGR vs EGR,pre_eo,accuracy,10,-0.00656565656565639,0.00742937513926499,-0.0118803113785764,-0.00125100175273641,9
+test,Corrected Re+EGR vs EGR,pre_eo,statistical_parity_difference,10,-0.0018117123451562,0.00950233109844945,-0.00860927051925183,0.00498584582893943,10
+test,Corrected Re+EGR vs EGR,pre_eo,disparate_impact,10,-0.00489825002974689,0.0214352354670222,-0.0202320937521885,0.0104355936926947,10
+test,Corrected Re+EGR vs EGR,pre_eo,equal_opportunity_difference,10,0.0133205484068262,0.015797188241645,0.00201992070324689,0.0246211761104056,8
+test,Corrected Re+EGR vs EGR,pre_eo,predictive_equality_difference,10,-0.0108889314335576,0.0213330223987876,-0.0261496563317571,0.00437179346464197,10
+test,Corrected Re+EGR vs EGR,pre_eo,abs_statistical_parity_difference,10,0.00216465441363238,0.00891336831969106,-0.00421158516931876,0.00854089399658352,10
+test,Corrected Re+EGR vs EGR,pre_eo,abs_equal_opportunity_difference,10,-0.00857159350319051,0.0166491625289797,-0.0204816868969242,0.00333849989054314,8
+test,Corrected Re+EGR vs EGR,pre_eo,abs_predictive_equality_difference,10,0.0108889314335576,0.0213330223987876,-0.00437179346464197,0.0261496563317571,10
+test,Corrected Re+EGR vs EGR,post_eo,accuracy,10,-0.0097222222222223,0.0201585706997259,-0.0241427949867691,0.00469835054232451,9
+test,Corrected Re+EGR vs EGR,post_eo,statistical_parity_difference,10,-0.0110131923161749,0.0143861323925077,-0.0213044114733636,-0.000721973158986275,10
+test,Corrected Re+EGR vs EGR,post_eo,disparate_impact,10,-0.0248647220216623,0.0362997963825716,-0.0508320320492638,0.00110258800593924,10
+test,Corrected Re+EGR vs EGR,post_eo,equal_opportunity_difference,10,-0.00179615308188449,0.023874854469866,-0.0188751951059477,0.0152828889421788,10
+test,Corrected Re+EGR vs EGR,post_eo,predictive_equality_difference,10,-0.0135501831339258,0.0245584507723465,-0.0311182404938644,0.00401787422601286,10
+test,Corrected Re+EGR vs EGR,post_eo,abs_statistical_parity_difference,10,-0.0105825587937587,0.0147408947061107,-0.0211275596219614,-3.75579655560506e-05,10
+test,Corrected Re+EGR vs EGR,post_eo,abs_equal_opportunity_difference,10,-0.00117357534276869,0.0215381984336355,-0.0165810743344364,0.014233923648899,10
+test,Corrected Re+EGR vs EGR,post_eo,abs_predictive_equality_difference,10,0.00978163225907424,0.0225588086183249,-0.00635596727651505,0.0259192317946635,10
+test,Unity vs legacy (must be zero),pre_eo,accuracy,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),pre_eo,statistical_parity_difference,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),pre_eo,disparate_impact,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),pre_eo,equal_opportunity_difference,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),pre_eo,predictive_equality_difference,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),pre_eo,abs_statistical_parity_difference,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),pre_eo,abs_equal_opportunity_difference,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),pre_eo,abs_predictive_equality_difference,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),post_eo,accuracy,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),post_eo,statistical_parity_difference,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),post_eo,disparate_impact,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),post_eo,equal_opportunity_difference,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),post_eo,predictive_equality_difference,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),post_eo,abs_statistical_parity_difference,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),post_eo,abs_equal_opportunity_difference,10,0,0,0,0,0
+test,Unity vs legacy (must be zero),post_eo,abs_predictive_equality_difference,10,0,0,0,0,0

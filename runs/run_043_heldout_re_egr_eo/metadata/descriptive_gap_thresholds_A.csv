@@ -1,0 +1,7 @@
+arm,split,n_seeds,post_eo_abs_EOD_le_0_05,post_eo_abs_PED_le_0_05,post_eo_both_abs_EOD_PED_le_0_05
+legacy_egr,calibration,10,10,10,10
+legacy_egr,test,10,7,7,4
+unity_oracle,calibration,10,10,10,10
+unity_oracle,test,10,7,7,4
+reweighted_oracle,calibration,10,10,10,10
+reweighted_oracle,test,10,5,6,2

@@ -1,0 +1,43 @@
+{
+  "experiment": "run_043_heldout_re_egr_eo",
+  "tag": "SMOKE",
+  "seeds": [
+    101
+  ],
+  "design": "70% train / 15% EO calibration / 15% final held-out test",
+  "outer_split": "seed, race-stratified; identical to original Run 042 70/30 training split",
+  "cal_test_split": "seed+10000, stratify race+label, divide outer 30% in half",
+  "egr_prediction_rng": {
+    "outer": "seed (frozen Run042 match)",
+    "calibration": "seed+20000",
+    "test": "seed+30000"
+  },
+  "eo_policy_seed": "seed",
+  "model": "EGR(DemographicParity,eps=.02,max_iter=20,drop_prot_attr=False); LR lbfgs max_iter=1000",
+  "arms": {
+    "legacy_egr": "EGR + EO (no Reweighing)",
+    "unity_oracle": "Unity-weights EGR + EO implementation control",
+    "reweighted_oracle": "Re + EGR + EO (Approach A: external Re weights * per-oracle EGR LR weights, preserving mass)"
+  },
+  "critical_scope": "Approach A changes EGR classifier oracle weights only, not EGR moment/objective weighting",
+  "test_outcomes_used_for_model_training_or_eo_policy_selection": false,
+  "note": "EO optimizes equalized odds; |EOD|<=.05 is an optional descriptive threshold, NOT EO fit constraint",
+  "original_run_016_and_022": "Test-calibrated EO with leakage, only checked as historical matched controls; metrics not compared directly to this held-out run",
+  "original_run_011_and_014": "Outer 70/30 EGR predictions and metrics verified against frozen originals",
+  "run042_prediction_level": "Optional cross-check when the prior run is present in sibling runs/ directory",
+  "hashes": {
+    "dataset": "6654c9ba30e95dd05567189302e033585a7c5ffb2a93fda284a7bf22e57f160e",
+    "run_014_re_egr_per_seed_results_A.csv": "8a2584383b6983cf2a126c90b24312c8f24a1cb96c0a0bd3363274c42a6dfbad",
+    "run_011_egr_per_seed_results_A.csv": "c32fb6a45d36574a01b11443f04f864ad02b1c5febc46e045120951adb3903f8",
+    "run_022_re_egr_eo_per_seed_results_A.csv": "fafe1991b2e97ac9a73cb9f30a141a9ef1e8ba096ba78bed2455a9d9f2df7c69",
+    "run_016_egr_eo_per_seed_results_A.csv": "471d0c4b7c67cc37aefdd27b9cf313835af14c2e9fcdbdd4db62dd15da451860"
+  },
+  "versions": {
+    "aif360": "0.6.1",
+    "fairlearn": "0.14.0",
+    "scikit-learn": "1.9.1",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "python": "3.14.7"
+  }
+}
